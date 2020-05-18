@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "800559009083",
+    "firebase_url": "https://elektrobit-cds.firebaseio.com",
+    "project_id": "elektrobit-cds",
+    "storage_bucket": "elektrobit-cds.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:800559009083:android:aa7a05e61b55ba426d3b1e",
+        "android_client_info": {
+          "package_name": "com.elektrobit.cds"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "800559009083-1u8hug5k5jqb3q14lm74j3hi91f6o8fd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADbNHNweIvtCGpW-s9_fNjtKvNpRfyUGo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "800559009083-1u8hug5k5jqb3q14lm74j3hi91f6o8fd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

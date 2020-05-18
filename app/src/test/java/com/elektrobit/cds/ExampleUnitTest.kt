@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.elektrobit.cds
 
 import org.junit.Test
 

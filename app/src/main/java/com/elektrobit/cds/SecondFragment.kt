@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.elektrobit.cds
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
