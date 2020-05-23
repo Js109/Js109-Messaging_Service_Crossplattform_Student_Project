@@ -28,7 +28,7 @@ stages:
 lintDebug:
   stage: build
   script:
-    - ./gradlew -Pci --console=plain :app:lintDebug -PbuildDir=lint
+    - ./gradlew -Pci --console=plain :automotive:lintDebug -PbuildDir=lint
 
 assembleDebug:
   stage: build
@@ -36,9 +36,9 @@ assembleDebug:
     - ./gradlew assembleDebug
   artifacts:
     paths:
-      - app/build/outputs/
+      - automotive/build/outputs/
 
 debugTests:
   stage: test
   script:
-    - ./gradlew -Pci --console=plain :app:testDebug
+    - ./gradlew -Pci --console=plain :automotive:testDebug
