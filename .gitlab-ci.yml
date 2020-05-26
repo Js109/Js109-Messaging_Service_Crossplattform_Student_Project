@@ -28,11 +28,13 @@ stages:
 lintDebug:
   stage: build
   script:
+    - cd automotive-frontend
     - ./gradlew -Pci --console=plain :automotive:lintDebug -PbuildDir=lint
 
 assembleDebug:
   stage: build
   script:
+    - cd automotive-frontend
     - ./gradlew assembleDebug
   artifacts:
     paths:
@@ -41,4 +43,5 @@ assembleDebug:
 debugTests:
   stage: test
   script:
+    - cd automotive-frontend
     - ./gradlew -Pci --console=plain :automotive:testDebug
