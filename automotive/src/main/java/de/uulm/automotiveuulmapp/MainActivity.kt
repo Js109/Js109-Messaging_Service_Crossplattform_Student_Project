@@ -1,16 +1,9 @@
 package de.uulm.automotiveuulmapp
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,6 +15,4 @@ class MainActivity : AppCompatActivity() {
             startService(intent)
         }
     }
-
-
 }
