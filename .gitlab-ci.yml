@@ -27,9 +27,9 @@ stages:
     - yes | android-sdk-linux/tools/bin/sdkmanager --licenses
     - set -o pipefail
 
-    only:
-      changes:
-        - automotive/**/*
+  only:
+    changes:
+      - automotive/**/*
 
 lintDebug:
   <<: *automotive-setup
