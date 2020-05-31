@@ -54,3 +54,25 @@ debugTests:
   script:
     - cd automotive-frontend
     - ./gradlew -Pci --console=plain :automotive:testDebug
+
+.backend-setup: &backend-setup
+  image: openjdk:11.0.5
+  
+  before_script:
+    - chmod +x backend/gradlew
+
+  only:
+    changes:
+      - backend/**/*
+
+build-backend:
+  <<: *backend-setup
+  stage: build
+  script:
+    - backend/gradlew bootJar
+
+test-backend:
+  <<: *backend-setup
+  stage: test
+  script:
+    - backend/gradlew test
