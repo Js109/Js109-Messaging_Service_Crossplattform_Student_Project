@@ -1,37 +1,75 @@
 package de.uulm.automotive.cds.controller
 
-import com.rabbitmq.client.ConnectionFactory
-import de.uulm.automotive.cds.models.Message
+import de.uulm.automotive.cds.Message
+import de.uulm.automotive.cds.MessageRepository
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.ModelAttribute
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import java.time.LocalDateTime
 
 @Controller
-class MessageController {
+class MessageController(private val repository: MessageRepository) {
 
     @GetMapping("/message")
     fun messageForm(model: Model): String {
         model["title"] = "Message"
+        return "create-message"
+    }
+
+    @GetMapping("/messages")
+    fun showMessages(model: Model): String {
+        model["title"] = "Messages"
+        model["messages"] = repository.findAllByOrderByTopicAsc().map { it.render() }
+        return "messages"
+    }
+
+    @GetMapping("/message/{id}")
+    fun showMessage(@PathVariable id: Long, model: Model): String {
+        model["title"] = "Message"
+
+        val message = repository.findById(id)
+        if (message.isEmpty)
+            return showMessages(model)
+
+        model["message"] = message.get().render()
+
         return "message"
     }
 
     @PostMapping("/message")
-    fun relayMessage(@ModelAttribute message: Message, model: Model): String {
-        val factory = ConnectionFactory()
-        factory.host = "134.60.157.15"
-        factory.username = "android_cl"
-        factory.password = "supersecure"
+    fun saveMessage(@ModelAttribute message: Message, model: Model): String {
+        message.isSent = false
+        if(message.starttime == null) {
+            message.starttime = LocalDateTime.now()
+        }
 
-        val connection = factory.newConnection()
-        val channel = connection.createChannel()
+        val savedMessage = repository.save(message)
 
-        channel.queueDeclare(message.topic, true, false, false, null)
-        channel.basicPublish("", message.topic, null, message.content.toByteArray())
+        model["title"] = "Messages"
+        model["message"] = savedMessage.render()
 
-        model["topic"] = message.topic
-        model["content"] = message.content
-
-        return "sentMessage"
+        return "message"
     }
+
+    fun Message.render() = RenderedMessage(
+            topic,
+            content,
+            starttime,
+            endtime,
+            isSent,
+            id
+    )
+
+    data class RenderedMessage(
+            val topic: String,
+            val content: String,
+            val starttime: LocalDateTime?,
+            val endtime: LocalDateTime?,
+            val isSent: Boolean?,
+            val id: Long?
+    )
 }
