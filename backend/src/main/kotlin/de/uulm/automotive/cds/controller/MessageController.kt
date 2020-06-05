@@ -1,15 +1,16 @@
 package de.uulm.automotive.cds.controller
 
+import com.rabbitmq.client.AMQP.BasicProperties
+import de.uulm.automotive.cds.models.CategoryRepository
 import de.uulm.automotive.cds.models.Message
 import de.uulm.automotive.cds.services.AmqpChannelService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 
-@Controller
-class MessageController @Autowired constructor(private val amqpChannelService: AmqpChannelService){
+@RestController
+class MessageController @Autowired constructor(private val amqpChannelService: AmqpChannelService, private val categoryRepository: CategoryRepository){
 
     @GetMapping("/message")
     fun messageForm(model: Model): String {
@@ -18,18 +19,27 @@ class MessageController @Autowired constructor(private val amqpChannelService: A
     }
 
     @PostMapping("/message")
-    fun relayMessage(@ModelAttribute message: Message, model: Model): String {
+    fun relayMessage(@RequestBody message: Message) {
+
+
+        val bindingArgs = HashMap<String, Any>()
+
+        for(id in message.categoryIds) {
+            val category = categoryRepository.findById(id)
+            category.ifPresent {
+                for(binding in it.bindings) {
+                    bindingArgs[binding] = ""
+                }
+            }
+        }
+
+        var props = BasicProperties()
+        props = props.builder().headers(bindingArgs).build()
 
         val channel = amqpChannelService.openChannel()
 
-        channel.queueDeclare(message.topic, true, false, false, null)
-        channel.basicPublish("", message.topic, null, message.content.toByteArray())
-
-        model["topic"] = message.topic
-        model["content"] = message.content
+        channel.basicPublish("amq.direct", "/test/direct", null, message.content.toByteArray())
 
         channel.close()
-
-        return "sentMessage"
     }
 }

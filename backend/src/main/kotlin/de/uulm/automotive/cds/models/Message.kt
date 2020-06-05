@@ -1,6 +1,6 @@
 package de.uulm.automotive.cds.models
 
 data class Message(
-        val topic: String,
+        val categoryIds: List<Long>,
         val content: String
 )

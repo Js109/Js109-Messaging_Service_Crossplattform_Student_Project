@@ -9,12 +9,15 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class SignUpController @Autowired constructor(private val amqpService: AmqpChannelService){
-    @PostMapping("signup")
+    @PostMapping("/signup")
     fun testResource(@RequestBody info: SignUpInfo) {
         val channel = amqpService.openChannel()
         channel.queueDeclare("id/${info.id}", true, false, false, null)
-        channel.queueBind("id/${info.id}", "amq.direct", "device/${info.deviceType}")
-        channel.queueBind("id/${info.id}", "amq.direct", "id/${info.id}")
+        val headersMap = HashMap<String, Any>()
+        headersMap["x-match"] = "any"
+        headersMap["id/${info.id}"] = ""
+        headersMap["device/${info.deviceType}"] = ""
+        channel.queueBind("id/${info.id}", "amq.headers", "", headersMap)
         channel.close()
     }
 }
