@@ -1,6 +1,7 @@
 package de.uulm.automotive.cds.controller
 
 import com.rabbitmq.client.AMQP.BasicProperties
+import com.rabbitmq.client.ConnectionFactory
 import de.uulm.automotive.cds.models.CategoryRepository
 import de.uulm.automotive.cds.models.Message
 import de.uulm.automotive.cds.services.AmqpChannelService
@@ -38,7 +39,7 @@ class MessageController @Autowired constructor(private val amqpChannelService: A
 
         val channel = amqpChannelService.openChannel()
 
-        channel.basicPublish("amq.direct", "/test/direct", null, message.content.toByteArray())
+        channel.basicPublish("amq.headers", "", props, message.content.toByteArray())
 
         channel.close()
     }
