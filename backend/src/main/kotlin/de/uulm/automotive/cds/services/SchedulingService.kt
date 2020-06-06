@@ -13,7 +13,7 @@ class SchedulingService(private val repository: MessageRepository) {
     fun sendMessages(): Boolean {
         val messages = repository.findAllByIsSentFalseOrderByStarttimeAsc()
         messages.forEach { message: Message ->
-            if (message.starttime!! > LocalDateTime.now().plusHours(1)) return true
+            if (message.starttime!! > LocalDateTime.now()) return true
 
             val messageService = MessageService()
             messageService.sendMessage(message)
