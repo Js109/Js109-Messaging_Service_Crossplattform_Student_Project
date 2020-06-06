@@ -1,0 +1,19 @@
+{{> header}}
+
+<div class="container">
+  <h3>{{title}}</h3>
+
+  {{#messages}}
+    <section>
+      <header class="message-header">
+        <h4 class="message-id"><a href="/message/{{id}}">
+          <div class="message-topic">{{topic}}</div>
+        </a></h4>
+        <div class="message-starttime">Starttime: {{starttime}}</div>
+      </header>
+      <div class="message-content">{{content}}</div>
+    </section>
+  {{/messages}}
+</div>
+
+{{> footer}}

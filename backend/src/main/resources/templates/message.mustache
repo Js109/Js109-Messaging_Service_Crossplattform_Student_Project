@@ -1,0 +1,15 @@
+{{> header}}
+
+<div class="container">
+  <h3>{{title}}</h3>
+  {{#message}}
+  <header class="message-header">
+    <div class="message-topic">{{topic}}</div>
+    <div class="message-starttime">Starttime: {{starttime}}</div>
+    <div class="message-sent">Message was sent: {{isSent}}</div>
+  </header>
+  <div class="message-content">{{content}}</div>
+  {{/message}}
+</div>
+
+{{> footer}}
