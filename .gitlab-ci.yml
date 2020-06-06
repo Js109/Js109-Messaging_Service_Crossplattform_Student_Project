@@ -29,7 +29,7 @@ stages:
 
   only:
     changes:
-      - automotive/**/*
+      - automotive-frontend/**/*
 
 lintDebug:
   <<: *automotive-setup
