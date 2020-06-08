@@ -1,12 +1,14 @@
 package de.uulm.automotiveuulmapp
 
+import android.app.Notification
+import android.app.Notification.DEFAULT_ALL
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.*
-import android.os.Process.THREAD_PRIORITY_BACKGROUND
+import android.os.Process.*
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
@@ -16,8 +18,6 @@ import com.rabbitmq.client.ConnectionFactory
 import com.rabbitmq.client.DeliverCallback
 import com.rabbitmq.client.Delivery
 import java.nio.charset.Charset
-import java.time.temporal.TemporalAdjusters.next
-import java.util.*
 import kotlin.random.Random.Default.nextInt
 
 class MyService : Service() {
@@ -109,7 +109,7 @@ class MyService : Service() {
         // the NotificationChannel class is new and not in the support library
         val name = getString(R.string.channel_name)
         val descriptionText = getString(R.string.channel_description)
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val importance = NotificationManager.IMPORTANCE_HIGH
         val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
             description = descriptionText
         }
@@ -124,7 +124,9 @@ class MyService : Service() {
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Message from Queue")
             .setContentText(message)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(Notification.CATEGORY_MESSAGE)
+            .setDefaults(DEFAULT_ALL)
 
         val notificationId = nextInt()
 
