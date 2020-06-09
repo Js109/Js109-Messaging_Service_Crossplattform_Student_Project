@@ -1,4 +1,2 @@
 rootProject.name='AutomotiveUUlmApp'
-include ':mobile'
 include ':automotive'
-include ':shared'
