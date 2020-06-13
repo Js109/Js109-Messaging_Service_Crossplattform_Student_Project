@@ -17,32 +17,44 @@ import com.rabbitmq.client.CancelCallback
 import com.rabbitmq.client.ConnectionFactory
 import com.rabbitmq.client.DeliverCallback
 import com.rabbitmq.client.Delivery
+import de.uulm.automotiveuulmapp.topic.TopicChange
 import java.nio.charset.Charset
 import kotlin.random.Random.Default.nextInt
+
+private const val MSG_INIT_AMQP = 0
+const val MSG_CHANGE_TOPICS = 1
+
 
 class MyService : Service() {
 
     private var serviceLooper: Looper? = null
     private var serviceHandler: ServiceHandler? = null
     private var CHANNEL_ID = "123"
+    private var EXCHANGE_NAME = "amq.topic"
+    private val QUEUE_NAME: String = "hello"
+    private var rabbitMQChannelManager: RabbitMQChannelManager = RabbitMQChannelManager()
 
     // Handler that receives messages from the thread
     private inner class ServiceHandler(looper: Looper) : Handler(looper) {
 
         override fun handleMessage(msg: Message) {
-            amqpSub()
-
+            when (msg.what) {
+                MSG_INIT_AMQP -> {
+                    amqpSetup()
+                    amqpSub()
+                }
+                MSG_CHANGE_TOPICS -> {
+                    changeSubscription(msg.obj as TopicChange)
+                }
+            }
             // Stop the service using the startId, so that we don't stop
             // the service in the middle of handling another job
             stopSelf(msg.arg1)
         }
     }
 
-
-    private val QUEUE_NAME: String = "hello"
-
     override fun onBind(p0: Intent?): IBinder? {
-        TODO("Not yet implemented")
+        return Messenger(serviceHandler).binder
     }
 
     override fun onCreate() {
@@ -53,12 +65,13 @@ class MyService : Service() {
         HandlerThread("ServiceStartArguments", THREAD_PRIORITY_BACKGROUND).apply {
             start()
 
+
             // Get the HandlerThread's Looper and use it for our Handler
             serviceLooper = looper
             serviceHandler = ServiceHandler(looper)
         }
 
-        createNotificationChannel()
+      createNotificationChannel()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -67,6 +80,7 @@ class MyService : Service() {
         // For each start request, send a message to start a job and deliver the
         // start ID so we know which request we're stopping when we finish the job
         serviceHandler?.obtainMessage()?.also { msg ->
+            msg.what = MSG_INIT_AMQP
             msg.arg1 = startId
             serviceHandler?.sendMessage(msg)
         }
@@ -75,11 +89,7 @@ class MyService : Service() {
         return START_STICKY
     }
 
-    fun amqpSub() {
-        //probably required to be able to start a new thread to be able to wait asynchronously for the callback
-        //val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-        //StrictMode.setThreadPolicy(policy)
-
+    fun amqpSetup(){
         //setup connection params
         val factory = ConnectionFactory()
         factory.host = "134.60.157.15"
@@ -91,7 +101,10 @@ class MyService : Service() {
         val channel = connection.createChannel()
 
         channel.queueDeclare(QUEUE_NAME, true, false, false, null)
+        rabbitMQChannelManager.channel = channel
+    }
 
+    fun amqpSub() {
         //define callback which should be executed when message is received from queue
         val deliverCallback =
             DeliverCallback { _: String?, delivery: Delivery ->
@@ -101,7 +114,7 @@ class MyService : Service() {
 
         Log.d("AMQP"," [*] Waiting for messages. To exit press CTRL+C")
         //start subscription on queue
-        channel.basicConsume(QUEUE_NAME, true, deliverCallback, CancelCallback {  })
+        rabbitMQChannelManager.channel.basicConsume(QUEUE_NAME, true, deliverCallback, CancelCallback {  })
     }
 
     private fun createNotificationChannel() {
@@ -135,6 +148,18 @@ class MyService : Service() {
             notify(notificationId, builder.build())
         }
         Log.d("Notification","Notification should be shown")
+    }
+
+    fun changeSubscription(topicChange: TopicChange){
+        var c = rabbitMQChannelManager.channel
+        when {
+            topicChange.active -> {
+                c.queueBind("hello", EXCHANGE_NAME, topicChange.name)
+            }
+            !topicChange.active -> {
+                c.queueUnbind("hello", EXCHANGE_NAME, topicChange.name)
+            }
+        }
     }
 
 
