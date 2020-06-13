@@ -1,14 +1,10 @@
 package de.uulm.automotiveuulmapp
 
-import android.app.Notification
-import android.app.Notification.DEFAULT_ALL
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.os.*
-import android.os.Process.*
+import android.os.Process.THREAD_PRIORITY_BACKGROUND
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
@@ -22,9 +18,12 @@ import kotlin.random.Random.Default.nextInt
 
 class MyService : Service() {
 
+    private val EXCHANGE_NAME: String = "amq.topic"
     private var serviceLooper: Looper? = null
     private var serviceHandler: ServiceHandler? = null
     private var CHANNEL_ID = "123"
+    private var rabbitMQChannelManager = de.uulm.automotiveuulmapp.RabbitMQChannelManager()
+
 
     // Handler that receives messages from the thread
     private inner class ServiceHandler(looper: Looper) : Handler(looper) {
@@ -120,13 +119,29 @@ class MyService : Service() {
     }
 
     private fun notify(message: String){
+
+        //not working yet (as heads up notification)
+        /*
+        var p: Person = Person.Builder().setName("OEM").build()
+        var intent = Intent(this, MainActivity::class.java)
+
+        var builder = Notification.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle("Message from Queue")
+            .setContentText(message)
+            .setPriority(Notification.PRIORITY_HIGH)
+            .setCategory(Notification.CATEGORY_MESSAGE)
+            .setStyle(Notification.MessagingStyle(p))
+            .addAction(Notification.Action.Builder(R.drawable.ic_launcher_foreground,"MARK READ", PendingIntent.getActivity(this,0,intent,0)).build())
+        */
+
         var builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Message from Queue")
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setCategory(Notification.CATEGORY_MESSAGE)
-            .setDefaults(DEFAULT_ALL)
+                .setCategory(Notification.CATEGORY_NAVIGATION)
+
 
         val notificationId = nextInt()
 
