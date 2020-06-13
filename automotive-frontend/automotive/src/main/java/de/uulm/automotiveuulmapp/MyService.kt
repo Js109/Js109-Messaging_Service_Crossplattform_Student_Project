@@ -22,7 +22,6 @@ class MyService : Service() {
     private var serviceLooper: Looper? = null
     private var serviceHandler: ServiceHandler? = null
     private var CHANNEL_ID = "123"
-    private var rabbitMQChannelManager = de.uulm.automotiveuulmapp.RabbitMQChannelManager()
 
 
     // Handler that receives messages from the thread
