@@ -1,9 +1,7 @@
 package de.uulm.automotive.cds
 
 import java.time.LocalDateTime
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
+import javax.persistence.*
 
 @Entity
 class Message(
@@ -12,5 +10,7 @@ class Message(
         var starttime: LocalDateTime?,
         var endtime: LocalDateTime?,
         var isSent: Boolean?,
+        @ElementCollection(fetch = FetchType.EAGER)
+        var properties: MutableList<String>?,
         @Id @GeneratedValue var id: Long? = null
 )
