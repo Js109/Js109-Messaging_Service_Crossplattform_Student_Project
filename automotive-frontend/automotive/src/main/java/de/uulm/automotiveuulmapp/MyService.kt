@@ -13,17 +13,21 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.rabbitmq.client.CancelCallback
 import com.rabbitmq.client.ConnectionFactory
 import com.rabbitmq.client.DeliverCallback
 import com.rabbitmq.client.Delivery
 import de.uulm.automotiveuulmapp.topic.TopicChange
+import kotlinx.android.synthetic.main.activity_main.*
 import java.nio.charset.Charset
 import kotlin.random.Random.Default.nextInt
 
 private const val MSG_INIT_AMQP = 0
 const val MSG_CHANGE_TOPICS = 1
-
 
 class MyService : Service() {
 
@@ -64,7 +68,6 @@ class MyService : Service() {
         // background priority so CPU-intensive work will not disrupt our UI.
         HandlerThread("ServiceStartArguments", THREAD_PRIORITY_BACKGROUND).apply {
             start()
-
 
             // Get the HandlerThread's Looper and use it for our Handler
             serviceLooper = looper
@@ -133,7 +136,7 @@ class MyService : Service() {
     }
 
     private fun notify(message: String){
-        var builder = NotificationCompat.Builder(this, CHANNEL_ID)
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Message from Queue")
             .setContentText(message)
@@ -151,7 +154,7 @@ class MyService : Service() {
     }
 
     fun changeSubscription(topicChange: TopicChange){
-        var c = rabbitMQChannelManager.channel
+        val c = rabbitMQChannelManager.channel
         when {
             topicChange.active -> {
                 c.queueBind("hello", EXCHANGE_NAME, topicChange.name)
@@ -161,6 +164,4 @@ class MyService : Service() {
             }
         }
     }
-
-
 }
