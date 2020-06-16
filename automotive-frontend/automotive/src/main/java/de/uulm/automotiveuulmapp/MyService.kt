@@ -1,8 +1,6 @@
 package de.uulm.automotiveuulmapp
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.os.*
@@ -16,30 +14,32 @@ import com.rabbitmq.client.ConnectionFactory
 import com.rabbitmq.client.DeliverCallback
 import com.rabbitmq.client.Delivery
 import java.nio.charset.Charset
-import java.time.temporal.TemporalAdjusters.next
-import java.util.*
 import kotlin.random.Random.Default.nextInt
 
 class MyService : Service() {
 
+    // used to store constants
+    companion object{
+        const val CHANNEL_ID = "123"
+        const val AMQ_HOST = "134.60.157.15"
+        const val AMQ_USER = "android_cl"
+        const val AMQ_PASSWORD = "supersecure"
+        const val QUEUE_NAME = "hello"
+    }
+
     private var serviceLooper: Looper? = null
     private var serviceHandler: ServiceHandler? = null
-    private var CHANNEL_ID = "123"
 
     // Handler that receives messages from the thread
     private inner class ServiceHandler(looper: Looper) : Handler(looper) {
-
         override fun handleMessage(msg: Message) {
-            amqpSub()
+            amqSub()
 
             // Stop the service using the startId, so that we don't stop
             // the service in the middle of handling another job
             stopSelf(msg.arg1)
         }
     }
-
-
-    private val QUEUE_NAME: String = "hello"
 
     override fun onBind(p0: Intent?): IBinder? {
         TODO("Not yet implemented")
@@ -75,16 +75,20 @@ class MyService : Service() {
         return START_STICKY
     }
 
-    fun amqpSub() {
+    /**
+     * Sets up the connection to the broker and sets callback when a message is received by the queue
+     *
+     */
+    fun amqSub() {
         //probably required to be able to start a new thread to be able to wait asynchronously for the callback
         //val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         //StrictMode.setThreadPolicy(policy)
 
         //setup connection params
         val factory = ConnectionFactory()
-        factory.host = "134.60.157.15"
-        factory.username = "android_cl"
-        factory.password = "supersecure"
+        factory.host = AMQ_HOST
+        factory.username = AMQ_USER
+        factory.password = AMQ_PASSWORD
 
         //open new connection to broker
         val connection = factory.newConnection()
@@ -104,12 +108,16 @@ class MyService : Service() {
         channel.basicConsume(QUEUE_NAME, true, deliverCallback, CancelCallback {  })
     }
 
+    /**
+     * Creates a notification channel where notifications to the users can be published to
+     * The channel later can be addressed with the CHANNELID defined in the companion object
+     */
     private fun createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         val name = getString(R.string.channel_name)
         val descriptionText = getString(R.string.channel_description)
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val importance = NotificationManager.IMPORTANCE_HIGH
         val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
             description = descriptionText
         }
@@ -119,12 +127,19 @@ class MyService : Service() {
         notificationManager.createNotificationChannel(channel)
     }
 
+    /**
+     * Takes a message and displays it as heads-up notification
+     * The message is being configured to fulfill the requirements to be displayed as a heads-up notification within automotive os
+     *
+     * @param message Message which should be displayed in the notification
+     */
     private fun notify(message: String){
-        var builder = NotificationCompat.Builder(this, CHANNEL_ID)
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Message from Queue")
             .setContentText(message)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(Notification.CATEGORY_NAVIGATION)
 
         val notificationId = nextInt()
 
