@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun addTopic(topicName: String, topicStatus: Boolean){
-        mService?.send(Message.obtain(null, MSG_CHANGE_TOPICS, 0, 0, TopicChange(topicName, topicStatus)))
+        mService?.send(Message.obtain(null, MyService.MSG_CHANGE_TOPICS, 0, 0, TopicChange(topicName, topicStatus)))
         if(topicStatus){
             Log.d("Topic", "Subscribing to topic" + topicName)
         } else {
