@@ -7,18 +7,16 @@ import javax.persistence.GeneratedValue
 import javax.persistence.Id
 
 @Entity
-class Category {
+class Topic {
     @Id
     @GeneratedValue
     var id: Long? = null
-    @ElementCollection
-    var bindings: MutableList<String> = ArrayList()
+    var binding: String = ""
     @ElementCollection
     var tags: MutableList<String> = ArrayList()
     var description: String = ""
-
 }
 
-interface CategoryRepository: CrudRepository<Category, Long> {
+interface TopicRepository: CrudRepository<Topic, Long> {
 
 }
