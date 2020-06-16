@@ -1,14 +1,10 @@
 package de.uulm.automotiveuulmapp
 
-import android.app.Notification
-import android.app.Notification.DEFAULT_ALL
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.os.*
-import android.os.Process.*
+import android.os.Process.THREAD_PRIORITY_BACKGROUND
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
@@ -26,26 +22,34 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.nio.charset.Charset
 import kotlin.random.Random.Default.nextInt
 
-private const val MSG_INIT_AMQP = 0
-const val MSG_CHANGE_TOPICS = 1
-
 class MyService : Service() {
+
+    // used to store constants
+    companion object{
+        const val CHANNEL_ID = "123"
+
+        const val AMQ_HOST = "134.60.157.15"
+        const val AMQ_USER = "android_cl"
+        const val AMQ_PASSWORD = "supersecure"
+        const val QUEUE_NAME = "hello"
+        private var EXCHANGE_NAME = "amq.topic"
+
+        const val MSG_INIT_AMQP = 0
+        const val MSG_CHANGE_TOPICS = 1
+    }
 
     private var serviceLooper: Looper? = null
     private var serviceHandler: ServiceHandler? = null
-    private var CHANNEL_ID = "123"
-    private var EXCHANGE_NAME = "amq.topic"
-    private val QUEUE_NAME: String = "hello"
     private var rabbitMQChannelManager: RabbitMQChannelManager = RabbitMQChannelManager()
+
 
     // Handler that receives messages from the thread
     private inner class ServiceHandler(looper: Looper) : Handler(looper) {
-
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 MSG_INIT_AMQP -> {
-                    amqpSetup()
-                    amqpSub()
+                    amqSetup()
+                    amqSub()
                 }
                 MSG_CHANGE_TOPICS -> {
                     changeSubscription(msg.obj as TopicChange)
@@ -74,7 +78,7 @@ class MyService : Service() {
             serviceHandler = ServiceHandler(looper)
         }
 
-      createNotificationChannel()
+        createNotificationChannel()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -92,12 +96,12 @@ class MyService : Service() {
         return START_STICKY
     }
 
-    fun amqpSetup(){
+    fun amqSetup(){
         //setup connection params
         val factory = ConnectionFactory()
-        factory.host = "134.60.157.15"
-        factory.username = "android_cl"
-        factory.password = "supersecure"
+        factory.host = AMQ_HOST
+        factory.username = AMQ_USER
+        factory.password = AMQ_PASSWORD
 
         //open new connection to broker
         val connection = factory.newConnection()
@@ -107,7 +111,7 @@ class MyService : Service() {
         rabbitMQChannelManager.channel = channel
     }
 
-    fun amqpSub() {
+    fun amqSub() {
         //define callback which should be executed when message is received from queue
         val deliverCallback =
             DeliverCallback { _: String?, delivery: Delivery ->
@@ -120,6 +124,10 @@ class MyService : Service() {
         rabbitMQChannelManager.channel.basicConsume(QUEUE_NAME, true, deliverCallback, CancelCallback {  })
     }
 
+    /**
+     * Creates a notification channel where notifications to the users can be published to
+     * The channel later can be addressed with the CHANNELID defined in the companion object
+     */
     private fun createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -135,14 +143,19 @@ class MyService : Service() {
         notificationManager.createNotificationChannel(channel)
     }
 
+    /**
+     * Takes a message and displays it as heads-up notification
+     * The message is being configured to fulfill the requirements to be displayed as a heads-up notification within automotive os
+     *
+     * @param message Message which should be displayed in the notification
+     */
     private fun notify(message: String){
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Message from Queue")
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setCategory(Notification.CATEGORY_MESSAGE)
-            .setDefaults(DEFAULT_ALL)
+            .setCategory(Notification.CATEGORY_NAVIGATION)
 
         val notificationId = nextInt()
 
