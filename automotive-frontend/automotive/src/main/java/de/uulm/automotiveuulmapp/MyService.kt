@@ -97,13 +97,13 @@ class MyService : Service() {
     }
 
     fun amqSetup(){
-        //setup connection params
+        // setup connection params
         val factory = ConnectionFactory()
         factory.host = AMQ_HOST
         factory.username = AMQ_USER
         factory.password = AMQ_PASSWORD
 
-        //open new connection to broker
+        // open new connection to broker
         val connection = factory.newConnection()
         val channel = connection.createChannel()
 
@@ -112,7 +112,7 @@ class MyService : Service() {
     }
 
     fun amqSub() {
-        //define callback which should be executed when message is received from queue
+        // define callback which should be executed when message is received from queue
         val deliverCallback =
             DeliverCallback { _: String?, delivery: Delivery ->
                 val message = String(delivery.body, Charset.forName("UTF-8"))
@@ -120,7 +120,7 @@ class MyService : Service() {
             }
 
         Log.d("AMQP"," [*] Waiting for messages. To exit press CTRL+C")
-        //start subscription on queue
+        // start subscription on queue
         rabbitMQChannelManager.channel.basicConsume(QUEUE_NAME, true, deliverCallback, CancelCallback {  })
     }
 
