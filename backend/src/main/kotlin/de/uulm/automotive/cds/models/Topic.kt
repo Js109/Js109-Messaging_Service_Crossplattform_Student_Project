@@ -12,6 +12,7 @@ class Topic {
     @GeneratedValue
     var id: Long? = null
     var binding: String = ""
+    var title: String = ""
     @ElementCollection
     var tags: MutableList<String> = ArrayList()
     var description: String = ""

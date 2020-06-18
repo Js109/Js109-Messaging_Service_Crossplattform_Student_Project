@@ -19,6 +19,11 @@ class AmqpChannelService() {
         connection = factory.newConnection()
     }
 
+    /**
+     * Opens a new channel to the amqp broke.
+     * When the communication with the broker is done Channel.close() should be called.
+     * @return Channel for communication with the amqp broker
+     */
     fun openChannel(): Channel {
         return connection.createChannel()
     }
