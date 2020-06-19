@@ -44,6 +44,9 @@ allOpen {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    environment("DB_SOURCE", "jdbc:h2:mem:testdb")
+    environment("DB_USERNAME", "sa")
+    environment("DB_PASSWORD", "")
 }
 
 tasks.withType<KotlinCompile> {
