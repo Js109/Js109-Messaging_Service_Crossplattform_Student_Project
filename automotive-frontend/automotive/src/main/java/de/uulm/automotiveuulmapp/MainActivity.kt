@@ -11,14 +11,13 @@ import android.os.Messenger
 import android.util.Log
 import android.widget.LinearLayout
 import android.widget.Switch
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Request
 import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import de.uulm.automotiveuulmapp.topic.TopicChange
 import de.uulm.automotiveuulmapp.topic.TopicModel
-import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -61,7 +60,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        register()
         loadAvailableTopics()
+
     }
 
     fun addTopic(topicName: String, topicStatus: Boolean){
@@ -88,34 +89,60 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun loadAvailableTopics(){
-        // Instantiate the RequestQueue.
-        val queue = Volley.newRequestQueue(this)
         val url = "http://192.168.178.25:8080/topic"
 
-        // Request a string response from the provided URL.
-        val stringRequest = StringRequest(
-            Request.Method.GET, url,
-            Response.Listener<String> { response ->
-                val jsonArray = JSONArray(response)
-                val topicArrayList = ArrayList<TopicModel>()
-                for (i in 0 until jsonArray.length()){
-                    val element: JSONObject = jsonArray.optJSONObject(i)
-                    val tags:ArrayList<String> = ArrayList()
-                    for(tag in 0 until element.getJSONArray("tags").length()){
-                        tags.add(element.getJSONArray("tags").get(i) as String)
-                    }
-                    val topic = TopicModel(
-                        element.getLong("id"),
-                        element.getString("binding"),
-                        element.getString("description"),
-                        tags.toTypedArray())
-                    topicArrayList.add(topic)
+        callRestEndpoint(url, Request.Method.GET, { response: JSONObject ->
+            val jsonArray = JSONArray(response.get("array").toString())
+            val topicArrayList = ArrayList<TopicModel>()
+            for (i in 0 until jsonArray.length()){
+                val element: JSONObject = jsonArray.optJSONObject(i)
+                val tags:ArrayList<String> = ArrayList()
+                for(tag in 0 until element.getJSONArray("tags").length()){
+                    tags.add(element.getJSONArray("tags").get(i) as String)
                 }
-                addTopicSwitches(topicArrayList)
-            },
-            Response.ErrorListener { error -> Log.d("Error",error.toString())})
+                val topic = TopicModel(
+                    element.getLong("id"),
+                    element.getString("binding"),
+                    element.getString("description"),
+                    tags.toTypedArray())
+                topicArrayList.add(topic)
+            }
+            addTopicSwitches(topicArrayList)
+        })
+    }
 
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest)
+    fun register(){
+        val url = "http://192.168.178.25:8080/signup"
+
+        val json = JSONObject()
+        json.put("id", 12345)
+        json.put("deviceType", "Android Emulator")
+        callRestEndpoint(url, Request.Method.POST, { response ->
+            Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show()
+        }, body = json)
+    }
+
+    /**
+     * TODO
+     *
+     * @param url
+     * @param httpMethod
+     * @param callback
+     * @param expectedReturnFormat
+     * @param body
+     */
+    fun callRestEndpoint(url: String, httpMethod: Int, callback: (response: JSONObject) -> Unit, body: JSONObject? = null){
+        // Instantiate the RequestQueue.
+        val queue = Volley.newRequestQueue(this)
+
+        val customJsonRequest = CustomJsonRequest(httpMethod, url, body,
+            Response.Listener<JSONObject> { response ->
+                callback(response)
+            },
+            Response.ErrorListener{
+                    error -> Log.d("Error", error.toString())
+            })
+        // Add the request to the RequestQueue
+        queue.add(customJsonRequest)
     }
 }
