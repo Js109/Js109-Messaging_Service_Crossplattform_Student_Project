@@ -11,12 +11,24 @@ import java.time.LocalDateTime
 @Controller
 class MessageController(private val repository: MessageRepository) {
 
+    /**
+     * TODO
+     *
+     * @param model
+     * @return String
+     */
     @GetMapping("/message")
     fun messageForm(model: Model): String {
         model["title"] = "Message"
         return "create-message"
     }
 
+    /**
+     * TODO
+     *
+     * @param model
+     * @return String
+     */
     @GetMapping("/messages")
     fun showMessages(model: Model): String {
         model["title"] = "Messages"
@@ -24,6 +36,13 @@ class MessageController(private val repository: MessageRepository) {
         return "messages"
     }
 
+    /**
+     * TODO
+     *
+     * @param id
+     * @param model
+     * @return String
+     */
     @GetMapping("/message/{id}")
     fun showMessage(@PathVariable id: Long, model: Model): String {
         model["title"] = "Message"
@@ -33,40 +52,57 @@ class MessageController(private val repository: MessageRepository) {
             return showMessages(model)
 
         model["message"] = message.get().render()
-
         return "message"
     }
 
+    /**
+     * TODO
+     *
+     * @param message
+     * @param model
+     * @return String
+     */
     @PostMapping("/message")
     fun saveMessage(@RequestBody message: Message, model: Model): String {
         message.isSent = false
-        if(message.starttime == null) {
+        if (message.starttime == null) {
             message.starttime = LocalDateTime.now()
         }
-
         val savedMessage = repository.save(message)
-
         model["title"] = "Messages"
         model["message"] = savedMessage.render()
-
         return "message"
     }
 
+    /**
+     * TODO
+     *
+     */
     fun Message.render() = RenderedMessage(
-            topic,
-            content,
-            starttime,
-            endtime,
-            isSent,
-            id
+        topic,
+        content,
+        starttime,
+        endtime,
+        isSent,
+        id
     )
 
+    /**
+     * TODO
+     *
+     * @property topic
+     * @property content
+     * @property starttime
+     * @property endtime
+     * @property isSent
+     * @property id
+     */
     data class RenderedMessage(
-            val topic: String,
-            val content: String,
-            val starttime: LocalDateTime?,
-            val endtime: LocalDateTime?,
-            val isSent: Boolean?,
-            val id: Long?
+        val topic: String,
+        val content: String,
+        val starttime: LocalDateTime?,
+        val endtime: LocalDateTime?,
+        val isSent: Boolean?,
+        val id: Long?
     )
 }

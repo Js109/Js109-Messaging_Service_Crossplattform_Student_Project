@@ -13,11 +13,21 @@ import org.springframework.web.bind.annotation.RestController
  * REST-Point for reading available topics and storing new topics.
  */
 class TopicController @Autowired constructor(private val topicRepository: TopicRepository) {
+    /**
+     * TODO
+     *
+     * @return TODO
+     */
     @GetMapping("/topic")
     fun getTopics(): Iterable<Topic> {
         return topicRepository.findAll()
     }
 
+    /**
+     * TODO
+     *
+     * @param topic
+     */
     @PostMapping("/topic")
     fun postTopics(@RequestBody topic: Topic) {
         topicRepository.save(topic)

@@ -6,6 +6,10 @@ import com.rabbitmq.client.Connection
 import com.rabbitmq.client.ConnectionFactory
 import org.springframework.stereotype.Component
 
+/**
+ * TODO
+ *
+ */
 @Component
 class AmqpChannelService() {
 

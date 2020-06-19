@@ -6,6 +6,10 @@ import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
 
+/**
+ * TODO
+ *
+ */
 @Entity
 class Topic {
     @Id
@@ -13,11 +17,16 @@ class Topic {
     var id: Long? = null
     var binding: String = ""
     var title: String = ""
+
     @ElementCollection
     var tags: MutableList<String> = ArrayList()
     var description: String = ""
 }
 
-interface TopicRepository: CrudRepository<Topic, Long> {
+/**
+ * TODO
+ *
+ */
+interface TopicRepository : CrudRepository<Topic, Long> {
 
 }

@@ -22,7 +22,10 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONArray
 import org.json.JSONObject
 
-
+/**
+ * TODO
+ *
+ */
 class MainActivity : AppCompatActivity() {
 
     var mService: Messenger? = null
@@ -64,30 +67,45 @@ class MainActivity : AppCompatActivity() {
         loadAvailableTopics()
     }
 
-    fun addTopic(topicName: String, topicStatus: Boolean){
+    /**
+     * TODO
+     *
+     * @param topicName
+     * @param topicStatus
+     */
+    fun addTopic(topicName: String, topicStatus: Boolean) {
         mService?.send(Message.obtain(null, MyService.MSG_CHANGE_TOPICS, 0, 0, TopicChange(topicName, topicStatus)))
-        if(topicStatus){
+        if (topicStatus) {
             Log.d("Topic", "Subscribing to topic" + topicName)
         } else {
             Log.d("Topic", "Unsubscribing from topic" + topicName)
         }
     }
 
-    fun addTopicSwitches(topicArrayList: ArrayList<TopicModel>){
+    /**
+     * TODO
+     *
+     * @param topicArrayList
+     */
+    fun addTopicSwitches(topicArrayList: ArrayList<TopicModel>) {
         val linearLayout = findViewById<LinearLayout>(R.id.scroll_linear_layout)
 
         for (topic in topicArrayList) {
             val switch = Switch(this)
             switch.text = topic.binding
             switch.textSize = 30F
-            switch.setOnCheckedChangeListener{buttonView, isChecked ->
+            switch.setOnCheckedChangeListener { buttonView, isChecked ->
                 addTopic(buttonView.text.toString(), isChecked)
             }
             linearLayout.addView(switch)
         }
     }
 
-    fun loadAvailableTopics(){
+    /**
+     * TODO
+     *
+     */
+    fun loadAvailableTopics() {
         // Instantiate the RequestQueue.
         val queue = Volley.newRequestQueue(this)
         val url = "http://192.168.178.25:8080/topic"
@@ -98,22 +116,23 @@ class MainActivity : AppCompatActivity() {
             Response.Listener<String> { response ->
                 val jsonArray = JSONArray(response)
                 val topicArrayList = ArrayList<TopicModel>()
-                for (i in 0 until jsonArray.length()){
+                for (i in 0 until jsonArray.length()) {
                     val element: JSONObject = jsonArray.optJSONObject(i)
-                    val tags:ArrayList<String> = ArrayList()
-                    for(tag in 0 until element.getJSONArray("tags").length()){
+                    val tags: ArrayList<String> = ArrayList()
+                    for (tag in 0 until element.getJSONArray("tags").length()) {
                         tags.add(element.getJSONArray("tags").get(i) as String)
                     }
                     val topic = TopicModel(
                         element.getLong("id"),
                         element.getString("binding"),
                         element.getString("description"),
-                        tags.toTypedArray())
+                        tags.toTypedArray()
+                    )
                     topicArrayList.add(topic)
                 }
                 addTopicSwitches(topicArrayList)
             },
-            Response.ErrorListener { error -> Log.d("Error",error.toString())})
+            Response.ErrorListener { error -> Log.d("Error", error.toString()) })
 
         // Add the request to the RequestQueue.
         queue.add(stringRequest)
