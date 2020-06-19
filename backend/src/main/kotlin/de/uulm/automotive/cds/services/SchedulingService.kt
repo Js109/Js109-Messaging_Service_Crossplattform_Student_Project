@@ -7,15 +7,14 @@ import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
 @Component
-class SchedulingService(private val repository: MessageRepository) {
+class SchedulingService(private val repository: MessageRepository, private val messageService: MessageService) {
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 10000)
     fun sendMessages(): Boolean {
         val messages = repository.findAllByIsSentFalseOrderByStarttimeAsc()
         messages.forEach { message: Message ->
             if (message.starttime!! > LocalDateTime.now()) return true
 
-            val messageService = MessageService()
             messageService.sendMessage(message)
 
             message.isSent = true
