@@ -1,0 +1,105 @@
+ifndef::maxxBaseUrl[:maxxBaseUrl:]
+= Get a monthly expense by year and month
+
+Retrieve an existing monthly expense by month and year from the logged in user.
+
+[subs="attributes"]
+----
+GET {maxxBaseUrl}/monthly-expenses/:year/:month
+----
+
+[discrete]
+== Example
+
+[subs="attributes"]
+----
+GET {maxxBaseUrl}/monthly-expenses/2018/7
+
+Accept: application/json
+----
+
+[discrete]
+== Response Success
+
+[subs="attributes"]
+----
+HTTP/1.1 200 OK
+
+Content-Type: application/json
+----
+[source,json]
+----
+{
+    "id": 1122,
+    "userId": 33,
+    "state": "OPEN",
+    "month": 7,
+    "year": 2018,
+    "submittedAt": null
+}
+----
+
+== Response error
+
+|===
+|Status Code |Content |Cause
+|404 Not Found
+|{
+"code": 404,
+"message": "Die Monatsabrechnung für den Monat 7 2018 konnte nicht gefunden werden."
+}
+|No monthly expense for the given year, month and user found in the database
+|===
+
+
+= Get a monthly expense by id
+
+Retrieve an existing monthly expense by id.
+
+[subs="attributes"]
+----
+GET {maxxBaseUrl}/monthly-expenses/:id
+----
+
+[discrete]
+== Example
+
+[subs="attributes"]
+----
+GET {maxxBaseUrl}/monthly-expenses/1122
+
+Accept: application/json
+----
+
+[discrete]
+== Response Success
+
+[subs="attributes"]
+----
+HTTP/1.1 200 OK
+
+Content-Type: application/json
+----
+[source,json]
+----
+{
+    "id": 1122,
+    "userId": 33,
+    "state": "OPEN",
+    "month": 7,
+    "year": 2018,
+    "submittedAt": null
+}
+----
+
+== Response error
+
+|===
+|Status Code |Content |Cause
+|404 Not Found
+|{
+"code": 404,
+"message": "Die Monatsabrechnung mit Id 1122 konnte nicht gefunden werden."
+}
+|No monthly expense with the given Id found in the database
+|===
