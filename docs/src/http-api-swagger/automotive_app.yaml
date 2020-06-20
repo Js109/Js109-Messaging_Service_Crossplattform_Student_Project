@@ -1,0 +1,92 @@
+swagger: "2.0"
+info:
+  description: "This is the backend application with the APIs of the Automotive App"
+  version: "1.0.0"
+  title: "Android Automotive Backend Documentation"
+  termsOfService: "http://swagger.io/terms/"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "localhost:8080"
+basePath: "/api"
+tags:
+  - name: "Administration/OEM"
+    description: "Any operations possible as oem (via the web UI)"
+  - name: "Client"
+    description: "Any operations possible as client (Android)"
+schemes:
+  - "https"
+  - "http"
+paths:
+  /topic:
+    get:
+      tags:
+        - "Administration/OEM"
+        - "Client"
+      summary: "Retrieve all existing topics."
+      description: "Retrieve all possible topics which messages can be published to or clients can subscribe to."
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Topic"
+    post:
+      tags:
+        - "Client"
+      summary: "Store new topic."
+      description: "Stores the topic given in the body. If the id is left out one will be generated."
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Client-Id which should subscribe to topic"
+          required: true
+          schema:
+            $ref: "#/definitions/Topic"
+      responses:
+        "200":
+          description: "successful operation"
+
+definitions:
+  Topic:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        example: 1234
+      title:
+        type: "string"
+        example: "Natur"
+      binding:
+        type: "string"
+        example: "landschaft/natur"
+      description:
+        type: "string"
+        example: "Hier werden alle naturbezogenen Themen veröffentlicht."
+      tags:
+        $ref: "#/definitions/Tag"
+
+
+  Tag:
+    type: "string"
+    format: "enum"
+    example:
+      - "Wandern"
+      - "Natur"
+
+
+  ApiResponse:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      type:
+        type: "string"
+      message:
+        type: "string"
