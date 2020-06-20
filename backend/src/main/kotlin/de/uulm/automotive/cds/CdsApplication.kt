@@ -5,7 +5,8 @@ import org.springframework.boot.runApplication
 import org.springframework.scheduling.annotation.EnableScheduling
 
 /**
- * TODO
+ * The application class for the spring server.
+ * The necessary properties (auto configuration, component scan...) are set via the @SpringBootApplication annotation.
  *
  */
 @SpringBootApplication
@@ -13,7 +14,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 class CdsApplication
 
 /**
- * TODO
+ * The main class starts the server by running the application class
  *
  * @param args
  */

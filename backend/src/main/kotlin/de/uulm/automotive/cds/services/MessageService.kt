@@ -7,9 +7,10 @@ import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
 /**
- * TODO
+ * A service class that takes care of sending messages via the amqp broker.
+ * Relies on AmqpChannelService.
  *
- * @property amqpChannelService
+ * @property amqpChannelService AmqpChannelService component used to communicate with the broker.
  */
 @Component
 @Transactional

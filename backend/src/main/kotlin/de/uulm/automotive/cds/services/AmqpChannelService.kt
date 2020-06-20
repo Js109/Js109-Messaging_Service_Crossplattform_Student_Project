@@ -7,8 +7,8 @@ import com.rabbitmq.client.ConnectionFactory
 import org.springframework.stereotype.Component
 
 /**
- * TODO
- *
+ * A service class that creates a connection to the amqp broker and allows the opening of communication channels to that broker.
+ * Other components can use this one to communicate with the broker.
  */
 @Component
 class AmqpChannelService() {
