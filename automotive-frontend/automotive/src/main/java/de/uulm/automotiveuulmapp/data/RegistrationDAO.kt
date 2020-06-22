@@ -6,8 +6,10 @@ import androidx.room.Query
 
 @Dao
 interface RegistrationDAO {
-    @Query("SELECT * FROM registration")
-    fun getAll(): List<RegistrationData>
+    @Query("SELECT * FROM registrationData")
+    suspend fun getAll(): List<RegistrationData>
+    @Query("SELECT CASE WHEN EXISTS(SELECT * FROM registrationData) THEN 0 ELSE 1 END AS IsEmpty")
+    suspend fun checkIfEmpty(): Boolean
     @Insert
-    fun insert(vararg registration: RegistrationData)
+    suspend fun insert(vararg registration: RegistrationData)
 }

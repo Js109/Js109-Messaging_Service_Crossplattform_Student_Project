@@ -1,6 +1,5 @@
-package de.uulm.automotiveuulmapp
+package de.uulm.automotiveuulmapp.httpHandling
 
-import com.android.volley.Network
 import com.android.volley.NetworkResponse
 import com.android.volley.Response
 import com.android.volley.toolbox.HttpHeaderParser
