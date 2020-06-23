@@ -1,5 +1,6 @@
 package de.uulm.automotive.cds.controller
 
+import de.uulm.automotive.cds.entities.SignUpToken
 import de.uulm.automotive.cds.models.SignUpInfo
 import de.uulm.automotive.cds.repositories.SignUpRepository
 import de.uulm.automotive.cds.services.AmqpChannelService
@@ -23,7 +24,7 @@ class SignUpController @Autowired constructor(private val amqpService: AmqpChann
              * @param info SignUp Info of the client
              * @return new UUID if the Sign Up was successful or null if the Sign Up was unsuccessful.
              */
-    fun testResource(@RequestBody info: SignUpInfo): UUID? {
+    fun testResource(@RequestBody info: SignUpInfo): SignUpToken? {
         // check if the Token is already saved in the Database
         val signUpToken = tokenRepository.findBySignUpToken(info.signUpToken)
         if (signUpToken == null) {
@@ -39,7 +40,10 @@ class SignUpController @Autowired constructor(private val amqpService: AmqpChann
             channel.queueBind("id/${id}", "amq.headers", "", headersMap)
             channel.close()
 
-            return id
+            val token = SignUpToken(id, LocalDateTime.now())
+            tokenRepository.save(token)
+
+            return token
         } else {
             // update time of the last use of the token
             signUpToken.timeLastUsed = LocalDateTime.now()
