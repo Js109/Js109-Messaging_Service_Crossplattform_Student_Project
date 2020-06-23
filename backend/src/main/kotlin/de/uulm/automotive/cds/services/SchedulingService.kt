@@ -6,10 +6,10 @@ import de.uulm.automotive.cds.repositories.SignUpRepository
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
-import java.time.temporal.TemporalUnit
 
-const val minute : Long = 60
-const val hour : Long = 3600
+const val sendMessageIntervalInSeconds : Long = 60
+const val removeTokenIntervalInSeconds : Long = 3600
+const val secondToMillis: Long = 1000
 
 /**s
  * A Service class that takes care of all actions that execute on a scheduled time.
@@ -26,7 +26,7 @@ class SchedulingService(private val messageRepository: MessageRepository, privat
      *
      * @return Boolean True if all Messages were sent
      */
-    @Scheduled(fixedRate = minute * 1000)
+    @Scheduled(fixedRate = sendMessageIntervalInSeconds * secondToMillis)
     fun sendMessages(): Boolean {
         val messages = messageRepository.findAllByIsSentFalseOrderByStarttimeAsc()
         messages.forEach { message: Message ->
@@ -44,10 +44,10 @@ class SchedulingService(private val messageRepository: MessageRepository, privat
      * Scheduled in an hourly interval.
      * Removes all SignUp tokens that have not been used in the last hour.
      */
-    @Scheduled(fixedRate = hour * 1000)
+    @Scheduled(fixedRate = removeTokenIntervalInSeconds * secondToMillis)
     fun removeOldSignUpTokens() {
         val tokens = tokenRepository.findAll()
-        val time = LocalDateTime.now().minusSeconds(hour)
+        val time = LocalDateTime.now().minusSeconds(removeTokenIntervalInSeconds)
         tokens.forEach {
             if (it.timeLastUsed < time) {
                 tokenRepository.delete(it)
