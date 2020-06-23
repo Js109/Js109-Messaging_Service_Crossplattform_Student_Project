@@ -1,6 +1,7 @@
 package de.uulm.automotive.cds.controller
 
 import de.uulm.automotive.cds.models.SignUpInfo
+import de.uulm.automotive.cds.repositories.SignUpRepository
 import de.uulm.automotive.cds.services.AmqpChannelService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.PostMapping
@@ -11,13 +12,17 @@ import java.util.*
 import kotlin.collections.HashMap
 
 /**
- * TODO
- *
- * @property amqpService
+ * Rest-Point for SignUp of new clients.
  */
 @RestController
 class SignUpController @Autowired constructor(private val amqpService: AmqpChannelService, private val tokenRepository: SignUpRepository) {
     @PostMapping("/signup")
+            /**
+             * Test Access Point for simulating SignUp of a new Client.
+             *
+             * @param info SignUp Info of the client
+             * @return new UUID if the Sign Up was successful or null if the Sign Up was unsuccessful.
+             */
     fun testResource(@RequestBody info: SignUpInfo): UUID? {
         // check if the Token is already saved in the Database
         val signUpToken = tokenRepository.findBySignUpToken(info.signUpToken)

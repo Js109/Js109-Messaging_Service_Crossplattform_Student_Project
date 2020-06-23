@@ -2,23 +2,25 @@ package de.uulm.automotive.cds.services
 
 import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.repositories.MessageRepository
+import de.uulm.automotive.cds.repositories.SignUpRepository
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
 /**
- * TODO
+ * A Service class that takes care of all actions that execute on a scheduled time.
  *
- * @property repository
+ * @property messageRepository
+ * @property tokenRepository
  * @property messageService
  */
 @Component
-class SchedulingService(private val messageRepository: MessageRepository, private val tokenRepository: SignUpRepository) {
+class SchedulingService(private val messageRepository: MessageRepository, private val tokenRepository: SignUpRepository, private val messageService: MessageService) {
 
     /**
-     * TODO
+     * Sends all Messages that are not sent and were scheduled to send before the current time.
      *
-     * @return Boolean
+     * @return Boolean True if all Messages were sent
      */
     @Scheduled(fixedRate = 10000)
     fun sendMessages(): Boolean {
@@ -26,7 +28,6 @@ class SchedulingService(private val messageRepository: MessageRepository, privat
         messages.forEach { message: Message ->
             if (message.starttime!! > LocalDateTime.now()) return true
 
-            val messageService = MessageService()
             messageService.sendMessage(message)
 
             message.isSent = true
