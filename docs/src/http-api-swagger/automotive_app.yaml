@@ -51,6 +51,24 @@ paths:
       responses:
         "200":
           description: "successful operation"
+  /signup:
+    post:
+      tags:
+        - "Client"
+      summary: SignUp a new Client
+      description: Signs a new Client Up to recieve messages.
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "The type of the device and an unique Identifier"
+          required: true
+          schema:
+            $ref: "#/definitions/SignUpInfo"
+      responses:
+        "200":
+          description: "successful operation"
 
 definitions:
   Topic:
@@ -70,6 +88,16 @@ definitions:
         example: "Hier werden alle naturbezogenen Themen veröffentlicht."
       tags:
         $ref: "#/definitions/Tag"
+  SignUpInfo:
+    type: "object"
+    properties:
+      deviceType:
+        type: string
+        example: "Audi A3"
+      signUpToken:
+        type: string
+        format: uuid
+        example: "bd604ecb-b6d3-49f7-a0f7-eaff204019be"
 
 
   Tag:
