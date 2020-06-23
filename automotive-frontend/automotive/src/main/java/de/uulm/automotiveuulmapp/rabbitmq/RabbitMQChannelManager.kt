@@ -1,4 +1,4 @@
-package de.uulm.automotiveuulmapp
+package de.uulm.automotiveuulmapp.rabbitmq
 
 import com.rabbitmq.client.Channel
 

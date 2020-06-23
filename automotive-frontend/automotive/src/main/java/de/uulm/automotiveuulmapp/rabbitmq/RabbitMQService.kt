@@ -1,4 +1,4 @@
-package de.uulm.automotiveuulmapp
+package de.uulm.automotiveuulmapp.rabbitmq
 
 import android.app.*
 import android.content.Context
@@ -9,20 +9,13 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
-import com.rabbitmq.client.CancelCallback
-import com.rabbitmq.client.ConnectionFactory
-import com.rabbitmq.client.DeliverCallback
-import com.rabbitmq.client.Delivery
+import com.rabbitmq.client.*
+import de.uulm.automotiveuulmapp.R
 import de.uulm.automotiveuulmapp.topic.TopicChange
-import kotlinx.android.synthetic.main.activity_main.*
 import java.nio.charset.Charset
 import kotlin.random.Random.Default.nextInt
 
-class MyService : Service() {
+class RabbitMQService : Service() {
 
     // used to store constants
     companion object{
@@ -40,15 +33,18 @@ class MyService : Service() {
 
     private var serviceLooper: Looper? = null
     private var serviceHandler: ServiceHandler? = null
-    private var rabbitMQChannelManager: RabbitMQChannelManager = RabbitMQChannelManager()
+    private lateinit var channel: Channel
 
 
-    // Handler that receives messages from the thread
+    /**
+     * Handler that receives messages from the thread
+     *
+     */
     private inner class ServiceHandler(looper: Looper) : Handler(looper) {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 MSG_INIT_AMQP -> {
-                    amqSetup()
+                    channel = amqSetup()
                     amqSub()
                 }
                 MSG_CHANGE_TOPICS -> {
@@ -87,7 +83,8 @@ class MyService : Service() {
         // For each start request, send a message to start a job and deliver the
         // start ID so we know which request we're stopping when we finish the job
         serviceHandler?.obtainMessage()?.also { msg ->
-            msg.what = MSG_INIT_AMQP
+            msg.what =
+                MSG_INIT_AMQP
             msg.arg1 = startId
             serviceHandler?.sendMessage(msg)
         }
@@ -96,23 +93,33 @@ class MyService : Service() {
         return START_STICKY
     }
 
-    fun amqSetup(){
+    /**
+     * Creating the connection channel with the within the companion object defined constants.
+     * This connection channel is required to interact with the queue (subscribing, changing bindings)
+     */
+    fun amqSetup(): Channel {
         // setup connection params
         val factory = ConnectionFactory()
-        factory.host = AMQ_HOST
-        factory.username = AMQ_USER
-        factory.password = AMQ_PASSWORD
+        factory.host =
+            AMQ_HOST
+        factory.username =
+            AMQ_USER
+        factory.password =
+            AMQ_PASSWORD
 
         // open new connection to broker
         val connection = factory.newConnection()
         val channel = connection.createChannel()
 
         channel.queueDeclare(QUEUE_NAME, true, false, false, null)
-        rabbitMQChannelManager.channel = channel
+        return channel
     }
 
+    /**
+     * Defines the callback which should be executed when message is received from queue and the subscription on the queue is enabled
+     *
+     */
     fun amqSub() {
-        // define callback which should be executed when message is received from queue
         val deliverCallback =
             DeliverCallback { _: String?, delivery: Delivery ->
                 val message = String(delivery.body, Charset.forName("UTF-8"))
@@ -121,7 +128,7 @@ class MyService : Service() {
 
         Log.d("AMQP"," [*] Waiting for messages. To exit press CTRL+C")
         // start subscription on queue
-        rabbitMQChannelManager.channel.basicConsume(QUEUE_NAME, true, deliverCallback, CancelCallback {  })
+        channel.basicConsume(QUEUE_NAME, true, deliverCallback, CancelCallback {  })
     }
 
     /**
@@ -150,7 +157,9 @@ class MyService : Service() {
      * @param message Message which should be displayed in the notification
      */
     private fun notify(message: String){
-        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+        val builder = NotificationCompat.Builder(this,
+            CHANNEL_ID
+        )
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Message from Queue")
             .setContentText(message)
@@ -166,14 +175,21 @@ class MyService : Service() {
         Log.d("Notification","Notification should be shown")
     }
 
+    /**
+     * This method adds or removes a binding for a queue to a topic
+     *
+     * @param topicChange Whether the subscription should be changed to active or inactive
+     */
     fun changeSubscription(topicChange: TopicChange){
-        val c = rabbitMQChannelManager.channel
+        val c = channel
         when {
             topicChange.active -> {
-                c.queueBind("hello", EXCHANGE_NAME, topicChange.name)
+                c.queueBind("hello",
+                    EXCHANGE_NAME, topicChange.name)
             }
             !topicChange.active -> {
-                c.queueUnbind("hello", EXCHANGE_NAME, topicChange.name)
+                c.queueUnbind("hello",
+                    EXCHANGE_NAME, topicChange.name)
             }
         }
     }

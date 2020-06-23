@@ -16,6 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,7 +26,7 @@
         </activity>
 
         <service
-            android:name=".MyService"
+            android:name=".rabbitmq.RabbitMQService"
             android:enabled="true"
             android:exported="true" />
     </application>
