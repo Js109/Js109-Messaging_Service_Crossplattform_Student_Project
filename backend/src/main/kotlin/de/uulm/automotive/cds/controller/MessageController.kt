@@ -1,7 +1,7 @@
 package de.uulm.automotive.cds.controller
 
-import de.uulm.automotive.cds.Message
-import de.uulm.automotive.cds.MessageRepository
+import de.uulm.automotive.cds.entities.Message
+import de.uulm.automotive.cds.repositories.MessageRepository
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -9,13 +9,15 @@ import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 
 @Controller
+/**
+ * Controller for Messages.
+ */
 class MessageController(private val repository: MessageRepository) {
 
     /**
-     * TODO
+     * Returns a view to create a new message.
      *
-     * @param model
-     * @return String
+     * @return String name of the view
      */
     @GetMapping("/message")
     fun messageForm(model: Model): String {
@@ -24,10 +26,9 @@ class MessageController(private val repository: MessageRepository) {
     }
 
     /**
-     * TODO
+     * Returns a view containing all messages.
      *
-     * @param model
-     * @return String
+     * @return String name of the view
      */
     @GetMapping("/messages")
     fun showMessages(model: Model): String {
@@ -37,11 +38,10 @@ class MessageController(private val repository: MessageRepository) {
     }
 
     /**
-     * TODO
+     * Returns the view for one message.
      *
-     * @param id
-     * @param model
-     * @return String
+     * @param id Id of the message
+     * @return String name of the view
      */
     @GetMapping("/message/{id}")
     fun showMessage(@PathVariable id: Long, model: Model): String {
@@ -56,11 +56,10 @@ class MessageController(private val repository: MessageRepository) {
     }
 
     /**
-     * TODO
+     * Saves the given Message.
      *
      * @param message
-     * @param model
-     * @return String
+     * @return String name of the view
      */
     @PostMapping("/message")
     fun saveMessage(@RequestBody message: Message, model: Model): String {
@@ -75,7 +74,7 @@ class MessageController(private val repository: MessageRepository) {
     }
 
     /**
-     * TODO
+     * Removes Unused values from the Message class that should not be available to the Client.
      *
      */
     fun Message.render() = RenderedMessage(
@@ -88,14 +87,7 @@ class MessageController(private val repository: MessageRepository) {
     )
 
     /**
-     * TODO
-     *
-     * @property topic
-     * @property content
-     * @property starttime
-     * @property endtime
-     * @property isSent
-     * @property id
+     * Rendered Version of the Message Class.
      */
     data class RenderedMessage(
         val topic: String,

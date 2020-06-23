@@ -1,7 +1,7 @@
 package de.uulm.automotive.cds.services
 
-import de.uulm.automotive.cds.Message
-import de.uulm.automotive.cds.MessageRepository
+import de.uulm.automotive.cds.entities.Message
+import de.uulm.automotive.cds.repositories.MessageRepository
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
