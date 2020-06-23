@@ -1,4 +1,4 @@
-package de.uulm.automotiveuulmapp.rabbitmq
+package de.uulm.automotiveuulmapp
 
 import android.app.*
 import android.content.Context
@@ -9,16 +9,23 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.rabbitmq.client.*
-import de.uulm.automotiveuulmapp.R
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import com.rabbitmq.client.CancelCallback
+import com.rabbitmq.client.ConnectionFactory
+import com.rabbitmq.client.DeliverCallback
+import com.rabbitmq.client.Delivery
 import de.uulm.automotiveuulmapp.topic.TopicChange
+import kotlinx.android.synthetic.main.activity_main.*
 import java.nio.charset.Charset
 import kotlin.random.Random.Default.nextInt
 
 class RabbitMQService : Service() {
 
     // used to store constants
-    companion object{
+    companion object {
         const val CHANNEL_ID = "123"
 
         const val AMQ_HOST = "134.60.157.15"
@@ -83,8 +90,7 @@ class RabbitMQService : Service() {
         // For each start request, send a message to start a job and deliver the
         // start ID so we know which request we're stopping when we finish the job
         serviceHandler?.obtainMessage()?.also { msg ->
-            msg.what =
-                MSG_INIT_AMQP
+            msg.what = MSG_INIT_AMQP
             msg.arg1 = startId
             serviceHandler?.sendMessage(msg)
         }
@@ -100,12 +106,9 @@ class RabbitMQService : Service() {
     fun amqSetup(): Channel {
         // setup connection params
         val factory = ConnectionFactory()
-        factory.host =
-            AMQ_HOST
-        factory.username =
-            AMQ_USER
-        factory.password =
-            AMQ_PASSWORD
+        factory.host = AMQ_HOST
+        factory.username = AMQ_USER
+        factory.password = AMQ_PASSWORD
 
         // open new connection to broker
         val connection = factory.newConnection()
@@ -120,13 +123,14 @@ class RabbitMQService : Service() {
      *
      */
     fun amqSub() {
+        // define callback which should be executed when message is received from queue
         val deliverCallback =
             DeliverCallback { _: String?, delivery: Delivery ->
                 val message = String(delivery.body, Charset.forName("UTF-8"))
                 notify(message)
             }
 
-        Log.d("AMQP"," [*] Waiting for messages. To exit press CTRL+C")
+        Log.d("AMQP", " [*] Waiting for messages. To exit press CTRL+C")
         // start subscription on queue
         channel.basicConsume(QUEUE_NAME, true, deliverCallback, CancelCallback {  })
     }
@@ -156,10 +160,8 @@ class RabbitMQService : Service() {
      *
      * @param message Message which should be displayed in the notification
      */
-    private fun notify(message: String){
-        val builder = NotificationCompat.Builder(this,
-            CHANNEL_ID
-        )
+    private fun notify(message: String) {
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Message from Queue")
             .setContentText(message)
@@ -172,7 +174,7 @@ class RabbitMQService : Service() {
             // notificationId is a unique int for each notification that you must define
             notify(notificationId, builder.build())
         }
-        Log.d("Notification","Notification should be shown")
+        Log.d("Notification", "Notification should be shown")
     }
 
     /**
@@ -184,12 +186,10 @@ class RabbitMQService : Service() {
         val c = channel
         when {
             topicChange.active -> {
-                c.queueBind("hello",
-                    EXCHANGE_NAME, topicChange.name)
+                c.queueBind("hello", EXCHANGE_NAME, topicChange.name)
             }
             !topicChange.active -> {
-                c.queueUnbind("hello",
-                    EXCHANGE_NAME, topicChange.name)
+                c.queueUnbind("hello", EXCHANGE_NAME, topicChange.name)
             }
         }
     }

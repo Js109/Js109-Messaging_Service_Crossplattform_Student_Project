@@ -1,11 +1,17 @@
 package de.uulm.automotive.cds.services
 
 import com.rabbitmq.client.AMQP
-import de.uulm.automotive.cds.Message
+import de.uulm.automotive.cds.entities.Message
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
+/**
+ * A service class that takes care of sending messages via the amqp broker.
+ * Relies on AmqpChannelService.
+ *
+ * @property amqpChannelService AmqpChannelService component used to communicate with the broker.
+ */
 @Component
 @Transactional
 class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelService) {

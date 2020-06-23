@@ -1,6 +1,12 @@
 package de.uulm.automotive.cds.models
 
+/**
+ * TODO
+ *
+ * @property id
+ * @property deviceType
+ */
 data class SignUpInfo(
-        val id: String,
-        val deviceType: String
+    val id: String,
+    val deviceType: String
 )

@@ -7,8 +7,18 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
+/**
+ * TODO
+ *
+ * @property amqpService
+ */
 @RestController
-class SignUpController @Autowired constructor(private val amqpService: AmqpChannelService){
+class SignUpController @Autowired constructor(private val amqpService: AmqpChannelService) {
+    /**
+     * TODO
+     *
+     * @param info
+     */
     @PostMapping("/signup")
     fun testResource(@RequestBody info: SignUpInfo) {
         val channel = amqpService.openChannel()
