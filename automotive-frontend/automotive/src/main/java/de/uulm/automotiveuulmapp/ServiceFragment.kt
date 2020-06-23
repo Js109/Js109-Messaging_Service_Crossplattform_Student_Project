@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import android.os.Message
 import android.os.Messenger
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,9 +14,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.room.Room
 import com.android.volley.Request
+import com.android.volley.VolleyError
 import de.uulm.automotiveuulmapp.data.RegistrationData
 import de.uulm.automotiveuulmapp.data.RegistrationDatabase
 import de.uulm.automotiveuulmapp.rabbitmq.RabbitMQService
+import de.uulm.automotiveuulmapp.topic.TopicChange
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.util.*
@@ -73,10 +76,11 @@ class ServiceFragment : BaseFragment() {
      *
      */
     private fun loadRegistrationId() {
-        val callback = { registrationId: UUID ->
+        // Callback function which passes the queueId to the service and starts it
+        val callback = { queueId: UUID ->
             Intent(mContext, RabbitMQService::class.java).also { intent ->
                 Log.d("Service", "Start Service...")
-                intent.putExtra("RegistrationId", registrationId)
+                intent.putExtra("queueId", queueId)
                 (activity as MainActivity).startService(intent)
                 (activity as MainActivity).bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
             }
@@ -85,7 +89,7 @@ class ServiceFragment : BaseFragment() {
         launch {
             val registrations = db.getRegistrationDAO().getAll()
             if(registrations.isNotEmpty()){
-                registrationId = registrations.get(0).id
+                registrationId = registrations[0].queueId
                 callback(registrationId)
                 Log.d("Registration", "Id loaded from DB")
             } else {
@@ -101,19 +105,22 @@ class ServiceFragment : BaseFragment() {
      *
      * @param callback This callback is executed when the response arrives
      */
-    fun register(callback: (UUID)->Intent){
-        val url = getString(R.string.server_url) + "/signup"
+    private fun register(callback: (UUID)->Intent){
+        val url = getString(R.string.server_url) + "/signup/"
 
         val json = JSONObject()
-        json.put("id", 12345)
+        json.put("signUpToken", UUID.randomUUID())
         json.put("deviceType", "Android Emulator")
         (activity as MainActivity).callRestEndpoint(url, Request.Method.POST, { response ->
-            // TODO add real uuid instead of mock
-            val mockId = UUID.randomUUID()
+            val signUpToken = UUID.fromString(response["signUpToken"] as String)
+            val queueId = UUID.fromString(response["queueID"] as String)
             launch {
-                db.getRegistrationDAO().insert(RegistrationData(mockId))
+                db.getRegistrationDAO().insert(RegistrationData(signUpToken, queueId))
             }
-            callback(mockId)
+            callback(queueId)
+        },
+        {
+           error: VolleyError -> // TODO retry registration later
         }, body = json)
     }
 }

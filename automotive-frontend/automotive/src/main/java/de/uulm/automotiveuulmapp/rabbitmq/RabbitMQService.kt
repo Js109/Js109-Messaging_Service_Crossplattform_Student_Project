@@ -1,6 +1,9 @@
-package de.uulm.automotiveuulmapp
+package de.uulm.automotiveuulmapp.rabbitmq
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.*
@@ -9,16 +12,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
-import com.rabbitmq.client.CancelCallback
-import com.rabbitmq.client.ConnectionFactory
-import com.rabbitmq.client.DeliverCallback
-import com.rabbitmq.client.Delivery
+import com.rabbitmq.client.*
+import de.uulm.automotiveuulmapp.R
 import de.uulm.automotiveuulmapp.topic.TopicChange
-import kotlinx.android.synthetic.main.activity_main.*
 import java.nio.charset.Charset
 import kotlin.random.Random.Default.nextInt
 
@@ -31,8 +27,7 @@ class RabbitMQService : Service() {
         const val AMQ_HOST = "134.60.157.15"
         const val AMQ_USER = "android_cl"
         const val AMQ_PASSWORD = "supersecure"
-        const val QUEUE_NAME = "hello"
-        private var EXCHANGE_NAME = "amq.topic"
+        const val EXCHANGE_NAME = "amq.topic"
 
         const val MSG_INIT_AMQP = 0
         const val MSG_CHANGE_TOPICS = 1
@@ -41,6 +36,7 @@ class RabbitMQService : Service() {
     private var serviceLooper: Looper? = null
     private var serviceHandler: ServiceHandler? = null
     private lateinit var channel: Channel
+    private lateinit var queueName: String
 
 
     /**
@@ -86,6 +82,7 @@ class RabbitMQService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show()
+        queueName = "id/" + intent!!.extras!!["queueId"].toString()
 
         // For each start request, send a message to start a job and deliver the
         // start ID so we know which request we're stopping when we finish the job
@@ -114,7 +111,7 @@ class RabbitMQService : Service() {
         val connection = factory.newConnection()
         val channel = connection.createChannel()
 
-        channel.queueDeclare(QUEUE_NAME, true, false, false, null)
+        channel.queueDeclare(queueName, true, false, false, null)
         return channel
     }
 
@@ -132,7 +129,7 @@ class RabbitMQService : Service() {
 
         Log.d("AMQP", " [*] Waiting for messages. To exit press CTRL+C")
         // start subscription on queue
-        channel.basicConsume(QUEUE_NAME, true, deliverCallback, CancelCallback {  })
+        channel.basicConsume(queueName, true, deliverCallback, CancelCallback {  })
     }
 
     /**
@@ -186,10 +183,10 @@ class RabbitMQService : Service() {
         val c = channel
         when {
             topicChange.active -> {
-                c.queueBind("hello", EXCHANGE_NAME, topicChange.name)
+                c.queueBind(queueName, EXCHANGE_NAME, topicChange.name)
             }
             !topicChange.active -> {
-                c.queueUnbind("hello", EXCHANGE_NAME, topicChange.name)
+                c.queueUnbind(queueName, EXCHANGE_NAME, topicChange.name)
             }
         }
     }

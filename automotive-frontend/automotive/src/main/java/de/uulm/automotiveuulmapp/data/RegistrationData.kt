@@ -6,5 +6,7 @@ import java.util.*
 
 @Entity
 data class RegistrationData(
-    @PrimaryKey val id: UUID
+    @PrimaryKey
+    val signUpToken: UUID,
+    val queueId: UUID
 )
