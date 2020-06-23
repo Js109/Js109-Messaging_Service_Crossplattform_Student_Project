@@ -1,6 +1,7 @@
 package de.uulm.automotive.cds.entities
 
 import java.time.LocalDateTime
+import java.util.*
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
@@ -14,7 +15,7 @@ import javax.persistence.Id
  * @property id
  */
 class SignUpToken(
-    var signUpToken: String,
+    var signUpToken: UUID,
     var timeLastUsed: LocalDateTime,
     @Id @GeneratedValue var id: Long? = null
 )

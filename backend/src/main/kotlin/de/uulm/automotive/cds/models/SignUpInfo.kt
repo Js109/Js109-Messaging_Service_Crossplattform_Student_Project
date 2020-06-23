@@ -1,5 +1,7 @@
 package de.uulm.automotive.cds.models
 
+import java.util.*
+
 /**
  * Class for the Information that the client sends on sign up.
  *
@@ -8,5 +10,5 @@ package de.uulm.automotive.cds.models
  */
 data class SignUpInfo(
         val deviceType: String,
-        val signUpToken: String
+        val signUpToken: UUID
 )
