@@ -3,14 +3,34 @@
 <div class="container">
   <h3>{{title}}</h3>
 
-  <form action="/message" method="post">
+  <form action="/publish" method="post">
     <div class="form-group">
       <label for="topic">Topic:</label>
-      <input type="text" class="form-control" name="topic" id="topic"/>
+      <select class="browser-default custom-select" name="topic" id="topic">
+        <option selected></option>
+        {{#topics}}
+          <option value="{{binding}}">{{title}}</option>
+        {{/topics}}
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Property:</label>
+      {{#properties}}
+        <div class="form-check">
+
+          <input class="form-check-input" name="properties" type="checkbox" value="{{binding}}" id="checkbox{{id}}"/>
+          <label class="form-check-label" for="checkbox{{id}}">
+            {{name}}
+          </label>
+        </div>
+      {{/properties}}
     </div>
     <div class="form-group">
       <label for="content">Message content:</label>
       <textarea class="form-control" name="content" id="content"></textarea>
+    </div>
+    <div class="form-group">
+      <input class="browser-default custom-select" name="messagestarttime" type="datetime-local"/>
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>

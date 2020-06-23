@@ -2,40 +2,20 @@ package de.uulm.automotive.cds.controller
 
 import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.repositories.MessageRepository
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDateTime
 
 @Controller
+@RequestMapping("/message")
 /**
  * Controller for Messages.
  */
 class MessageController(private val repository: MessageRepository) {
-
-    /**
-     * Returns a view to create a new message.
-     *
-     * @return String name of the view
-     */
-    @GetMapping("/message")
-    fun messageForm(model: Model): String {
-        model["title"] = "Message"
-        return "create-message"
-    }
-
-    /**
-     * Returns a view containing all messages.
-     *
-     * @return String name of the view
-     */
-    @GetMapping("/messages")
-    fun showMessages(model: Model): String {
-        model["title"] = "Messages"
-        model["messages"] = repository.findAllByOrderByTopicAsc().map { it.render() }
-        return "messages"
-    }
 
     /**
      * Returns the view for one message.
@@ -43,16 +23,15 @@ class MessageController(private val repository: MessageRepository) {
      * @param id Id of the message
      * @return String name of the view
      */
-    @GetMapping("/message/{id}")
-    fun showMessage(@PathVariable id: Long, model: Model): String {
+    @GetMapping("/{id}")
+    fun showMessage(@PathVariable id: Long, model: Model): Message {
         model["title"] = "Message"
 
         val message = repository.findById(id)
         if (message.isEmpty)
-            return showMessages(model)
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find message with id $id.")
 
-        model["message"] = message.get().render()
-        return "message"
+        return message.get()
     }
 
     /**
@@ -61,40 +40,12 @@ class MessageController(private val repository: MessageRepository) {
      * @param message
      * @return String name of the view
      */
-    @PostMapping("/message")
-    fun saveMessage(@RequestBody message: Message, model: Model): String {
+    @PostMapping()
+    fun saveMessage(@RequestBody message: Message, model: Model) {
         message.isSent = false
         if (message.starttime == null) {
             message.starttime = LocalDateTime.now()
         }
-        val savedMessage = repository.save(message)
-        model["title"] = "Messages"
-        model["message"] = savedMessage.render()
-        return "message"
+        repository.save(message)
     }
-
-    /**
-     * Removes Unused values from the Message class that should not be available to the Client.
-     *
-     */
-    fun Message.render() = RenderedMessage(
-        topic,
-        content,
-        starttime,
-        endtime,
-        isSent,
-        id
-    )
-
-    /**
-     * Rendered Version of the Message Class.
-     */
-    data class RenderedMessage(
-        val topic: String,
-        val content: String,
-        val starttime: LocalDateTime?,
-        val endtime: LocalDateTime?,
-        val isSent: Boolean?,
-        val id: Long?
-    )
 }
