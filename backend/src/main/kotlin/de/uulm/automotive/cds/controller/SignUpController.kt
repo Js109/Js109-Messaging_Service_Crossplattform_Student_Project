@@ -1,7 +1,6 @@
 package de.uulm.automotive.cds.controller
 
 import de.uulm.automotive.cds.models.SignUpInfo
-import de.uulm.automotive.cds.repositories.SignUpRepository
 import de.uulm.automotive.cds.services.AmqpChannelService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.PostMapping
@@ -11,6 +10,11 @@ import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.HashMap
 
+/**
+ * TODO
+ *
+ * @property amqpService
+ */
 @RestController
 class SignUpController @Autowired constructor(private val amqpService: AmqpChannelService, private val tokenRepository: SignUpRepository) {
     @PostMapping("/signup")

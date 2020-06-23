@@ -1,16 +1,26 @@
 package de.uulm.automotive.cds.services
 
-import de.uulm.automotive.cds.Message
-import de.uulm.automotive.cds.MessageRepository
-import de.uulm.automotive.cds.repositories.SignUpRepository
+import de.uulm.automotive.cds.entities.Message
+import de.uulm.automotive.cds.repositories.MessageRepository
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
+/**
+ * TODO
+ *
+ * @property repository
+ * @property messageService
+ */
 @Component
 class SchedulingService(private val messageRepository: MessageRepository, private val tokenRepository: SignUpRepository) {
 
-    @Scheduled(fixedRate = 60000)
+    /**
+     * TODO
+     *
+     * @return Boolean
+     */
+    @Scheduled(fixedRate = 10000)
     fun sendMessages(): Boolean {
         val messages = messageRepository.findAllByIsSentFalseOrderByStarttimeAsc()
         messages.forEach { message: Message ->
