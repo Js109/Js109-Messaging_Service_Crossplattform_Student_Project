@@ -3,14 +3,13 @@ package de.uulm.automotive.cds.controller
 import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.repositories.MessageRepository
 import org.springframework.http.HttpStatus
-import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDateTime
 
-@Controller
+@RestController
 @RequestMapping("/message")
 /**
  * Controller for Messages.

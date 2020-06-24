@@ -1,6 +1,5 @@
 package de.uulm.automotive.cds.controller
 
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer
 import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.repositories.PropertyRepository
@@ -11,8 +10,10 @@ import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
+/**
+ * Controller for the OEM web view.
+ */
 @Controller
 @RequestMapping("/publish")
 class PublishController(private val messageRepository: MessageRepository, private val topicRepository: TopicRepository, private val propertyRepository: PropertyRepository) {
@@ -56,13 +57,15 @@ class PublishController(private val messageRepository: MessageRepository, privat
     )
 
     /**
-     * Saves the given Message.
+     * Post resource for the form in the create-message view.
+     * Returns a view showing the details of the stored message.
      *
-     * @param message
+     * @param message Message generated from the request params.
+     * @param messagestarttime LocalDateTime for the starttime of the message that is passed separately to specifically set the necessary format.
      * @return String name of the view
      */
     @PostMapping()
-    fun saveMessage(message: Message, @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) messagestarttime: LocalDateTime?, model: Model): String {
+    fun postMessage(message: Message, @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) messagestarttime: LocalDateTime?, model: Model): String {
         message.isSent = false
         if (messagestarttime == null) {
             message.starttime = LocalDateTime.now()

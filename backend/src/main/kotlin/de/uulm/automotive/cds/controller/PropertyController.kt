@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/property")
+/**
+ * Controller for storing and reading properties.
+ */
 class PropertyController (val propertyRepository: PropertyRepository) {
     @GetMapping()
     fun getProperties(): Iterable<Property> {
