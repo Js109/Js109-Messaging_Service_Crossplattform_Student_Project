@@ -20,11 +20,10 @@ class MessageController(private val repository: MessageRepository) {
      * Returns the view for one message.
      *
      * @param id Id of the message
-     * @return String name of the view
+     * @return Message with the specified id
      */
     @GetMapping("/{id}")
-    fun showMessage(@PathVariable id: Long, model: Model): Message {
-        model["title"] = "Message"
+    fun showMessage(@PathVariable id: Long): Message {
 
         val message = repository.findById(id)
         if (message.isEmpty)
@@ -37,10 +36,9 @@ class MessageController(private val repository: MessageRepository) {
      * Saves the given Message.
      *
      * @param message
-     * @return String name of the view
      */
     @PostMapping()
-    fun saveMessage(@RequestBody message: Message, model: Model) {
+    fun saveMessage(@RequestBody message: Message) {
         message.isSent = false
         if (message.starttime == null) {
             message.starttime = LocalDateTime.now()
