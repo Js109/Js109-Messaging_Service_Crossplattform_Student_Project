@@ -1,5 +1,6 @@
 package de.uulm.automotive.cds.entities
 
+import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -16,7 +17,7 @@ import javax.persistence.*
  */
 @Entity
 class Message(
-    var topic: String,
+    var topic: String?,
     var content: String,
     var starttime: LocalDateTime?,
     var endtime: LocalDateTime?,

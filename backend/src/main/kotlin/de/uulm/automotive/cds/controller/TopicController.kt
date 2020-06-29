@@ -1,14 +1,12 @@
 package de.uulm.automotive.cds.controller
 
-import de.uulm.automotive.cds.models.Topic
-import de.uulm.automotive.cds.models.TopicRepository
+import de.uulm.automotive.cds.entities.Topic
+import de.uulm.automotive.cds.repositories.TopicRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
+@RequestMapping("/topic")
 /**
  * REST-Point for reading available topics and storing new topics.
  */
@@ -19,7 +17,7 @@ class TopicController @Autowired constructor(private val topicRepository: TopicR
      *
      * @return List of Topic elements stored via jpa
      */
-    @GetMapping("/topic")
+    @GetMapping()
     fun getTopics(): Iterable<Topic> {
         return topicRepository.findAll()
     }
@@ -30,7 +28,7 @@ class TopicController @Autowired constructor(private val topicRepository: TopicR
      *
      * @param topic Topic to be stored
      */
-    @PostMapping("/topic")
+    @PostMapping()
     fun postTopics(@RequestBody topic: Topic) {
         topicRepository.save(topic)
     }
