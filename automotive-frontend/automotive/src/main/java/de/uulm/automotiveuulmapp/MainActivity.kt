@@ -1,6 +1,11 @@
 package de.uulm.automotiveuulmapp
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.view.View
+import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Response
 import com.android.volley.VolleyError
@@ -9,11 +14,37 @@ import de.uulm.automotiveuulmapp.httpHandling.CustomJsonRequest
 import org.json.JSONObject
 
 
+/**
+ * This is the MainActivity, which is the starting point of the application.
+ * The onCreate() method is called first
+ */
 class MainActivity : AppCompatActivity() {
+    private val TIME_OUT = 4000 //Time to launch the another activity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        // setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_welcome)
+
+        val view = findViewById<View>(R.id.welcome_videoView) as VideoView
+        val path = "android.resource://" + packageName + "/" + R.raw.video_file
+        view.setVideoURI(Uri.parse(path))
+        view.start()
+
+        // val myLayout = findViewById<View>(R.id.welcome_activity_slilder)
+        Handler().postDelayed(Runnable {
+            // play the Video as starting point
+            val i = Intent(this@MainActivity, WelcomeActivity::class.java)
+            startActivity(i)
+            finish()
+        }, TIME_OUT.toLong())
+    }
+
+    /** Called when the user taps the Send button */
+    fun accept(view: View) {
+        val intent = Intent(this, WelcomeActivity::class.java).apply {
+        }
+        startActivity(intent)
     }
 
     /**
