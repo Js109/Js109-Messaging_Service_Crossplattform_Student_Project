@@ -1,4 +1,4 @@
-package de.uulm.automotive.cds.models
+package de.uulm.automotive.cds.entities
 
 import org.springframework.data.repository.CrudRepository
 import javax.persistence.ElementCollection
@@ -22,12 +22,4 @@ class Topic {
     @ElementCollection
     var tags: MutableList<String> = ArrayList()
     var description: String = ""
-}
-
-/**
- * Repository to store and query the Topics in the persistence unit.
- *
- */
-interface TopicRepository : CrudRepository<Topic, Long> {
-
 }
