@@ -11,8 +11,8 @@ import com.android.volley.Response
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.Volley
 import de.uulm.automotiveuulmapp.httpHandling.CustomJsonRequest
+import de.uulm.automotiveuulmapp.welcome.WelcomeAppIntro
 import org.json.JSONObject
-
 
 /**
  * This is the MainActivity, which is the starting point of the application.

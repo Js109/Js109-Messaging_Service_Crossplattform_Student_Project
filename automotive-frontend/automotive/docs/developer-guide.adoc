@@ -1,0 +1,9 @@
+:imagesdir: img
+:icons: font
+:source-highlighter: coderay
+:toc: left
+:toclevels: 5
+
+= Developer guide
+
+Für die Umsetzung des Introduction Sliders wird genutzt. Entsprechend ist dies auch im build.gradle des Moduls dokumentiert

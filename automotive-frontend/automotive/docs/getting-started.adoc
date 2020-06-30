@@ -1,0 +1,149 @@
+:imagesdir: img
+:icons: font
+:source-highlighter: coderay
+:toc:
+
+= Getting started
+
+_Getting started_ will guide you through the process of running the maXX application on your local developer workstation. For a more detailed explanation of how to develop new features or fix bugs in the maXX application read the *Developer Guide*.
+
+== Prerequisites
+
+maXX is a client-server application. The server is running on Java 8. The client is a React/TypeScript single-page-application. Before you can start working, you have to install the required tools.
+
+* Java JDK 8 (tested with version 1.8.0_151)
+* https://nodejs.org[NodeJS] 8.x.x (tested with version 8.9.3)
+* https://yarnpkg.com[Yarn] (tested with version 1.3.2)
+* https://www.jetbrains.com/idea/[IntelliJ IDEA] (tested with version 2017.3)
+
+== Getting the sources
+
+The maXX sources are stored and managed in a Git repository. It can be obtained from https://gitlab-ext.exxcellent.de/maxx/maxx[external eXXcellent GitLab]. The first thing to do is to clone the maXX Git repository to your local file system.
+
+----
+$ git clone git@gitlab-ext.exxcellent.de:maxx/maxx.git
+----
+
+If you do not have the proper permissions to access the maXX Git repository in GitLab, feel free to contact one of the repository owners (currently mailto:hauke.jaeger@exxcellent.de[Hauke Jäger] or mailto:benjamin.schmid@exxcellent.de[Benjamin Schmid]).
+
+include::developer-guide/02-production-build.adoc[leveloffset=+1]
+
+== Development: Running the application from command line
+
+maXX makes use of the https://docs.gradle.org/4.4/userguide/application_plugin.html[Gradle application plugin], hence the application can be started from command line using Gradle with the `run` task.
+
+For production the build bundles the frontend webapp into the backend application. The backend application server then serves the webapp to the user. For development we want to build and serve the webapp separately. To exlude the frontend from the gradle build we append `--exclude-task buildWebjar` to our gradle commands. All details are described in the following.
+
+First of all navigate to the maXX project root directory. This is the directory containing `gradlew` & `gradlew.bat`.
+
+----
+$ cd path/to/maxx
+----
+
+=== Preparing the database
+
+First of all the database needs to be initialized or updated to the latest version.
+
+----
+# Unix
+./gradlew run -Drun.args="db migrate --include none" --exclude-task buildWebjar
+----
+
+----
+# Windows
+> gradlew.bat run '-Drun.args="db migrate --include none"' --exclude-task buildWebjar
+----
+
+This command uses http://www.dropwizard.io/1.2.2/docs/manual/migrations.html[Dropwizard Migrations] (Liquibase) to update the database to the latest version.
+
+By default an H2 file database is used. Hence a new file based H2 instance will be created when this command is executed the first time.
+
+If this command is run in a local/development environment `--include none` can be replaced with `--include dev` or `--include qa` to load initial data into the database.
+
+For development you typically use the option `--include dev`.
+
+=== Starting the application server (backend)
+
+Once the database is up to date the application server can be started.
+
+----
+# Unix
+$ ./gradlew run -Drun.args="server" --exclude-task buildWebjar
+----
+
+----
+# Windows
+> gradlew.bat run '-Drun.args="server"' --exclude-task buildWebjar
+----
+
+[NOTE]
+====
+To exlude the frontend from the gradle build we append the option `--exclude-task buildWebjar`.
+====
+
+The application can now be accessed at <https://localhost:8443/maxx/app>
+
+To stop the server you can press `Ctrl + C`.
+
+If you want to change any of the default configuration options in `api/src/main/resources/config.yml` you can put them into `api/.env` in the form of `key=value`.
+
+For example: to use the mock authentication backend, set `MAXX_CROWD_MOCK_ENABLED=true`. The users known to the mock service can be found in `api/src/main/resources/mock/crowd/users.csv`.
+
+=== Starting the webapp (frontend)
+
+The frontend (module `app`) is a single page web application based on React. To run it:
+
+----
+# navigate to the root project directory
+$ cd path/to/maxx
+
+# navigate to the app module
+$ cd app
+
+# install dependencies
+$ yarn install
+
+# build the app and start the development server
+$ yarn start
+----
+
+== Development: Running the application from IntelliJ IDEA
+
+[[intellij]]
+When developing the maXX application it is desirable to run the backend and the frontend application as seprate processes in debug or dev mode. Therefore several run configurations must be created in IntelliJ IDEA.
+
+=== Running the backend from IntelliJ IDEA
+
+include::developer-guide/backend-run-from-idea.adoc[leveloffset=+3]
+
+=== Running the frontend from IntelliJ IDEA
+
+The frontend app uses a webpack based build. The build contains a continous development build that can be startet from IntelliJ and then continues to build the app on it's own when the source code changes. However the development build does not install the dependencies for the frontend application automatically. So first of all the dependencies have to be installed.
+
+----
+$ cd path/to/maxx
+$ cd app
+$ yarn install
+----
+
+[NOTE]
+====
+Make sure you are using NodeJS in version 8.x.x!
+----
+$ node --version
+v8.9.3
+----
+====
+
+Now add a new run configuration for starting the development build.
+
+image:idea_run_config_app_start.png[]
+
+Alternatively you can just run the development build from command line.
+
+----
+$ cd path/to/maxx
+$ cd app
+$ yarn start
+----
+
