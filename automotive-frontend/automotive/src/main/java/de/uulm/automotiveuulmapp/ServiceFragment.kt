@@ -1,5 +1,6 @@
 package de.uulm.automotiveuulmapp
 
+import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -81,8 +82,8 @@ class ServiceFragment : BaseFragment() {
             Intent(mContext, RabbitMQService::class.java).also { intent ->
                 Log.d("Service", "Start Service...")
                 intent.putExtra("queueId", queueId)
-                (activity as MainActivity).startService(intent)
-                (activity as MainActivity).bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
+                (activity as Activity).startService(intent)
+                (activity as Activity).bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
             }
         }
 

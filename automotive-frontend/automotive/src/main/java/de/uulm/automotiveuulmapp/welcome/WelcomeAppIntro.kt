@@ -7,6 +7,7 @@ import com.github.appintro.AppIntro
 import com.github.appintro.AppIntroCustomLayoutFragment
 import com.github.appintro.AppIntroFragment
 import de.uulm.automotiveuulmapp.R
+import de.uulm.automotiveuulmapp.TopicFragment
 
 class WelcomeAppIntro : AppIntro() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +29,7 @@ class WelcomeAppIntro : AppIntro() {
             )
         )
         //addSlide(AppIntroCustomLayoutFragment.newInstance(R.layout.activity_main))
-        addSlide(AppIntroCustomLayoutFragment.newInstance(R.layout.fragment_topic))
+        addSlide(AppIntroCustomLayoutFragment.newInstance(R.layout.activity_main))
         addSlide(
             AppIntroFragment.newInstance(
                 title = "The title of your slide",

@@ -1,5 +1,6 @@
 package de.uulm.automotiveuulmapp
 
+import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -58,7 +59,7 @@ class TopicFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         // binding service to be able to access the functions to change topic subscriptions
         Intent(mContext, RabbitMQService::class.java).also { intent ->
-            (activity as MainActivity).bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
+            (activity as Activity).bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
         }
     }
 
