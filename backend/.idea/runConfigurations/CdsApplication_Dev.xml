@@ -1,7 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="CdsApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+  <configuration default="false" name="CdsApplication_Dev" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
     <module name="cds.main" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="de.uulm.automotive.cds.CdsApplication" />
+    <option name="ACTIVE_PROFILES" value="dev" />
     <option name="ALTERNATIVE_JRE_PATH" />
     <method v="2">
       <option name="Make" enabled="true" />
