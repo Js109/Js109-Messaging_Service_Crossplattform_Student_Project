@@ -1,7 +1,11 @@
 <resources>
+    <!-- Application parameters -->
     <string name="app_name">AutomotiveUUlmApp</string>
     <string name="channel_name">Notification Channel</string>
     <string name="channel_description">Channel for messages from RabbitMQ</string>
-    <string name="reply_name">reply</string>
-    <string name="server_url">http://10.0.2.2:8080</string>
+
+    <!-- Displayed strings -->
+    <string name="topic_selection_heading">Select your topics to get notified about</string>
+    <string name="notification_msg_title">Message from Queue</string>
+    <string name="service_start_toast">Service starting</string>
 </resources>

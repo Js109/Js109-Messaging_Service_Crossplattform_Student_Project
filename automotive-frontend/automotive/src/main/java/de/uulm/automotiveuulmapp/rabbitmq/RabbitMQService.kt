@@ -81,7 +81,7 @@ class RabbitMQService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.service_start_toast), Toast.LENGTH_SHORT).show()
         queueName = "id/" + intent!!.extras!!["queueId"].toString()
 
         // For each start request, send a message to start a job and deliver the
@@ -160,7 +160,7 @@ class RabbitMQService : Service() {
     private fun notify(message: String) {
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle("Message from Queue")
+            .setContentTitle(getString(R.string.notification_msg_title))
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(Notification.CATEGORY_NAVIGATION)

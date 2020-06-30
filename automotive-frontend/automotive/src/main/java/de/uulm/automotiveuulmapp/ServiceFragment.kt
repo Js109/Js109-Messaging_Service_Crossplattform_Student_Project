@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import android.os.Message
 import android.os.Messenger
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,7 +17,6 @@ import com.android.volley.VolleyError
 import de.uulm.automotiveuulmapp.data.RegistrationData
 import de.uulm.automotiveuulmapp.data.RegistrationDatabase
 import de.uulm.automotiveuulmapp.rabbitmq.RabbitMQService
-import de.uulm.automotiveuulmapp.topic.TopicChange
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.util.*
@@ -54,7 +52,7 @@ class ServiceFragment : BaseFragment() {
         super.onAttach(context)
         mContext = context
         // Database instance is created
-        db = Room.databaseBuilder(context, RegistrationDatabase::class.java, "registrationData").build()
+        db = Room.databaseBuilder(context, RegistrationDatabase::class.java, ApplicationConstants.REGISTRATION_DB_NAME).build()
     }
 
     override fun onCreateView(
@@ -79,7 +77,7 @@ class ServiceFragment : BaseFragment() {
         // Callback function which passes the queueId to the service and starts it
         val callback = { queueId: UUID ->
             Intent(mContext, RabbitMQService::class.java).also { intent ->
-                Log.d("Service", "Start Service...")
+                Log.d("Service", "Starting Service...")
                 intent.putExtra("queueId", queueId)
                 (activity as MainActivity).startService(intent)
                 (activity as MainActivity).bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
@@ -106,11 +104,11 @@ class ServiceFragment : BaseFragment() {
      * @param callback This callback is executed when the response arrives
      */
     private fun register(callback: (UUID)->Intent){
-        val url = getString(R.string.server_url) + "/signup/"
+        val url = ApplicationConstants.ENDPOINT_SIGNUP
 
         val json = JSONObject()
         json.put("signUpToken", UUID.randomUUID())
-        json.put("deviceType", "Android Emulator")
+        json.put("deviceType", ApplicationConstants.DEVICE_TYPE)
         (activity as MainActivity).callRestEndpoint(url, Request.Method.POST, { response ->
             val signUpToken = UUID.fromString(response["signUpToken"] as String)
             val queueId = UUID.fromString(response["queueID"] as String)

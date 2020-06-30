@@ -95,7 +95,7 @@ class TopicFragment : BaseFragment() {
      * @param view The view where the topic listing should be added to
      */
     private fun loadAvailableTopics(view: View){
-        val url = getString(R.string.server_url) + "/topic"
+        val url = ApplicationConstants.ENDPOINT_TOPIC
 
         (activity as MainActivity).callRestEndpoint(url, Request.Method.GET, { response: JSONObject ->
             val jsonArray = JSONArray(response.get("array").toString())
@@ -114,7 +114,7 @@ class TopicFragment : BaseFragment() {
                 topicArrayList.add(topic)
             }
             addTopicSwitches(view, topicArrayList)
-        }, { error: VolleyError -> Log.e("HTTP-Request","Failed to load topics")})
+        }, { error: VolleyError -> Log.e("Topic","Failed to load topics")})
     }
 
     /**
