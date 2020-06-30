@@ -17,7 +17,7 @@ import java.time.LocalDateTime
  */
 @Component
 class SchedulingService(private val messageRepository: MessageRepository, private val tokenRepository: SignUpRepository, private val messageService: MessageService,
-                        @Value("\${pruning.interval.seconds: 60}000")
+                        @Value("\${pruning.interval.seconds:60}000")
                         val removeTokenIntervalInSeconds: Long) {
 
     /**
@@ -25,7 +25,7 @@ class SchedulingService(private val messageRepository: MessageRepository, privat
      *
      * @return Boolean True if all Messages were sent
      */
-    @Scheduled(fixedRateString = "\${sending.interval.seconds: 60}000")
+    @Scheduled(fixedRateString = "\${sending.interval.seconds:60}000")
     fun sendMessages(): Boolean {
         val messages = messageRepository.findAllByIsSentFalseOrderByStarttimeAsc()
         messages.forEach { message: Message ->
@@ -43,7 +43,7 @@ class SchedulingService(private val messageRepository: MessageRepository, privat
      * Scheduled in an hourly interval.
      * Removes all SignUp tokens that have not been used in the last hour.
      */
-    @Scheduled(fixedRateString = "\${pruning.interval.seconds: 3600}000")
+    @Scheduled(fixedRateString = "\${pruning.interval.seconds:3600}000")
     fun removeOldSignUpTokens() {
         val tokens = tokenRepository.findAll()
         val time = LocalDateTime.now().minusSeconds(removeTokenIntervalInSeconds)
