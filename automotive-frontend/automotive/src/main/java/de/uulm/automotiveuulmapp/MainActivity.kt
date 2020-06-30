@@ -34,17 +34,10 @@ class MainActivity : AppCompatActivity() {
         // val myLayout = findViewById<View>(R.id.welcome_activity_slilder)
         Handler().postDelayed(Runnable {
             // play the Video as starting point
-            val i = Intent(this@MainActivity, WelcomeActivity::class.java)
+            val i = Intent(this@MainActivity, WelcomeAppIntro::class.java)
             startActivity(i)
             finish()
         }, TIME_OUT.toLong())
-    }
-
-    /** Called when the user taps the Send button */
-    fun accept(view: View) {
-        val intent = Intent(this, WelcomeActivity::class.java).apply {
-        }
-        startActivity(intent)
     }
 
     /**
