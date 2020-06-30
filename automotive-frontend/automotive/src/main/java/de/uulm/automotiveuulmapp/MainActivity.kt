@@ -24,14 +24,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // setContentView(R.layout.activity_main)
-        setContentView(R.layout.activity_welcome)
+        setContentView(R.layout.activity_welcome_video)
 
+        // start the Introvideo from local storage
         val view = findViewById<View>(R.id.welcome_videoView) as VideoView
         val path = "android.resource://" + packageName + "/" + R.raw.video_file
         view.setVideoURI(Uri.parse(path))
         view.start()
 
-        // val myLayout = findViewById<View>(R.id.welcome_activity_slilder)
+        // go to the next Activity after 4 seconds, when the video is played
         Handler().postDelayed(Runnable {
             // play the Video as starting point
             val i = Intent(this@MainActivity, WelcomeAppIntro::class.java)

@@ -8,10 +8,17 @@
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
+    <string name="next">Nächste Seite</string>
+    <string name="previous">Vorherige Seite</string>
+    <!-- Strings used for fragments for Welcomeintroduction -->
+    <string name="welcome">Willkommen in Ihrem persönlichen Newskanal!</string>
+    <string name="welcome_subtitel">Diese Anleitung wird Ihnen helfen sich mit der Anwendung vertraut zu machen.</string>
+    <string name="welcome_page2">Informationen ohne Ende!</string>
+    <string name="welcome_page2_subtitel">Es gibt sogenannte Channels, für die Sie sich registrieren können. Wählen Sie für Sie interessante Channels aus und bekommen nach belieben Notifications.</string>
+
+    <string name="title_activity_my_custom_app_intro">AppIntro</string>
+    <string name="title_activity_menu">MenuActivity</string>
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-    <string name="title_activity_my_custom_app_intro">MyCustomAppIntro</string>
 </resources>

@@ -4,13 +4,17 @@ import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 
-import kotlinx.android.synthetic.main.welcome_activity_slilder.*
+import kotlinx.android.synthetic.main.activity_menu.*
 
-class WelcomeActivity : AppCompatActivity() {
+/**
+ * An Activity to show a fluent workflow, will be deleted later
+ *
+ */
+class MenuActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.welcome_activity_slilder)
+        setContentView(R.layout.activity_menu)
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener { view ->

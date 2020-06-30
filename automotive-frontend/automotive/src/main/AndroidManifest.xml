@@ -17,12 +17,12 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".welcome.WelcomeAppIntro"
-            android:label="@string/title_activity_my_custom_app_intro"
+            android:name=".MenuActivity"
+            android:label="@string/title_activity_menu"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".WelcomeActivity"
-            android:label="@string/title_activity_welcome"
+            android:name=".welcome.WelcomeAppIntro"
+            android:label="@string/title_activity_my_custom_app_intro"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".MainActivity">
             <intent-filter>
