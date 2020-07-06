@@ -4,11 +4,17 @@ import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.repositories.PropertyRepository
 import de.uulm.automotive.cds.repositories.TopicRepository
+import de.uulm.automotive.cds.services.MessageService
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.multipart.MultipartFile
+import java.io.File
 import java.time.LocalDateTime
 
 /**
@@ -16,7 +22,7 @@ import java.time.LocalDateTime
  */
 @Controller
 @RequestMapping("/publish")
-class PublishController(private val messageRepository: MessageRepository, private val topicRepository: TopicRepository, private val propertyRepository: PropertyRepository) {
+class PublishController(private val messageRepository: MessageRepository, private val topicRepository: TopicRepository, private val propertyRepository: PropertyRepository, private val messageService: MessageService) {
 
     /**
      * Returns a view to create a new message.
@@ -65,10 +71,12 @@ class PublishController(private val messageRepository: MessageRepository, privat
      * @return String name of the view
      */
     @PostMapping()
-    fun postMessage(message: Message, @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) messagestarttime: LocalDateTime?, model: Model): String {
+    fun postMessage(message: Message, @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) messagestarttime: LocalDateTime?, model: Model, @RequestParam("file") file: MultipartFile): String {
         message.isSent = false
         if (messagestarttime == null) {
             message.starttime = LocalDateTime.now()
+            message.isSent = true;
+            messageService.sendMessage(message, file)
         } else {
             message.starttime = messagestarttime
         }

@@ -1,9 +1,6 @@
 package de.uulm.automotiveuulmapp.rabbitmq
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.os.*
@@ -13,9 +10,9 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.rabbitmq.client.*
+import de.uulm.automotiveuulmapp.MessageContentActivity
 import de.uulm.automotiveuulmapp.R
 import de.uulm.automotiveuulmapp.topic.TopicChange
-import java.nio.charset.Charset
 import kotlin.random.Random.Default.nextInt
 
 class RabbitMQService : Service() {
@@ -123,7 +120,7 @@ class RabbitMQService : Service() {
         // define callback which should be executed when message is received from queue
         val deliverCallback =
             DeliverCallback { _: String?, delivery: Delivery ->
-                val message = String(delivery.body, Charset.forName("UTF-8"))
+                val message = delivery.body
                 notify(message)
             }
 
@@ -157,13 +154,17 @@ class RabbitMQService : Service() {
      *
      * @param message Message which should be displayed in the notification
      */
-    private fun notify(message: String) {
+    private fun notify(message: ByteArray) {
+        val intent = Intent(this, MessageContentActivity::class.java)
+        intent.putExtra("message", message)
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(getString(R.string.notification_msg_title))
-            .setContentText(message)
+            //.setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(Notification.CATEGORY_NAVIGATION)
+            .setContentIntent(pendingIntent)
 
         val notificationId = nextInt()
 
