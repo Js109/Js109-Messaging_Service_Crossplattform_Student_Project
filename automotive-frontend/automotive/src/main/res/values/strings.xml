@@ -8,4 +8,5 @@
     <string name="topic_selection_heading">Select your topics to get notified about</string>
     <string name="notification_msg_title">Message from Queue</string>
     <string name="service_start_toast">Service starting</string>
+    <string name="image_content_description">Image</string>
 </resources>

@@ -3,7 +3,7 @@
 <div class="container">
   <h3>{{title}}</h3>
 
-  <form action="/publish" method="post">
+  <form enctype="multipart/form-data" action="/publish" method="post">
     <div class="form-group">
       <label for="topic">Topic:</label>
       <select class="browser-default custom-select" name="topic" id="topic">
@@ -32,8 +32,20 @@
     <div class="form-group">
       <input class="browser-default custom-select" name="messagestarttime" type="datetime-local"/>
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <div class="custom-file">
+        <input type="file" id="fileSelection" name="file" class="custom-file-input">
+        <label class="custom-file-label" for="customFile">Choose file</label>
+    </div>
+    <button type="button" onclick="document.getElementById('fileSelection').value = ''" class="btn btn-primary">clear</button>
+    <input type="submit" value="Submit" class="btn btn-primary"/>
   </form>
+  <script>
+  // Add the following code if you want the name of the file appear on select
+  $(".custom-file-input").on("change", function() {
+    var fileName = $(this).val().split("\\").pop();
+    $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+  });
+  </script>
 </div>
 
 {{> footer}}

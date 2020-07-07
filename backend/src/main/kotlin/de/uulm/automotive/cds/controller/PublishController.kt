@@ -5,16 +5,14 @@ import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.repositories.PropertyRepository
 import de.uulm.automotive.cds.repositories.TopicRepository
 import de.uulm.automotive.cds.services.MessageService
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
-import java.io.File
+import java.net.URL
 import java.time.LocalDateTime
 
 /**
@@ -23,7 +21,6 @@ import java.time.LocalDateTime
 @Controller
 @RequestMapping("/publish")
 class PublishController(private val messageRepository: MessageRepository, private val topicRepository: TopicRepository, private val propertyRepository: PropertyRepository, private val messageService: MessageService) {
-
     /**
      * Returns a view to create a new message.
      *
@@ -68,17 +65,21 @@ class PublishController(private val messageRepository: MessageRepository, privat
      *
      * @param message Message generated from the request params.
      * @param messagestarttime LocalDateTime for the starttime of the message that is passed separately to specifically set the necessary format.
+     * @param file File which should contain an image
      * @return String name of the view
      */
     @PostMapping()
-    fun postMessage(message: Message, @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) messagestarttime: LocalDateTime?, model: Model, @RequestParam("file") file: MultipartFile): String {
-        message.isSent = false
+    fun postMessage(sender: String, title: String, message: Message, @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) messagestarttime: LocalDateTime?, model: Model, @RequestParam("file") file: MultipartFile?): String {
+        message.sender = sender
+        message.title = title
+        message.attachment = file?.bytes
         if (messagestarttime == null) {
             message.starttime = LocalDateTime.now()
-            message.isSent = true;
-            messageService.sendMessage(message, file)
+            message.isSent = true
+            messageService.sendMessage(message)
         } else {
             message.starttime = messagestarttime
+            message.isSent = false
         }
         val savedMessage = messageRepository.save(message)
         model["title"] = "Messages"
@@ -97,5 +98,4 @@ class PublishController(private val messageRepository: MessageRepository, privat
             val isSent: Boolean?,
             val id: Long?
     )
-
 }

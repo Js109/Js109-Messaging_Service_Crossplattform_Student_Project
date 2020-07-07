@@ -10,9 +10,13 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.rabbitmq.client.*
+import de.uulm.automotive.cds.controller.MessageSerializable
 import de.uulm.automotiveuulmapp.MessageContentActivity
 import de.uulm.automotiveuulmapp.R
 import de.uulm.automotiveuulmapp.topic.TopicChange
+import java.io.ByteArrayInputStream
+import java.io.IOException
+import java.io.ObjectInputStream
 import kotlin.random.Random.Default.nextInt
 
 class RabbitMQService : Service() {
@@ -120,7 +124,7 @@ class RabbitMQService : Service() {
         // define callback which should be executed when message is received from queue
         val deliverCallback =
             DeliverCallback { _: String?, delivery: Delivery ->
-                val message = delivery.body
+                val message = convertByteArrayToMessage(delivery.body)
                 notify(message)
             }
 
@@ -154,14 +158,14 @@ class RabbitMQService : Service() {
      *
      * @param message Message which should be displayed in the notification
      */
-    private fun notify(message: ByteArray) {
+    private fun notify(message: MessageSerializable) {
         val intent = Intent(this, MessageContentActivity::class.java)
         intent.putExtra("message", message)
         val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle(getString(R.string.notification_msg_title))
-            //.setContentText(message)
+            .setContentTitle(message.title)
+            .setContentText(message.messageText)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(Notification.CATEGORY_NAVIGATION)
             .setContentIntent(pendingIntent)
@@ -188,6 +192,21 @@ class RabbitMQService : Service() {
             }
             !topicChange.active -> {
                 c.queueUnbind(queueName, EXCHANGE_NAME, topicChange.name)
+            }
+        }
+    }
+
+    fun convertByteArrayToMessage(byteArray: ByteArray): MessageSerializable {
+        val bis = ByteArrayInputStream(byteArray)
+        try {
+            val input = ObjectInputStream(bis)
+            val obj = input.readObject()
+            return obj as MessageSerializable
+        } finally {
+            try {
+                bis.close()
+            } catch (ex: IOException) {
+                // ignore close exception
             }
         }
     }
