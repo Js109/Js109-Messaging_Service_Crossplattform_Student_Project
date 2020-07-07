@@ -80,7 +80,7 @@ class TopicFragment : BaseFragment() {
 
         for (topic in topicArrayList) {
             val switch = Switch(mContext)
-            switch.text = topic.binding
+            switch.text = topic.title
             switch.textSize = 30F
             switch.setOnCheckedChangeListener{buttonView, isChecked ->
                 addTopicSubscription(buttonView.text.toString(), isChecked)
@@ -108,6 +108,7 @@ class TopicFragment : BaseFragment() {
                 }
                 val topic = TopicModel(
                     element.getLong("id"),
+                    element.getString("title"),
                     element.getString("binding"),
                     element.getString("description"),
                     tags.toTypedArray())
