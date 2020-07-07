@@ -110,7 +110,7 @@ class ServiceFragment : BaseFragment() {
         val json = JSONObject()
         json.put("signUpToken", UUID.randomUUID())
         json.put("deviceType", ApplicationConstants.DEVICE_TYPE)
-        (activity as MainActivity).callRestEndpoint(url, Request.Method.POST, { response ->
+        (activity as SubscribeActivity).callRestEndpoint(url, Request.Method.POST, { response ->
             val signUpToken = UUID.fromString(response["signUpToken"] as String)
             val queueId = UUID.fromString(response["queueID"] as String)
             launch {

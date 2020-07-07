@@ -101,7 +101,7 @@ class TopicFragment : BaseFragment() {
     private fun loadAvailableTopics(view: View){
         val url = ApplicationConstants.ENDPOINT_TOPIC
 
-        callRestEndpoint(url, Request.Method.GET, { response: JSONObject ->
+        (activity as SubscribeActivity).callRestEndpoint(url, Request.Method.GET, { response: JSONObject ->
             val jsonArray = JSONArray(response.get("array").toString())
             val topicArrayList = ArrayList<TopicModel>()
             for (i in 0 until jsonArray.length()){
@@ -135,32 +135,5 @@ class TopicFragment : BaseFragment() {
         } else {
             Log.d("Topic", "Unsubscribing from topic" + topicName)
         }
-    }
-
-    /**
-     * Helper function to send http-requests to the REST-Api
-     *
-     * @param url Url of the rest-endpoint to be called
-     * @param httpMethod HTTP Method to be used for the request
-     * @param successCallback Function that should be executed with the return value as parameter
-     * @param failureCallback Function that should be executed (with error object as param) when the http request fail
-     * @param body The Object in Json-Format to be sent within the http-body
-     */
-    fun callRestEndpoint(url: String, httpMethod: Int, successCallback: (response: JSONObject) -> Unit, failureCallback: (error: VolleyError) -> Unit, body: JSONObject? = null){
-        // Instantiate the RequestQueue.
-        val queue = Volley.newRequestQueue(mContext)
-
-        val customJsonRequest =
-            CustomJsonRequest(httpMethod,
-                url,
-                body,
-                Response.Listener<JSONObject> { response ->
-                    successCallback(response)
-                },
-                Response.ErrorListener { error ->
-                    failureCallback(error)
-                })
-        // Add the request to the RequestQueue
-        queue.add(customJsonRequest)
     }
 }
