@@ -54,6 +54,7 @@ class PublishController(private val messageRepository: MessageRepository, privat
             starttime,
             endtime,
             isSent,
+            properties,
             id
     )
 
@@ -90,6 +91,7 @@ class PublishController(private val messageRepository: MessageRepository, privat
             val starttime: LocalDateTime?,
             val endtime: LocalDateTime?,
             val isSent: Boolean?,
+            val properties: MutableList<String>?,
             val id: Long?
     )
 
