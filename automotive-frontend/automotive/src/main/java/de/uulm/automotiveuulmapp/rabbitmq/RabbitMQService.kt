@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.rabbitmq.client.*
-import de.uulm.automotive.cds.controller.MessageSerializable
+import de.uulm.automotive.cds.entities.MessageSerializable
 import de.uulm.automotiveuulmapp.MessageContentActivity
 import de.uulm.automotiveuulmapp.R
 import de.uulm.automotiveuulmapp.topic.TopicChange
