@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
         //show introduction video
         setContentView(R.layout.activity_welcome_video)
 
+        // read the value of SharedPreferences with the name of PREFERENCE
         val isFirstRun =
             getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE)
                 .getBoolean("isFirstRun", true)

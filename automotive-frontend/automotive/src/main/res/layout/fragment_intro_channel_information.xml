@@ -1,37 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
     tools:context=".welcome.IntroFragmentChannelInformation">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <TextView
+        android:id="@+id/fragm_welc2_textview1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:layout_weight="1"
         android:gravity="center"
-        android:orientation="vertical">
+        android:text="@string/welcome_page2"
+        android:textColor="#FFFFFF"
+        android:textSize="40sp" />
 
-        <TextView
-            android:id="@+id/fragm_welc2_textview1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="100px"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/welcome_page2"
-            android:textColor="#FFFFFF"
-            android:textSize="40px" />
+    <TextView
+        android:id="@+id/fragm_welc2_textview2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="150dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/welcome_page2_subtitel"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp" />
 
-        <TextView
-            android:id="@+id/fragm_welc2_textview2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="150px"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textColor="#FFFFFF"
-            android:text="@string/welcome_page2_subtitel"
-            android:textSize="24sp" />
-    </LinearLayout>
-
-</FrameLayout>
+</LinearLayout>

@@ -15,22 +15,30 @@
             android:id="@+id/fragm_welc1_textview1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100px"
+            android:layout_marginTop="100dp"
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/welcome"
             android:textColor="#FFFFFF"
-            android:textSize="40px" />
+            android:textSize="40dp" />
 
         <TextView
             android:id="@+id/fragm_welc1_textview2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="150px"
+            android:layout_marginBottom="150dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:textColor="#FFFFFF"
             android:text="@string/welcome_subtitel"
+            android:textColor="#FFFFFF"
             android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/welc1_button1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="clickSkipMethod"
+            android:text="@string/welcome_page1_skip" />
     </LinearLayout>
 </FrameLayout>

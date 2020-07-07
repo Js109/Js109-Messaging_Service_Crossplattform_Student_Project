@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".SubscribeActivity"></activity>
+        <activity android:name=".SubscribeActivity" />
         <activity
             android:name=".welcome.WelcomeAppIntro"
             android:label="@string/title_activity_my_custom_app_intro"
