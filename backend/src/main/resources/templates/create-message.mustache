@@ -1,5 +1,7 @@
 {{> header}}
 
+{{> global-scripts}}
+
 <div class="container">
   <h3>{{title}}</h3>
 
@@ -30,7 +32,8 @@
       <textarea class="form-control" name="content" id="content"></textarea>
     </div>
     <div class="form-group">
-      <input class="browser-default custom-select" name="messagestarttime" type="datetime-local"/>
+      <label for="messagestarttime">Send message at:</label>
+      <input class="browser-default custom-select" name="messagestarttime" type="datetime-local" id="messagestarttime"/>
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
