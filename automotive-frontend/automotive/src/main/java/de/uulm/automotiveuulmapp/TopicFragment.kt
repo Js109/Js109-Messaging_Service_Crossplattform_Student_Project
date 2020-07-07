@@ -126,7 +126,6 @@ class TopicFragment : BaseFragment() {
      *
      * @param topicName Name of the topic of which the subscription status should be changed
      * @param topicStatus If the subscription should be enabled or disabled
-     *
      */
     private fun addTopicSubscription(topicName: String, topicStatus: Boolean){
         mService?.send(Message.obtain(null, RabbitMQService.MSG_CHANGE_TOPICS, 0, 0, TopicChange(topicName, topicStatus)))

@@ -18,7 +18,7 @@
             android:layout_marginTop="100dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/welcome"
+            android:text="@string/welcome_intro_titel"
             android:textColor="#FFFFFF"
             android:textSize="40dp" />
 
@@ -29,7 +29,7 @@
             android:layout_marginBottom="150dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/welcome_subtitel"
+            android:text="@string/welcome_intro_subtitel"
             android:textColor="#FFFFFF"
             android:textSize="24sp" />
 
@@ -39,6 +39,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="clickSkipMethod"
-            android:text="@string/welcome_page1_skip" />
+            android:text="@string/welcome_intro_skip" />
     </LinearLayout>
 </FrameLayout>

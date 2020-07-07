@@ -42,8 +42,6 @@ class MainActivity : AppCompatActivity() {
                 // play the Video as starting point
                 val i = Intent(this@MainActivity, WelcomeAppIntro::class.java)
                 startActivity(i)
-                Toast.makeText(this@MainActivity, "First Run", Toast.LENGTH_LONG)
-                    .show()
                 finish()
             }, TIME_OUT.toLong())
         }

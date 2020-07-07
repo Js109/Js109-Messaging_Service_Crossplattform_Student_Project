@@ -30,7 +30,7 @@ class WelcomeAppIntro : AppIntro() {
     }
 
     /**
-     * clickSkipMethod defines what happens when the user presses "skip" in the IntroFragmentWelcome
+     * defines what happens when the user presses "skip"
      * @param v
      */
     fun clickSkipMethod() {
