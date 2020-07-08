@@ -1,5 +1,6 @@
 package de.uulm.automotiveuulmapp
 
+import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -79,8 +80,8 @@ class ServiceFragment : BaseFragment() {
             Intent(mContext, RabbitMQService::class.java).also { intent ->
                 Log.d("Service", "Starting Service...")
                 intent.putExtra("queueId", queueId)
-                (activity as MainActivity).startService(intent)
-                (activity as MainActivity).bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
+                (activity as Activity).startService(intent)
+                (activity as Activity).bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
             }
         }
 
@@ -109,7 +110,7 @@ class ServiceFragment : BaseFragment() {
         val json = JSONObject()
         json.put("signUpToken", UUID.randomUUID())
         json.put("deviceType", ApplicationConstants.DEVICE_TYPE)
-        (activity as MainActivity).callRestEndpoint(url, Request.Method.POST, { response ->
+        (activity as SubscribeActivity).callRestEndpoint(url, Request.Method.POST, { response ->
             val signUpToken = UUID.fromString(response["signUpToken"] as String)
             val queueId = UUID.fromString(response["queueID"] as String)
             launch {
