@@ -1,5 +1,6 @@
 package de.uulm.automotiveuulmapp
 
+import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -15,7 +16,10 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Switch
 import com.android.volley.Request
+import com.android.volley.Response
 import com.android.volley.VolleyError
+import com.android.volley.toolbox.Volley
+import de.uulm.automotiveuulmapp.httpHandling.CustomJsonRequest
 import de.uulm.automotiveuulmapp.rabbitmq.RabbitMQService
 import de.uulm.automotiveuulmapp.topic.TopicChange
 import de.uulm.automotiveuulmapp.topic.TopicModel
@@ -55,7 +59,7 @@ class TopicFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         // binding service to be able to access the functions to change topic subscriptions
         Intent(mContext, RabbitMQService::class.java).also { intent ->
-            (activity as MainActivity).bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
+            (activity as Activity).bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
         }
     }
 
@@ -80,7 +84,7 @@ class TopicFragment : BaseFragment() {
 
         for (topic in topicArrayList) {
             val switch = Switch(mContext)
-            switch.text = topic.binding
+            switch.text = topic.title
             switch.textSize = 30F
             switch.setOnCheckedChangeListener{buttonView, isChecked ->
                 addTopicSubscription(buttonView.text.toString(), isChecked)
@@ -97,7 +101,7 @@ class TopicFragment : BaseFragment() {
     private fun loadAvailableTopics(view: View){
         val url = ApplicationConstants.ENDPOINT_TOPIC
 
-        (activity as MainActivity).callRestEndpoint(url, Request.Method.GET, { response: JSONObject ->
+        (activity as SubscribeActivity).callRestEndpoint(url, Request.Method.GET, { response: JSONObject ->
             val jsonArray = JSONArray(response.get("array").toString())
             val topicArrayList = ArrayList<TopicModel>()
             for (i in 0 until jsonArray.length()){
@@ -108,6 +112,7 @@ class TopicFragment : BaseFragment() {
                 }
                 val topic = TopicModel(
                     element.getLong("id"),
+                    element.getString("title"),
                     element.getString("binding"),
                     element.getString("description"),
                     tags.toTypedArray())

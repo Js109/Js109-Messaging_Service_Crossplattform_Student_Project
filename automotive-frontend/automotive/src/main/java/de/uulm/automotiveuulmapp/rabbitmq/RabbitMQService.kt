@@ -167,8 +167,8 @@ class RabbitMQService : Service() {
             .setContentTitle(message.title)
             .setContentText(message.messageText)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setCategory(Notification.CATEGORY_NAVIGATION)
             .setContentIntent(pendingIntent)
+            .setCategory(Notification.CATEGORY_CALL)
 
         val notificationId = nextInt()
 

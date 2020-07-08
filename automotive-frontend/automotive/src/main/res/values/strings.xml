@@ -3,9 +3,17 @@
     <string name="app_name">AutomotiveUUlmApp</string>
     <string name="channel_name">Notification Channel</string>
     <string name="channel_description">Channel for messages from RabbitMQ</string>
+    <string name="reply_name">reply</string>
+    <!-- Strings used for fragments for Welcomeintroduction -->
+    <string name="welcome_intro_titel">Willkommen in Ihrem persönlichen Newskanal!</string>
+    <string name="welcome_intro_subtitel">Diese Anleitung wird Ihnen helfen sich mit der Anwendung vertraut zu machen. Wenn Sie sich schon auskennen können Sie die Überspringen benutzen</string>
+    <string name="welcome_intro_channel_info_titel">Informationen ohne Ende!</string>
+    <string name="welcome_intro_channel_info_subtitel">Es gibt sogenannte Channels, für die Sie sich registrieren können. Wählen Sie für Sie interessante Channels aus und bekommen nach belieben Notifications.</string>
+    <string name="welcome_intro_skip">Überspringen</string>
+    <string name="title_activity_my_custom_app_intro">AppIntro</string>
 
     <!-- Displayed strings -->
-    <string name="topic_selection_heading">Select your topics to get notified about</string>
+    <string name="topic_selection_heading">Wählen Sie Themen aus, über die Sie informiert werden möchten</string>
     <string name="notification_msg_title">Message from Queue</string>
     <string name="service_start_toast">Service starting</string>
     <string name="image_content_description">Image</string>
