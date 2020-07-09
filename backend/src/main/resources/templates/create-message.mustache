@@ -5,7 +5,7 @@
 <div class="container">
   <h3>{{title}}</h3>
 
-  <form action="/publish" method="post">
+  <form enctype="multipart/form-data" action="/publish" method="post">
     <div class="form-group">
       <label for="topic">Topic:</label>
       <select class="browser-default custom-select" name="topic" id="topic">
@@ -14,6 +14,14 @@
           <option value="{{binding}}">{{title}}</option>
         {{/topics}}
       </select>
+    </div>
+    <div class="form-group">
+      <label for="sender">Sender:</label>
+      <input class="form-control" name="sender" id="sender">
+    </div>
+    <div class="form-group">
+      <label for="title">Title:</label>
+      <input class="form-control" name="title" id="title">
     </div>
     <div class="form-group">
       <label>Property:</label>
@@ -35,8 +43,70 @@
       <label for="messagestarttime">Send message at:</label>
       <input class="browser-default custom-select" name="messagestarttime" type="datetime-local" id="messagestarttime"/>
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <div class="form-group">
+      <div class="container" id="url-list">
+        <label for="urls">Links:</label>
+        <button class="btn btn-success" onclick="addItem()" type="button">
+          <span>Add URL:</span>
+        </button>
+      </div>
+    </div>
+    <div class="custom-file">
+        <input type="file" id="fileSelection" name="file" class="custom-file-input">
+        <label class="custom-file-label" for="customFile">Choose file</label>
+    </div>
+    <button type="button" onclick="document.getElementById('fileSelection').value = ''" class="btn btn-primary">clear</button>
+    <input type="submit" value="Submit" class="btn btn-primary"/>
   </form>
+  <script>
+  // Add the following code if you want the name of the file appear on select
+  $(".custom-file-input").on("change", function() {
+    var fileName = $(this).val().split("\\").pop();
+    $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+  });
+  </script>
 </div>
 
+<script>
+  let cnt = 0;
+
+  function addItem() {
+    let id = cnt++;
+
+    let urlList = document.getElementById("url-list");
+
+    let div = document.createElement("div");
+    div.classList.add("row");
+    div.id = "url-" + id;
+    div.classList.add("input-group");
+
+    let input = document.createElement("input");
+    input.type = "text";
+    input.name = "urls";
+    input.classList.add("form-control");
+
+    let removeButtonInfo = document.createElement("span");
+    removeButtonInfo.textContent = "Remove URL";
+
+    let removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.classList.add("btn");
+    removeButton.classList.add("btn-danger");
+    removeButton.appendChild(removeButtonInfo);
+    removeButton.addEventListener('click', function () {
+      removeItem(id);
+    });
+
+    div.appendChild(input);
+    div.appendChild(removeButton);
+
+    urlList.appendChild(div);
+  }
+
+  function removeItem(number) {
+    let id = "url-" + number;
+    let item = document.getElementById(id);
+    item.remove();
+  }
+</script>
 {{> footer}}

@@ -1,4 +1,5 @@
 <resources>
+    <!-- Application parameters -->
     <string name="app_name">AutomotiveUUlmApp</string>
     <string name="channel_name">Notification Channel</string>
     <string name="channel_description">Channel for messages from RabbitMQ</string>
@@ -15,5 +16,5 @@
     <string name="topic_selection_heading">Wählen Sie Themen aus, über die Sie informiert werden möchten</string>
     <string name="notification_msg_title">Message from Queue</string>
     <string name="service_start_toast">Service starting</string>
-
+    <string name="image_content_description">Image</string>
 </resources>

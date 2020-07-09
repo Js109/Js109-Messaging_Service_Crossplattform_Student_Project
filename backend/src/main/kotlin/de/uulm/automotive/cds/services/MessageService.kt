@@ -1,10 +1,13 @@
 package de.uulm.automotive.cds.services
 
 import com.rabbitmq.client.AMQP
+import de.uulm.automotive.cds.entities.MessageSerializable
 import de.uulm.automotive.cds.entities.Message
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
+import java.net.URL
 
 /**
  * A service class that takes care of sending messages via the amqp broker.
@@ -24,9 +27,10 @@ class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelS
      */
     fun sendMessage(message: Message) {
         val channel = amqpChannelService.openChannel()
+        val messageSerializable = MessageSerializable(message.sender!!, message.title!!, message.content, message.attachment, message.links?.toTypedArray())
 
         if (message.properties == null || message.properties?.size == 0) {
-            channel.basicPublish("amq.topic", message.topic, null, message.content.toByteArray())
+            channel.basicPublish("amq.topic", message.topic, null, messageSerializable.toByteArray())
         } else {
             val properties = createHeaderProps(message.properties)
             channel.basicPublish("amq.headers", "", properties, message.content.toByteArray())
