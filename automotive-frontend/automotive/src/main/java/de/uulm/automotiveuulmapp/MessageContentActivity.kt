@@ -6,7 +6,7 @@ import android.util.Base64
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import de.uulm.automotive.cds.controller.MessageSerializable
+import de.uulm.automotive.cds.entities.MessageSerializable
 import java.nio.charset.Charset
 
 class MessageContentActivity : AppCompatActivity() {

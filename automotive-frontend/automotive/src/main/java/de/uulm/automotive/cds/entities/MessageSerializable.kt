@@ -1,4 +1,4 @@
-package de.uulm.automotive.cds.controller
+package de.uulm.automotive.cds.entities
 
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -20,9 +20,8 @@ class MessageSerializable (
      */
     fun toByteArray(): ByteArray {
         val bos = ByteArrayOutputStream()
-        var out: ObjectOutputStream?
         try {
-            out = ObjectOutputStream(bos)
+            val out = ObjectOutputStream(bos)
             out.writeObject(this)
             out.flush()
             return bos.toByteArray()

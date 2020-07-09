@@ -5,7 +5,6 @@ import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.repositories.PropertyRepository
 import de.uulm.automotive.cds.repositories.TopicRepository
 import de.uulm.automotive.cds.services.MessageService
-import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -21,6 +20,7 @@ import java.time.LocalDateTime
 @Controller
 @RequestMapping("/publish")
 class PublishController(private val messageRepository: MessageRepository, private val topicRepository: TopicRepository, private val propertyRepository: PropertyRepository, private val messageService: MessageService) {
+
     /**
      * Returns a view to create a new message.
      *
@@ -56,6 +56,7 @@ class PublishController(private val messageRepository: MessageRepository, privat
             starttime,
             endtime,
             isSent,
+            properties,
             id
     )
 
@@ -69,10 +70,13 @@ class PublishController(private val messageRepository: MessageRepository, privat
      * @return String name of the view
      */
     @PostMapping()
-    fun postMessage(sender: String, title: String, message: Message, @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) messagestarttime: LocalDateTime?, model: Model, @RequestParam("file") file: MultipartFile?): String {
-        message.sender = sender
-        message.title = title
+    fun postMessage(message: Message, @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) messagestarttime: LocalDateTime?, model: Model, @RequestParam("file") file: MultipartFile?, @RequestParam("urls") urls: Array<String>?): String {
         message.attachment = file?.bytes
+        message.links = mutableListOf()
+        urls?.forEach {
+            message.links!!.add(URL(it))
+        }
+
         if (messagestarttime == null) {
             message.starttime = LocalDateTime.now()
             message.isSent = true
@@ -96,6 +100,7 @@ class PublishController(private val messageRepository: MessageRepository, privat
             val starttime: LocalDateTime?,
             val endtime: LocalDateTime?,
             val isSent: Boolean?,
+            val properties: MutableList<String>?,
             val id: Long?
     )
 }
