@@ -1,13 +1,14 @@
 package de.uulm.automotive.cds.services
 
 import com.rabbitmq.client.AMQP
-import de.uulm.automotive.cds.entities.MessageSerializable
 import de.uulm.automotive.cds.entities.Message
+import de.uulm.automotive.cds.entities.MessageSerializable
+import de.uulm.automotive.cds.repositories.MessageRepository
+import org.hibernate.Hibernate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.multipart.MultipartFile
-import java.net.URL
+import java.time.LocalDateTime
 
 /**
  * A service class that takes care of sending messages via the amqp broker.
@@ -16,8 +17,8 @@ import java.net.URL
  * @property amqpChannelService AmqpChannelService component used to communicate with the broker.
  */
 @Component
-@Transactional
-class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelService) {
+
+class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelService, val messageRepository: MessageRepository) {
 
     /**
      * Publishes a messages to the broker.
@@ -50,5 +51,26 @@ class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelS
             bindingArgs[it] = ""
         }
         return AMQP.BasicProperties().builder().headers(bindingArgs).build()
+    }
+
+    /**
+     * This method filters the message-list by their sending timestamp.
+     * The transactional context is required to be able to lazy load only the properties and links of messages,
+     * which should be sent.
+     *
+     * @return List of messages which should be processed (sent)
+     */
+    @Transactional
+    fun filterCurrentMessages(): List<Message>{
+        val messages = messageRepository.findAllByIsSentFalseOrderByStarttimeAsc()
+        return messages.filter { message: Message ->
+            message.starttime!! < LocalDateTime.now()
+        }.apply {
+            forEach { message ->
+                // triggers the loading of the lazy-fetch attributes
+                Hibernate.initialize(message.links)
+                Hibernate.initialize(message.properties)
+            }
+        }
     }
 }
