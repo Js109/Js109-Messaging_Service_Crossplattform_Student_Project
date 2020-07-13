@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         if (isFirstRun) {
             // start the Introvideo from local storage
-            val view = findViewById<View>(R.id.welcome_videoView) as VideoView
+            val view = findViewById<VideoView>(R.id.welcome_videoView)
             val path = "android.resource://" + packageName + "/" + R.raw.video_file
             view.setVideoURI(Uri.parse(path))
             view.start()
@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
             }, TIME_OUT.toLong())
         } else {
             // start the Introvideo from local storage
-            val view = findViewById<View>(R.id.welcome_videoView) as VideoView
+            val view = findViewById<VideoView>(R.id.welcome_videoView)
             val path = "android.resource://" + packageName + "/" + R.raw.video_file
             view.setVideoURI(Uri.parse(path))
             view.start()
