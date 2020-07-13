@@ -27,12 +27,9 @@ class SchedulingService(private val messageRepository: MessageRepository, privat
      */
     @Scheduled(fixedRateString = "\${sending.interval.seconds:60}000")
     fun sendMessages(): Boolean {
-        val messages = messageRepository.findAllByIsSentFalseOrderByStarttimeAsc()
+        val messages: Iterable<Message> = messageService.filterCurrentMessages()
         messages.forEach { message: Message ->
-            if (message.starttime!! > LocalDateTime.now()) return true
-
             messageService.sendMessage(message)
-
             message.isSent = true
             messageRepository.save(message)
         }
