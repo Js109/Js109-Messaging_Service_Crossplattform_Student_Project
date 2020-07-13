@@ -14,7 +14,7 @@
 
         <TextView
             android:id="@+id/textView"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/topic_selection_heading"
             android:textSize="30sp"
@@ -26,16 +26,28 @@
             android:id="@+id/topicSearch"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/cardview_dark_background"
+            android:iconifiedByDefault="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+        <include
+            android:id="@+id/oemTopicCard"
+            layout="@layout/topic_card"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/topicSearch" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/topicsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/topicSearch" />
+            app:layout_constraintTop_toBottomOf="@+id/oemTopicCard" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
