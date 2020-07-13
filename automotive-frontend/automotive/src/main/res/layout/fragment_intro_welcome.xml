@@ -19,8 +19,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/welcome_intro_titel"
-            android:textColor="#FFFFFF"
-            android:textSize="40dp" />
+            android:textColor="@color/white"
+            android:textSize="@dimen/heading" />
 
         <TextView
             android:id="@+id/fragm_welc1_textview2"
@@ -30,8 +30,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/welcome_intro_subtitel"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp" />
+            android:textColor="@color/white"
+            android:textSize="@dimen/subheading" />
 
         <Button
             android:id="@+id/welc1_button1"
