@@ -10,7 +10,6 @@ import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 import de.uulm.automotiveuulmapp.welcome.WelcomeAppIntro
 
-
 /**
  * This is the MainActivity, which is the starting point of the application.
  * The onCreate() method is called first.
