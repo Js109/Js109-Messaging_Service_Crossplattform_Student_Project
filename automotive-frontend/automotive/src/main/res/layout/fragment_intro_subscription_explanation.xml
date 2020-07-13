@@ -11,7 +11,7 @@
         android:layout_width="910dp"
         android:layout_height="109dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="70dp"
         android:layout_marginEnd="24dp"
         android:gravity="center"
         android:text="@string/welcome_subscription_explanation_titel"
@@ -23,12 +23,12 @@
 
     <ImageView
         android:id="@+id/fragment_subscription_explanation_imageView"
-        android:layout_width="313dp"
-        android:layout_height="221dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="350dp"
         android:layout_marginTop="220dp"
-        android:contentDescription="An imageView to show how a subscripted topic should look like"
-        android:src="@mipmap/ic_launcher_foreground"
+        android:contentDescription="@string/welcome_imageView_description"
+        android:src="@mipmap/topic_selection"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
