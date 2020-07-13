@@ -29,13 +29,11 @@ class Message(
         var starttime: LocalDateTime?,
         var endtime: LocalDateTime?,
         var isSent: Boolean?,
-        //@Fetch(value = FetchMode.JOIN)
         @ElementCollection(fetch = FetchType.LAZY)
         var properties: MutableList<String>?,
         @Lob
-        @Column(name = "attachment", columnDefinition="BLOB")
+        @Column(name = "attachment", columnDefinition = "BLOB")
         var attachment: ByteArray?,
-        //@Fetch(value = FetchMode.JOIN)
         @ElementCollection(fetch = FetchType.LAZY)
         var links: MutableList<URL>?
 )
