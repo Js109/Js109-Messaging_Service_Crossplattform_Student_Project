@@ -8,22 +8,20 @@ info:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 host: "localhost:8080"
-basePath: "/api"
 tags:
-  - name: "Administration/OEM"
+  - name: "Administration - OEM-Web Frontend"
     description: "Any operations possible as oem (via the web UI)"
-  - name: "Client"
-    description: "Any operations possible as client (Android)"
+  - name: "Client - Android Automotive Application"
+    description: "Any operations possible as client (Android Automotive UI)"
 schemes:
-  - "https"
   - "http"
 paths:
   /topic:
     get:
       tags:
-        - "Administration/OEM"
-        - "Client"
-      summary: "Retrieve all existing topics."
+        - "Administration - OEM-Web Frontend"
+        - "Client - Android Automotive Application"
+      summary: "Retrieve all existing topics for Notifications."
       description: "Retrieve all possible topics which messages can be published to or clients can subscribe to."
       produces:
         - "application/json"
@@ -34,10 +32,14 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/Topic"
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Not Found"
     post:
       tags:
-        - "Client"
-      summary: "Store new topic."
+        - "Client - Android Automotive Application"
+      summary: "Store new topic for the Notifications."
       description: "Stores the topic given in the body. If the id is left out one will be generated."
       produces:
         - "application/json"
@@ -51,12 +53,16 @@ paths:
       responses:
         "200":
           description: "successful operation"
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Not Found"
   /signup:
     post:
       tags:
-        - "Client"
-      summary: SignUp a new Client
-      description: Signs a new Client Up to recieve messages.
+        - "Client - Android Automotive Application"
+      summary: "SignUp a new Client"
+      description: "Signs a new Client Up to recieve Notifications."
       produces:
         - "application/json"
       parameters:
@@ -69,23 +75,23 @@ paths:
       responses:
         "200":
           description: "successful operation"
-
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Not Found"
 definitions:
   Topic:
     type: "object"
     properties:
-      id:
-        type: "string"
-        example: 1234
       title:
         type: "string"
-        example: "Natur"
+        example: "Kultur"
       binding:
         type: "string"
-        example: "landschaft/natur"
+        example: "landschaft/Kultur"
       description:
         type: "string"
-        example: "Hier werden alle naturbezogenen Themen veröffentlicht."
+        example: "Hier werden alle kulturbezogenen Themen veröffentlicht."
       tags:
         $ref: "#/definitions/Tag"
   SignUpInfo:
