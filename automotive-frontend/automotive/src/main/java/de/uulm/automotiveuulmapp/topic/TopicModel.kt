@@ -8,11 +8,11 @@ package de.uulm.automotiveuulmapp.topic
  * @property description
  * @property tags
  */
-class TopicModel(
+data class TopicModel(
     var id: Long,
     var title: String,
     var binding: String,
     var description: String,
-    var tags: Array<String>
-) {
-}
+    var tags: Array<String>,
+    var subscribed: Boolean
+)

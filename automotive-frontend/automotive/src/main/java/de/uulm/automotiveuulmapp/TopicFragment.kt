@@ -1,10 +1,7 @@
 package de.uulm.automotiveuulmapp
 
 import android.app.Activity
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
+import android.content.*
 import android.os.Bundle
 import android.os.IBinder
 import android.os.Message
@@ -14,12 +11,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.SearchView
 import android.widget.Switch
+import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
-import com.android.volley.Response
 import com.android.volley.VolleyError
-import com.android.volley.toolbox.Volley
-import de.uulm.automotiveuulmapp.httpHandling.CustomJsonRequest
 import de.uulm.automotiveuulmapp.rabbitmq.RabbitMQService
 import de.uulm.automotiveuulmapp.topic.TopicChange
 import de.uulm.automotiveuulmapp.topic.TopicModel
@@ -28,8 +26,10 @@ import org.json.JSONObject
 
 class TopicFragment : BaseFragment() {
     private lateinit var mContext: Context
-    var mService: Messenger? = null
-    var bound: Boolean = false
+    private var mService: Messenger? = null
+    private var bound: Boolean = false
+    private val topicList: MutableList<TopicModel> = ArrayList()
+    private var topicAdapter = TopicAdapter(topicList)
 
     private val mConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -69,28 +69,10 @@ class TopicFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val v = inflater.inflate(R.layout.fragment_topic, container, false)
+        
+
         loadAvailableTopics(v)
         return v
-    }
-
-    /**
-     * Adding switches to the view to change subscriptions of the device.
-     *
-     * @param view View to which the
-     * @param topicArrayList List of topics available to subscribe to
-     */
-    private fun addTopicSwitches(view: View, topicArrayList: ArrayList<TopicModel>){
-        val linearLayout = view.findViewById<LinearLayout>(R.id.scroll_linear_layout)
-
-        for (topic in topicArrayList) {
-            val switch = Switch(mContext)
-            switch.text = topic.title
-            switch.textSize = 30F
-            switch.setOnCheckedChangeListener{buttonView, isChecked ->
-                addTopicSubscription(buttonView.text.toString(), isChecked)
-            }
-            linearLayout.addView(switch)
-        }
     }
 
     /**
@@ -103,7 +85,6 @@ class TopicFragment : BaseFragment() {
 
         (activity as SubscribeActivity).callRestEndpoint(url, Request.Method.GET, { response: JSONObject ->
             val jsonArray = JSONArray(response.get("array").toString())
-            val topicArrayList = ArrayList<TopicModel>()
             for (i in 0 until jsonArray.length()){
                 val element: JSONObject = jsonArray.optJSONObject(i)
                 val tags:ArrayList<String> = ArrayList()
@@ -115,11 +96,62 @@ class TopicFragment : BaseFragment() {
                     element.getString("title"),
                     element.getString("binding"),
                     element.getString("description"),
-                    tags.toTypedArray())
-                topicArrayList.add(topic)
+                    tags.toTypedArray(),
+                    false)
+                topic.subscribed = activity?.getPreferences(Context.MODE_PRIVATE)?.getBoolean("topic/${topic.id}", false) ?: false
+                topicList.add(topic)
             }
-            addTopicSwitches(view, topicArrayList)
-        }, { error: VolleyError -> Log.e("Topic","Failed to load topics")})
+            topicAdapter = TopicAdapter(topicList)
+            val topicRecyclerView = view.findViewById<RecyclerView>(R.id.topicsRecyclerView).apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = topicAdapter
+            }
+            val topicSearch = view.findViewById<SearchView>(R.id.topicSearch).setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return false
+                }
+
+                override fun onQueryTextChange(query: String?): Boolean {
+                    topicAdapter.filter(query)
+                    return true
+                }
+
+            })
+        }, { error: VolleyError ->
+            Log.e("Topic","Failed to load topics")
+        })
+    }
+
+    /**
+     * Adding switches to the view to change subscriptions of the device.
+     *
+     * @param view View to which the
+     * @param topicArrayList List of topics available to subscribe to
+     */
+    private fun addTopicSwitches(linearLayout: LinearLayout, topicArrayList: List<TopicModel>){
+        for(topic in topicArrayList) {
+            val inflater = LayoutInflater.from(context)
+            val topicCard = inflater.inflate(R.layout.topic_card, null)
+
+            val switch = topicCard.findViewById<Switch>(R.id.topicCardSwitch)
+            switch.isChecked = topic.subscribed
+            switch.setOnCheckedChangeListener{buttonView, isChecked ->
+                activity?.getPreferences(Context.MODE_PRIVATE)?.edit()?.apply {
+                    putBoolean("topic/${topic.id}", isChecked)
+                    apply()
+                }
+                topic.subscribed = isChecked
+                addTopicSubscription(topic.binding, isChecked)
+            }
+
+            val title = topicCard.findViewById<TextView>(R.id.topicCardTitle)
+            title.text = topic.title
+
+            val description = topicCard.findViewById<TextView>(R.id.topicCardDescription)
+            description.text = topic.description
+
+            linearLayout.addView(topicCard)
+        }
     }
 
     /**
