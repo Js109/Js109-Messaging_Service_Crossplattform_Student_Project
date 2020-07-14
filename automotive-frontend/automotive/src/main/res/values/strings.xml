@@ -17,4 +17,7 @@
     <string name="notification_msg_title">Message from Queue</string>
     <string name="service_start_toast">Service starting</string>
     <string name="image_content_description">Image</string>
+    <string name="oem_topic_card_titel">Hersteller-Inhalte</string>
+    <string name="oem_topic_card_description">Informationen und Nachrichten des Herstellers</string>
+    <string name="oem_unsubsrice_impossible_message">Herstellerinformationen können nicht deabonniert werden</string>
 </resources>
