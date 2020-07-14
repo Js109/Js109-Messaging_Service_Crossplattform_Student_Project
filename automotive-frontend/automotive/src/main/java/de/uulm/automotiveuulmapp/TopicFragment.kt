@@ -68,28 +68,34 @@ class TopicFragment : BaseFragment() {
         val view = inflater.inflate(R.layout.fragment_topic, container, false)
 
         val oemTopicCard = view.findViewById<View>(R.id.oemTopicCard)
-        oemTopicCard.findViewById<TextView>(R.id.topicCardTitle).text = getString(R.string.oem_topic_card_titel)
-        oemTopicCard.findViewById<TextView>(R.id.topicCardDescription).text = getString(R.string.oem_topic_card_description)
+        oemTopicCard.findViewById<TextView>(R.id.topicCardTitle).text =
+            getString(R.string.oem_topic_card_titel)
+        oemTopicCard.findViewById<TextView>(R.id.topicCardDescription).text =
+            getString(R.string.oem_topic_card_description)
         val oemSwitch = oemTopicCard.findViewById<Switch>(R.id.topicCardSwitch)
         oemSwitch.isEnabled = false
         oemSwitch.setOnClickListener {
-            Toast.makeText(context, getString(R.string.oem_unsubsrice_impossible_message), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                getString(R.string.oem_unsubsrice_impossible_message),
+                Toast.LENGTH_SHORT
+            ).show()
         }
         oemTopicCard.setOnClickListener { oemSwitch.callOnClick() }
 
-
-        val topicAdapter = TopicAdapter(this)
+        val topicSearch = view.findViewById<SearchView>(R.id.topicSearch)
+        val topicAdapter = TopicAdapter(this, topicSearch)
         view.findViewById<RecyclerView>(R.id.topicsRecyclerView).apply {
             layoutManager = LinearLayoutManager(context)
             adapter = topicAdapter
         }
-        view.findViewById<SearchView>(R.id.topicSearch).setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        topicSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
 
             override fun onQueryTextChange(query: String?): Boolean {
-                topicAdapter.filter(query)
+                topicAdapter.filter()
                 oemTopicCard.isVisible = query == null || query.isEmpty()
                 return true
             }
@@ -100,16 +106,23 @@ class TopicFragment : BaseFragment() {
         return view
     }
 
-
     /**
      * Invoking service to change topic subscriptions
      *
      * @param topicName Name of the topic of which the subscription status should be changed
      * @param topicStatus If the subscription should be enabled or disabled
      */
-    fun sendTopicSubscription(topicName: String, topicStatus: Boolean){
-        mService?.send(Message.obtain(null, RabbitMQService.MSG_CHANGE_TOPICS, 0, 0, TopicChange(topicName, topicStatus)))
-        if(topicStatus){
+    fun sendTopicSubscription(topicName: String, topicStatus: Boolean) {
+        mService?.send(
+            Message.obtain(
+                null,
+                RabbitMQService.MSG_CHANGE_TOPICS,
+                0,
+                0,
+                TopicChange(topicName, topicStatus)
+            )
+        )
+        if (topicStatus) {
             Log.d("Topic", "Subscribing to topic" + topicName)
         } else {
             Log.d("Topic", "Unsubscribing from topic" + topicName)

@@ -5,8 +5,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import android.widget.Switch
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.VolleyError
@@ -17,8 +19,11 @@ import org.json.JSONObject
 /**
  * Adapter that fills an RecyclerView with topic card views from a list of topics it gets from the backend.
  * This list can optionally be filtered by calling a search query.
+ * @param fragment TopicFragment the RecyclerView is placed in. Needed to access preferences.
+ * @param searchView SearchView whose query is used to filter the topics in the RecyclerView. Note that the firing of filter() must manually be set in the onQueryTextListener of the SearchView.
  */
-class TopicAdapter(private val fragment: TopicFragment): RecyclerView.Adapter<TopicAdapter.TopicViewHolder>() {
+class TopicAdapter(private val fragment: TopicFragment, private val searchView: SearchView) :
+    RecyclerView.Adapter<TopicAdapter.TopicViewHolder>() {
 
     init {
         loadTopics()
@@ -36,48 +41,54 @@ class TopicAdapter(private val fragment: TopicFragment): RecyclerView.Adapter<To
 
     /**
      * Fetches the topics from the backend asynchronously and stores them in topicList.
-     * After all topics are read from the json response they are copied to currentList and notifyDataSetChanged() is invoced.
+     * After all topics are read from the json response they are copied to currentList and notifyDataSetChanged() is invoked.
      */
     private fun loadTopics() {
         val url = ApplicationConstants.ENDPOINT_TOPIC
 
-        (fragment.activity as SubscribeActivity).callRestEndpoint(url, Request.Method.GET, { response: JSONObject ->
-            val jsonArray = JSONArray(response.get("array").toString())
-            for (i in 0 until jsonArray.length()){
-                val element: JSONObject = jsonArray.optJSONObject(i)
-                val tags:ArrayList<String> = ArrayList()
-                for(tag in 0 until element.getJSONArray("tags").length()){
-                    tags.add(element.getJSONArray("tags").get(tag) as String)
+        (fragment.activity as SubscribeActivity).callRestEndpoint(
+            url,
+            Request.Method.GET,
+            { response: JSONObject ->
+                val jsonArray = JSONArray(response.get("array").toString())
+                for (i in 0 until jsonArray.length()) {
+                    val element: JSONObject = jsonArray.optJSONObject(i)
+                    val tags: ArrayList<String> = ArrayList()
+                    for (tag in 0 until element.getJSONArray("tags").length()) {
+                        tags.add(element.getJSONArray("tags").get(tag) as String)
+                    }
+                    val topic = TopicModel(
+                        element.getLong("id"),
+                        element.getString("title"),
+                        element.getString("binding"),
+                        element.getString("description"),
+                        tags.toTypedArray(),
+                        false
+                    )
+                    topic.subscribed = loadTopicIsSubscribed(topic)
+                    topicList.add(topic)
                 }
-                val topic = TopicModel(
-                    element.getLong("id"),
-                    element.getString("title"),
-                    element.getString("binding"),
-                    element.getString("description"),
-                    tags.toTypedArray(),
-                    false)
-                topic.subscribed = loadTopicIsSubscribed(topic)
-                topicList.add(topic)
-            }
-            currentList = topicList.toList()
-            notifyDataSetChanged()
-        }, { error: VolleyError ->
-            Log.e("Topic","Failed to load topics")
-        })
+                filter()
+            },
+            { error: VolleyError ->
+                Log.e("Topic", "Failed to load topics")
+            })
     }
 
     /**
      * Retrieves the subscription status of a topic from the Preferences.
      */
     private fun loadTopicIsSubscribed(topic: TopicModel): Boolean {
-        return fragment.activity?.getPreferences(Context.MODE_PRIVATE)?.getBoolean("topic/${topic.id}", false) ?: false
+        return fragment.activity?.getPreferences(Context.MODE_PRIVATE)
+            ?.getBoolean("topic/${topic.id}", false) ?: false
     }
 
     /**
      * Inflates the topic card layout to create the views in the RecyclerView.
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopicViewHolder {
-        val topicCard = LayoutInflater.from(parent.context).inflate(R.layout.topic_card, parent, false)
+        val topicCard =
+            LayoutInflater.from(parent.context).inflate(R.layout.topic_card, parent, false)
         return TopicViewHolder(topicCard)
     }
 
@@ -92,8 +103,9 @@ class TopicAdapter(private val fragment: TopicFragment): RecyclerView.Adapter<To
         description.text = currentList[position].description
 
         val switch = holder.itemView.findViewById<Switch>(R.id.topicCardSwitch)
+        switch.setOnCheckedChangeListener { _, _ ->  }
         switch.isChecked = currentList[position].subscribed
-        switch.setOnCheckedChangeListener{_, isChecked ->
+        switch.setOnCheckedChangeListener { _, isChecked ->
             topicCardSwitchChange(currentList[position], isChecked)
         }
 
@@ -109,6 +121,7 @@ class TopicAdapter(private val fragment: TopicFragment): RecyclerView.Adapter<To
         topic.subscribed = isChecked
         storeTopicIsSubscribed(topic, isChecked)
         fragment.sendTopicSubscription(topic.binding, isChecked)
+        filter()
     }
 
     /**
@@ -124,13 +137,14 @@ class TopicAdapter(private val fragment: TopicFragment): RecyclerView.Adapter<To
     }
 
     /**
-     * Filters the topics displayed by the RecyclerView by a given query String.
+     * Filters the topics displayed by the RecyclerView by the query currently in the search bar.
      */
-    fun filter(query: String?) {
+    fun filter() {
+        val query = searchView.query
         currentList = if (query == null || query.isEmpty()) {
             topicList.sortedBy { !it.subscribed }
         } else {
-            filteredTopicList(topicList, query)
+            filteredTopicList(topicList, query.toString())
         }
         notifyDataSetChanged()
     }
@@ -144,8 +158,14 @@ class TopicAdapter(private val fragment: TopicFragment): RecyclerView.Adapter<To
      */
     private fun filteredTopicList(topicList: List<TopicModel>, query: String): List<TopicModel> {
         val query = query.toLowerCase()
-        val (titleMatch, nonTitleMatch) = topicList.partition { it.title.toLowerCase().contains(query) }
-        val (descriptionMatch, nonDescriptionMatch) = nonTitleMatch.partition { it.tags.any { tag -> tag.toLowerCase().contains(query) } }
+        val (titleMatch, nonTitleMatch) = topicList.partition {
+            it.title.toLowerCase().contains(query)
+        }
+        val (descriptionMatch, nonDescriptionMatch) = nonTitleMatch.partition {
+            it.tags.any { tag ->
+                tag.toLowerCase().contains(query)
+            }
+        }
         val tagMatch = nonDescriptionMatch.filter { it.description.toLowerCase().contains(query) }
         return titleMatch.sortedBy { it.title } + descriptionMatch.sortedBy { it.title } + tagMatch.sortedBy { it.title }
     }
@@ -155,5 +175,4 @@ class TopicAdapter(private val fragment: TopicFragment): RecyclerView.Adapter<To
     override fun getItemCount(): Int {
         return currentList.size
     }
-
 }
