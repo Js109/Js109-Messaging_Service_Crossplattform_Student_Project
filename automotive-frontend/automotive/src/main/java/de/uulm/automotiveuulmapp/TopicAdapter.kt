@@ -103,7 +103,7 @@ class TopicAdapter(private val fragment: TopicFragment, private val searchView: 
         description.text = currentList[position].description
 
         val switch = holder.itemView.findViewById<Switch>(R.id.topicCardSwitch)
-        switch.setOnCheckedChangeListener { _, _ ->  }
+        switch.setOnCheckedChangeListener { _, _ -> }
         switch.isChecked = currentList[position].subscribed
         switch.setOnCheckedChangeListener { _, isChecked ->
             topicCardSwitchChange(currentList[position], isChecked)
@@ -162,11 +162,13 @@ class TopicAdapter(private val fragment: TopicFragment, private val searchView: 
             it.title.toLowerCase().contains(query)
         }
         val (descriptionMatch, nonDescriptionMatch) = nonTitleMatch.partition {
+            it.description.toLowerCase().contains(query)
+        }
+        val tagMatch = nonDescriptionMatch.filter {
             it.tags.any { tag ->
                 tag.toLowerCase().contains(query)
             }
         }
-        val tagMatch = nonDescriptionMatch.filter { it.description.toLowerCase().contains(query) }
         return titleMatch.sortedBy { it.title } + descriptionMatch.sortedBy { it.title } + tagMatch.sortedBy { it.title }
     }
 

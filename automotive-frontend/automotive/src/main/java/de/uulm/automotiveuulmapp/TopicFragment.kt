@@ -102,7 +102,6 @@ class TopicFragment : BaseFragment() {
 
         })
 
-
         return view
     }
 
