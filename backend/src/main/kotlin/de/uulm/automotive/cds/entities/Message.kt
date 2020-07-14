@@ -1,11 +1,7 @@
 package de.uulm.automotive.cds.entities
 
-import org.springframework.boot.jackson.JsonObjectSerializer
-import org.springframework.format.annotation.DateTimeFormat
-import org.springframework.web.multipart.MultipartFile
 import java.net.URL
 import java.time.LocalDateTime
-import java.util.*
 import javax.persistence.*
 
 /**
@@ -33,9 +29,11 @@ class Message(
         var starttime: LocalDateTime?,
         var endtime: LocalDateTime?,
         var isSent: Boolean?,
-        @ElementCollection
+        @ElementCollection(fetch = FetchType.LAZY)
         var properties: MutableList<String>?,
+        @Lob
+        @Column(name = "attachment", columnDefinition = "BLOB")
         var attachment: ByteArray?,
-        @ElementCollection
+        @ElementCollection(fetch = FetchType.LAZY)
         var links: MutableList<URL>?
 )
