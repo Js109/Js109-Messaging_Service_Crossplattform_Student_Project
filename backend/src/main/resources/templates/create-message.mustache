@@ -5,43 +5,74 @@
 <div class="container">
   <h3>{{title}}</h3>
 
-  <form enctype="multipart/form-data" action="/publish" method="post">
+  <form enctype="multipart/form-data" action="/publish" onsubmit="return validateForm()"
+        name="messageForm" method="post">
     <div class="form-group">
       <label for="topic">Topic:</label>
-      <select class="browser-default custom-select" name="topic" id="topic">
+      <select
+          class="browser-default custom-select {{#hasTopicPropertiesError}}is-invalid{{/hasTopicPropertiesError}}"
+          name="topic" id="topic">
         <option selected></option>
         {{#topics}}
           <option value="{{binding}}">{{title}}</option>
         {{/topics}}
       </select>
-    </div>
-    <div class="form-group">
-      <label for="sender">Sender:</label>
-      <input class="form-control" name="sender" id="sender">
-    </div>
-    <div class="form-group">
-      <label for="title">Title:</label>
-      <input class="form-control" name="title" id="title">
+      {{#hasTopicPropertiesError}}
+        <div class="invalid-feedback">Either Topics or Properties are required.</div>
+      {{/hasTopicPropertiesError}}
     </div>
     <div class="form-group">
       <label>Property:</label>
       {{#properties}}
         <div class="form-check">
 
-          <input class="form-check-input" name="properties" type="checkbox" value="{{binding}}" id="checkbox{{id}}"/>
+          <input
+              class="form-check-input {{#hasTopicPropertiesError}}is-invalid{{/hasTopicPropertiesError}}"
+              name="properties" type="checkbox" value="{{binding}}" id="checkbox{{id}}"/>
           <label class="form-check-label" for="checkbox{{id}}">
             {{name}}
           </label>
         </div>
       {{/properties}}
+      {{#hasTopicPropertiesError}}
+        <div class="invalid-feedback">Either Topics or Properties are required.</div>
+      {{/hasTopicPropertiesError}}
+    </div>
+    <div class="form-group">
+      <label for="sender">Sender:</label>
+      <input class="form-control {{#hasSenderError}}is-invalid{{/hasSenderError}}" name="sender"
+             id="sender" placeholder="Sender">
+      {{#hasSenderError}}
+        <div class="invalid-feedback">Sender field is required.</div>
+      {{/hasSenderError}}
+    </div>
+    <div class="form-group">
+      <label for="title">Title:</label>
+      <input class="form-control {{#hasTitleError}}is-invalid{{/hasTitleError}}" name="title"
+             id="title" placeholder="Title">
+      {{#hasTitleError}}
+        <div class="invalid-feedback">Title field is required.</div>
+      {{/hasTitleError}}
     </div>
     <div class="form-group">
       <label for="content">Message content:</label>
-      <textarea class="form-control" name="content" id="content"></textarea>
+      <textarea class="form-control {{#hasContentError}}is-invalid{{/hasContentError}}"
+                name="content" id="content" placeholder="Content"></textarea>
+      {{#hasContentError}}
+        <div class="invalid-feedback">Either Content or Files are required.</div>
+      {{/hasContentError}}
     </div>
     <div class="form-group">
       <label for="messagestarttime">Send message at:</label>
-      <input class="browser-default custom-select" name="messagestarttime" type="datetime-local" id="messagestarttime"/>
+      <input class="browser-default custom-select" name="messagestarttime" type="datetime-local"
+             id="messagestarttime"/>
+    </div>
+    <div class="custom-file">
+      <input type="file" id="fileSelection" name="file" class="custom-file-input">
+      <label class="custom-file-label" for="customFile">Choose file</label>
+      {{#hasContentError}}
+        <div class="invalid-feedback">Either Content or Files are required.</div>
+      {{/hasContentError}}
     </div>
     <div class="form-group">
       <div class="container" id="url-list">
@@ -50,20 +81,23 @@
           <span>Add URL:</span>
         </button>
       </div>
+      {{#hasUrlError}}
+        <div class="invalid-feedback">Please insert URLs in the following Scheme:
+          http://www.example.com .
+        </div>
+      {{/hasUrlError}}
     </div>
-    <div class="custom-file">
-        <input type="file" id="fileSelection" name="file" class="custom-file-input">
-        <label class="custom-file-label" for="customFile">Choose file</label>
-    </div>
-    <button type="button" onclick="document.getElementById('fileSelection').value = ''" class="btn btn-primary">clear</button>
+    <button type="button" onclick="document.getElementById('fileSelection').value = ''"
+            class="btn btn-primary">clear
+    </button>
     <input type="submit" value="Submit" class="btn btn-primary"/>
   </form>
   <script>
-  // Add the following code if you want the name of the file appear on select
-  $(".custom-file-input").on("change", function() {
-    var fileName = $(this).val().split("\\").pop();
-    $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-  });
+    // Add the following code if you want the name of the file appear on select
+    $(".custom-file-input").on("change", function () {
+      var fileName = $(this).val().split("\\").pop();
+      $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
   </script>
 </div>
 
@@ -83,7 +117,9 @@
     let input = document.createElement("input");
     input.type = "text";
     input.name = "urls";
+    input.placeholder = "http://www.example.com";
     input.classList.add("form-control");
+    input.classList.add("url-lst")
 
     let removeButtonInfo = document.createElement("span");
     removeButtonInfo.textContent = "Remove URL";
@@ -107,6 +143,170 @@
     let id = "url-" + number;
     let item = document.getElementById(id);
     item.remove();
+  }
+
+  /**
+   * Validates the message Form
+   * @returns {boolean} true if the Form is valid
+   */
+  function validateForm() {
+    let isValid = true;
+
+    let topic = document.forms["messageForm"]["topic"];
+    let properties = document.forms["messageForm"]["properties"];
+
+    let sender = document.forms["messageForm"]["sender"];
+    let title = document.forms["messageForm"]["title"];
+
+    let content = document.forms["messageForm"]["content"];
+    let file = document.forms["messageForm"]["file"];
+
+    let urls = document.forms["messageForm"].querySelectorAll(".url-lst");
+
+    // topic or properties required
+
+    if (topic.value === "") {
+      let hasProperty = false;
+      if (properties != null) {
+        if (properties.length === undefined) {
+          hasProperty = properties.checked;
+        } else {
+          properties.forEach(option => {
+            if (option.checked) {
+              hasProperty = true;
+            }
+          });
+        }
+      }
+      if (!hasProperty) {
+        isValid = false;
+
+        if (properties != null) {
+          if (properties.length === undefined) {
+            properties.classList.add("is-invalid");
+          } else {
+            properties.forEach(option => {
+              option.classList.add("is-invalid");
+            });
+          }
+          if (properties.parentNode != null && properties.parentNode.querySelector(
+              '.invalid-feedback') == null) {
+            addValidationError(properties, "Either Topics or Properties are required.")
+          }
+        }
+
+        if (topic.parentNode.querySelector('.invalid-feedback') == null) {
+          addValidationError(topic, "Either Topics or Properties are required.");
+        }
+      }
+    } else {
+      removeValidationError(topic);
+
+      if (properties != null) {
+        removeValidationError(properties);
+        if (properties.length === undefined) {
+          properties.classList.remove("is-invalid");
+        } else {
+          properties.forEach(option => {
+            option.classList.remove("is-invalid");
+          })
+        }
+      }
+    }
+
+    // sender required
+
+    if (sender.value === "") {
+      isValid = false;
+      if (sender.parentNode.querySelector('.invalid-feedback') == null) {
+        addValidationError(sender, "Sender field is required");
+      }
+    } else {
+      removeValidationError(sender);
+    }
+
+    // title required
+
+    if (title.value === "") {
+      isValid = false;
+      if (title.parentNode.querySelector('.invalid-feedback') == null) {
+        addValidationError(title, "Title field is required");
+      }
+    } else {
+      removeValidationError(title);
+    }
+
+    // content or file required
+
+    if (content.value === "" && file.files.length === 0) {
+      isValid = false;
+      if (content.parentNode.querySelector('.invalid-feedback') == null) {
+        addValidationError(content, "Either Content or Files are required.");
+      }
+      if (file.parentNode.querySelector('.invalid-feedback') == null) {
+        addValidationError(file, "Either Content or Files are required.");
+      }
+    } else {
+      removeValidationError(content);
+      removeValidationError(file);
+    }
+
+    // max file size
+
+    if (!(file.files.length === 0) && file.files[0].size > 128000) {
+      isValid = false;
+      if (file.parentNode.querySelector('.invalid-feedback') == null) {
+        addValidationError(file, "Only Files up to 128 kB are Supported!");
+      }
+    } else {
+      removeValidationError(file);
+    }
+
+    // url schema validation
+    let urlRegex = new RegExp(
+        "((http|https)\\/\\/)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)")
+    urls.forEach(url => {
+      if (!urlRegex.test(url.value)) {
+        console.log("valid")
+        if (url.parentNode.querySelector(".invalid-feedback") == null) {
+          addValidationError(url,
+              "Please insert URLs in the following Scheme: http://www.example.com .")
+        }
+      } else {
+        removeValidationError(url);
+      }
+
+    });
+
+    return isValid;
+  }
+
+  /**
+   * Adds a div containing the Error text for a given node to the parent of this node.
+   * @param node to which the error belongs
+   * @param errorText text of the error
+   */
+  function addValidationError(node, errorText) {
+    let errorDiv = document.createElement("div");
+    errorDiv.classList.add("invalid-feedback");
+    errorDiv.innerHTML = errorText;
+
+    node.classList.add("is-invalid");
+    node.parentNode.appendChild(errorDiv);
+  }
+
+  /**
+   * Removes the div containing the error for the given node
+   * @param node
+   */
+  function removeValidationError(node) {
+    if (node != null) {
+      node.classList.remove('is-invalid');
+      let queryNode = node.parentNode.querySelector('.invalid-feedback');
+      if (queryNode != null) {
+        queryNode.remove();
+      }
+    }
   }
 </script>
 {{> footer}}

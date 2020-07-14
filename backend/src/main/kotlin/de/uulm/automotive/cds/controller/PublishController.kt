@@ -21,6 +21,11 @@ import java.time.LocalDateTime
 @RequestMapping("/publish")
 class PublishController(private val messageRepository: MessageRepository, private val topicRepository: TopicRepository, private val propertyRepository: PropertyRepository, private val messageService: MessageService) {
 
+    final val regexUrl: String = "[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)";
+    final val regexUrlWithoutProtocol: Regex = Regex("(www\\.)?$regexUrl")
+    final val regexUrlHttp: Regex = Regex("http?:\\/\\/(www\\.)?$regexUrl")
+    final val regexUrlHttps: Regex = Regex("https?:\\/\\/(www\\.)?$regexUrl")
+
     /**
      * Returns a view to create a new message.
      *
@@ -71,10 +76,24 @@ class PublishController(private val messageRepository: MessageRepository, privat
      */
     @PostMapping()
     fun postMessage(message: Message, @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) messagestarttime: LocalDateTime?, model: Model, @RequestParam("file") file: MultipartFile?, @RequestParam("urls") urls: Array<String>?): String {
+        var hasErrors = false
+
         message.attachment = file?.bytes
         message.links = mutableListOf()
         urls?.forEach {
-            message.links!!.add(URL(it))
+            if (it.contains(regexUrlWithoutProtocol)) {
+                if(it.matches(regexUrlWithoutProtocol)) {
+                    message.links!!.add(URL("http://" + it))
+                } else if (it.matches(regexUrlHttp) || it.matches(regexUrlHttps)) {
+                    message.links!!.add(URL(it))
+                } else {
+                    model["hasUrlError"] = true
+                    hasErrors = true
+                }
+            } else {
+                model["hasUrlError"] = true
+                hasErrors = true
+            }
         }
 
         if (messagestarttime == null) {
@@ -85,9 +104,34 @@ class PublishController(private val messageRepository: MessageRepository, privat
             message.starttime = messagestarttime
             message.isSent = false
         }
-        val savedMessage = messageRepository.save(message)
+
         model["title"] = "Messages"
+        model["message"] = message.render()
+
+        if (message.sender == "") {
+            model["hasSenderError"] = true
+            hasErrors = true
+        }
+        if (message.title == "") {
+            model["hasTitleError"] = true
+            hasErrors = true
+        }
+        if (message.topic == "" && (message.properties == null || message.properties!!.isEmpty())) {
+            model["hasTopicPropertiesError"] = true
+            hasErrors = true
+        }
+        if (message.content == "" && message.attachment?.isEmpty() == true) {
+            model["hasContentError"] = true
+        }
+
+        if (hasErrors) {
+            return "create-message"
+        }
+
+
+        val savedMessage = messageRepository.save(message)
         model["message"] = savedMessage.render()
+
         return "message"
     }
 
