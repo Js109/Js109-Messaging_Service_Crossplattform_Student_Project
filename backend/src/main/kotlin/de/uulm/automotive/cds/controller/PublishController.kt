@@ -21,7 +21,7 @@ import java.time.LocalDateTime
 @RequestMapping("/publish")
 class PublishController(private val messageRepository: MessageRepository, private val topicRepository: TopicRepository, private val propertyRepository: PropertyRepository, private val messageService: MessageService) {
 
-    final val regexUrl: String = "[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)";
+    final val regexUrl: String = "[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=,!]*)"
     final val regexUrlWithoutProtocol: Regex = Regex("(www\\.)?$regexUrl")
     final val regexUrlHttp: Regex = Regex("http?:\\/\\/(www\\.)?$regexUrl")
     final val regexUrlHttps: Regex = Regex("https?:\\/\\/(www\\.)?$regexUrl")

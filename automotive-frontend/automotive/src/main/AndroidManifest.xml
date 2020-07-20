@@ -34,6 +34,10 @@
             android:name=".rabbitmq.RabbitMQService"
             android:enabled="true"
             android:exported="true" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCdP9Z5FYGgS10fS_aV_vzt5uuXDzc5vS4" />
     </application>
 
 </manifest>
