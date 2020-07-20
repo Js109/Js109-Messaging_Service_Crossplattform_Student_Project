@@ -12,6 +12,9 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.VolleyError
+import com.android.volley.toolbox.BaseHttpStack
+import de.uulm.automotiveuulmapp.httpHandling.RestCallHelper
+import de.uulm.automotiveuulmapp.topic.Callback
 import de.uulm.automotiveuulmapp.topic.TopicModel
 import org.json.JSONArray
 import org.json.JSONObject
@@ -22,7 +25,7 @@ import org.json.JSONObject
  * @param fragment TopicFragment the RecyclerView is placed in. Needed to access preferences.
  * @param searchView SearchView whose query is used to filter the topics in the RecyclerView. Note that the firing of filter() must manually be set in the onQueryTextListener of the SearchView.
  */
-class TopicAdapter(private val fragment: TopicFragment, private val searchView: SearchView) :
+class TopicAdapter(private val fragment: TopicFragment, private val searchView: SearchView, private val httpStack: BaseHttpStack? = null) :
     RecyclerView.Adapter<TopicAdapter.TopicViewHolder>() {
 
     init {
@@ -32,7 +35,7 @@ class TopicAdapter(private val fragment: TopicFragment, private val searchView: 
     /**
      * List containing all currently available topics in the backend
      */
-    private var topicList: MutableList<TopicModel> = ArrayList()
+    public var topicList: MutableList<TopicModel> = ArrayList()
 
     /**
      * List containing all topics that should be currently displayed by the RecyclerView
@@ -46,33 +49,37 @@ class TopicAdapter(private val fragment: TopicFragment, private val searchView: 
     private fun loadTopics() {
         val url = ApplicationConstants.ENDPOINT_TOPIC
 
-        (fragment.activity as SubscribeActivity).callRestEndpoint(
+        val restCallHelper = RestCallHelper(null)
+        restCallHelper.callRestEndpoint(
             url,
             Request.Method.GET,
-            { response: JSONObject ->
-                val jsonArray = JSONArray(response.get("array").toString())
-                for (i in 0 until jsonArray.length()) {
-                    val element: JSONObject = jsonArray.optJSONObject(i)
-                    val tags: ArrayList<String> = ArrayList()
-                    for (tag in 0 until element.getJSONArray("tags").length()) {
-                        tags.add(element.getJSONArray("tags").get(tag) as String)
+            object: Callback {
+                override fun onSuccess(response: JSONObject) {
+                    val jsonArray = JSONArray(response.get("array").toString())
+                    for (i in 0 until jsonArray.length()) {
+                        val element: JSONObject = jsonArray.optJSONObject(i)
+                        val tags: ArrayList<String> = ArrayList()
+                        for (tag in 0 until element.getJSONArray("tags").length()) {
+                            tags.add(element.getJSONArray("tags").get(tag) as String)
+                        }
+                        val topic = TopicModel(
+                            element.getLong("id"),
+                            element.getString("title"),
+                            element.getString("binding"),
+                            element.getString("description"),
+                            tags.toTypedArray(),
+                            false
+                        )
+                        topic.subscribed = loadTopicIsSubscribed(topic)
+                        topicList.add(topic)
                     }
-                    val topic = TopicModel(
-                        element.getLong("id"),
-                        element.getString("title"),
-                        element.getString("binding"),
-                        element.getString("description"),
-                        tags.toTypedArray(),
-                        false
-                    )
-                    topic.subscribed = loadTopicIsSubscribed(topic)
-                    topicList.add(topic)
+                    filter()
                 }
-                filter()
-            },
-            { error: VolleyError ->
-                Log.e("Topic", "Failed to load topics")
-            })
+
+                override fun onFailure(volleyError: VolleyError) {
+                    TODO("Not yet implemented")
+                }
+            }, context = fragment.mContext, httpStack = httpStack)
     }
 
     /**

@@ -35,12 +35,18 @@ android {
             abortOnError false
         }
     }
+    testOptions {
+        unitTests.includeAndroidResources = true
+        unitTests.returnDefaultValues = true //required because of "Method ... not mocked" exception, see http://tools.android.com/tech-docs/unit-testing-support#TOC-Method-...-not-mocked.-
+    }
+
 // To inline the bytecode built with JVM target 1.8 into
 // bytecode that is being built with JVM target 1.6. (e.g. navArgs)
 
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    useLibrary 'org.apache.http.legacy'
 }
 
 repositories {
@@ -60,6 +66,11 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
     testImplementation 'junit:junit:4.12'
+    //Mockito framework
+    testImplementation 'org.mockito:mockito-core:1.10.19'
+    testImplementation 'androidx.test:core:1.2.0'
+    testImplementation 'org.json:json:20090211'
+
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     // Need for Android GUI tests
     androidTestImplementation 'androidx.test:runner:1.1.0'

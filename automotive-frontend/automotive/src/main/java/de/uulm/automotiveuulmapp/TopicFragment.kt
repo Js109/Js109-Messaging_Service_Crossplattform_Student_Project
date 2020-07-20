@@ -24,7 +24,7 @@ import org.json.JSONObject
 import org.w3c.dom.Text
 
 class TopicFragment : BaseFragment() {
-    private lateinit var mContext: Context
+    lateinit var mContext: Context
     private var mService: Messenger? = null
     private var bound: Boolean = false
 
