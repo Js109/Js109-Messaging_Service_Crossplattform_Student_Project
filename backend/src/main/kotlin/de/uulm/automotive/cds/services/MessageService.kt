@@ -34,7 +34,7 @@ class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelS
             channel.basicPublish("amq.topic", message.topic, null, messageSerializable.toByteArray())
         } else {
             val properties = createHeaderProps(message.properties)
-            channel.basicPublish("amq.headers", "", properties, message.content.toByteArray())
+            channel.basicPublish("amq.headers", "", properties, messageSerializable.toByteArray())
         }
 
         channel.close()
