@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.LatLng
@@ -29,38 +30,34 @@ class MessageContentActivity : AppCompatActivity() {
         titleView.setText(message.title)
         messageContentView.setText(message.messageText)
         // if attachment exists, decode base64-encoded byte array
-        message.attachment?.let {
+        val image = message.attachment
+        if(image != null && image.isNotEmpty()) {
             val bmp =
                 BitmapFactory.decodeByteArray(message.attachment, 0, message.attachment!!.size)
 
             val imageView = findViewById<ImageView>(R.id.imageView)
             imageView.setImageBitmap(bmp)
+        } else {
+            findViewById<ImageView>(R.id.imageView).visibility = View.GONE
         }
 
         val map =
             supportFragmentManager.findFragmentById(R.id.message_map) as SupportMapFragment
 
         val mapsUrl = message.links?.firstOrNull { isGoogleMapsUrl(it) }
-        mapsUrl?.let{
+        mapsUrl?.let {
             getCoordinatesFromMapsUrl(it)
         }?.let { coords ->
             map.getMapAsync { map ->
                 val location = LatLng(coords.first, coords.second)
-                map.addMarker(MarkerOptions().position(location).title(message.title))
+                val marker = map.addMarker(MarkerOptions().position(location).title(message.title))
+                marker.showInfoWindow()
                 map.moveCamera(CameraUpdateFactory.newLatLng(location))
-                map.moveCamera(CameraUpdateFactory.zoomTo(15.0f))
-
-                map.setOnMapClickListener {
-                    val gmmIntentUri =
-                        Uri.parse("google.navigation:q=${coords.first},${coords.second}")
-                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-                    mapIntent.setPackage("com.google.android.apps.maps")
-                    startActivity(mapIntent)
-                }
+                map.moveCamera(CameraUpdateFactory.zoomTo(17.0f))
             }
 
         } ?: run {
-            findViewById<LinearLayout>(R.id.map_container).visibility = View.GONE
+            findViewById<ConstraintLayout>(R.id.map_container).visibility = View.GONE
         }
 
     }
