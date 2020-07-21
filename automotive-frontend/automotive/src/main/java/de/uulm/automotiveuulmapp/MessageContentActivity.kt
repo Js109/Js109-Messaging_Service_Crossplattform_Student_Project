@@ -1,12 +1,9 @@
 package de.uulm.automotiveuulmapp
 
-import android.content.Intent
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -24,7 +21,7 @@ class MessageContentActivity : AppCompatActivity() {
         setContentView(R.layout.activity_message_content)
 
         val message = intent.getSerializableExtra("message") as MessageSerializable
-        val titleView = findViewById<TextView>(R.id.titleText)
+        val titleView = findViewById<TextView>(R.id.messageContentTitleText)
         val messageContentView = findViewById<TextView>(R.id.messageContentText)
 
         titleView.setText(message.title)
@@ -35,10 +32,10 @@ class MessageContentActivity : AppCompatActivity() {
             val bmp =
                 BitmapFactory.decodeByteArray(message.attachment, 0, message.attachment!!.size)
 
-            val imageView = findViewById<ImageView>(R.id.imageView)
+            val imageView = findViewById<ImageView>(R.id.messageContentImageView)
             imageView.setImageBitmap(bmp)
         } else {
-            findViewById<ImageView>(R.id.imageView).visibility = View.GONE
+            findViewById<ImageView>(R.id.messageContentImageView).visibility = View.GONE
         }
 
         val map =
@@ -57,7 +54,7 @@ class MessageContentActivity : AppCompatActivity() {
             }
 
         } ?: run {
-            findViewById<ConstraintLayout>(R.id.map_container).visibility = View.GONE
+            findViewById<ConstraintLayout>(R.id.message_map_container).visibility = View.GONE
         }
 
     }

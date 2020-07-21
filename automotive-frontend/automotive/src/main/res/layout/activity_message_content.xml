@@ -12,7 +12,7 @@
 
 
         <TextView
-            android:id="@+id/titleText"
+            android:id="@+id/messageContentTitleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
@@ -29,10 +29,10 @@
             android:textSize="36sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleText" />
+            app:layout_constraintTop_toBottomOf="@+id/messageContentTitleText" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/image_container"
+            android:id="@+id/message_content_image_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -44,7 +44,7 @@
             app:layout_constraintTop_toBottomOf="@+id/messageContentText">
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/messageContentImageView"
                 android:layout_width="0dp"
                 android:layout_height="500dp"
                 android:layout_marginBottom="16dp"
@@ -58,7 +58,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/map_container"
+            android:id="@+id/message_map_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -67,7 +67,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image_container">
+            app:layout_constraintTop_toBottomOf="@+id/message_content_image_container">
 
             <fragment
                 android:id="@+id/message_map"
