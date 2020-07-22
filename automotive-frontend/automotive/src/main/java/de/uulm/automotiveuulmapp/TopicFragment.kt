@@ -73,6 +73,7 @@ class TopicFragment : BaseFragment() {
         oemTopicCard.findViewById<TextView>(R.id.topicCardDescription).text =
             getString(R.string.oem_topic_card_description)
         val oemSwitch = oemTopicCard.findViewById<Switch>(R.id.topicCardSwitch)
+        oemSwitch.isChecked = true
         oemSwitch.isEnabled = false
         oemSwitch.setOnClickListener {
             Toast.makeText(
