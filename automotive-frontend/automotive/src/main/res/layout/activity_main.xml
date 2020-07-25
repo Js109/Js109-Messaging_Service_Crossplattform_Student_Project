@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
 
     <fragment
-        android:id="@+id/fragment2"
+        android:id="@+id/serviceFragment"
         android:name="de.uulm.automotiveuulmapp.ServiceFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,12 +16,13 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <fragment
-        android:id="@+id/fragment"
+        android:id="@+id/topicFragment"
         android:name="de.uulm.automotiveuulmapp.TopicFragment"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginStart="64dp"
         android:layout_marginEnd="64dp"
+        app:layout_constraintBottom_toTopOf="@+id/serviceFragment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
