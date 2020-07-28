@@ -15,7 +15,6 @@ build/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea
 *.iws
 *.iml
 *.ipr
@@ -30,3 +29,13 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Add multiple application properties ###
+!.idea
+/.idea/.name
+/.idea/gradle.xml
+/.idea/jarRepositories.xml
+/.idea/misc.xml
+/.idea/uiDesigner.xml
+/.idea/vcs.xml
+/.idea/workspace.xml

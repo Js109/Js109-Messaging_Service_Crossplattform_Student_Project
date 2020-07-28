@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="CdsApplication_Prod_Postgres" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="cds.main" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="de.uulm.automotive.cds.CdsApplication" />
+    <option name="ACTIVE_PROFILES" value="postgres,prod" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <envs>
+      <env name="DB_SOURCE" value="jdbc:postgresql://localhost:5432/postgres" />
+      <env name="DB_USERNAME" value="postgres" />
+      <env name="DB_PASSWORD" value="root" />
+    </envs>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

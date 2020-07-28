@@ -1,0 +1,126 @@
+swagger: "2.0"
+info:
+  description: "This is the backend application with the APIs of the Automotive App"
+  version: "1.0.0"
+  title: "Android Automotive Backend Documentation"
+  termsOfService: "http://swagger.io/terms/"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "localhost:8080"
+tags:
+  - name: "Administration - OEM-Web Frontend"
+    description: "Any operations possible as oem (via the web UI)"
+  - name: "Client - Android Automotive Application"
+    description: "Any operations possible as client (Android Automotive UI)"
+schemes:
+  - "http"
+paths:
+  /topic:
+    get:
+      tags:
+        - "Administration - OEM-Web Frontend"
+        - "Client - Android Automotive Application"
+      summary: "Retrieve all existing topics for Notifications."
+      description: "Retrieve all possible topics which messages can be published to or clients can subscribe to."
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Topic"
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Not Found"
+    post:
+      tags:
+        - "Client - Android Automotive Application"
+      summary: "Store new topic for the Notifications."
+      description: "Stores the topic given in the body. If the id is left out one will be generated."
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Client-Id which should subscribe to topic"
+          required: true
+          schema:
+            $ref: "#/definitions/Topic"
+      responses:
+        "200":
+          description: "successful operation"
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Not Found"
+  /signup:
+    post:
+      tags:
+        - "Client - Android Automotive Application"
+      summary: "SignUp a new Client"
+      description: "Signs a new Client Up to recieve Notifications."
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "The type of the device and an unique Identifier"
+          required: true
+          schema:
+            $ref: "#/definitions/SignUpInfo"
+      responses:
+        "200":
+          description: "successful operation"
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Not Found"
+definitions:
+  Topic:
+    type: "object"
+    properties:
+      title:
+        type: "string"
+        example: "Kultur"
+      binding:
+        type: "string"
+        example: "landschaft/Kultur"
+      description:
+        type: "string"
+        example: "Hier werden alle kulturbezogenen Themen veröffentlicht."
+      tags:
+        $ref: "#/definitions/Tag"
+  SignUpInfo:
+    type: "object"
+    properties:
+      deviceType:
+        type: string
+        example: "Audi A3"
+      signUpToken:
+        type: string
+        format: uuid
+        example: "bd604ecb-b6d3-49f7-a0f7-eaff204019be"
+
+
+  Tag:
+    type: "string"
+    format: "enum"
+    example:
+      - "Wandern"
+      - "Natur"
+
+
+  ApiResponse:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      type:
+        type: "string"
+      message:
+        type: "string"

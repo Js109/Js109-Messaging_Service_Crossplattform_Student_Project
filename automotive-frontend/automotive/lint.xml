@@ -1,0 +1,5 @@
+<lint>
+    <issue id="InvalidPackage">
+        <ignore path="*/com.rabbitmq/amqp-client/5.9.0/*"/>
+    </issue>
+</lint>
