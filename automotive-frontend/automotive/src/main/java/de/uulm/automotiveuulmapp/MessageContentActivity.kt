@@ -1,8 +1,10 @@
 package de.uulm.automotiveuulmapp
 
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -36,6 +38,13 @@ class MessageContentActivity : AppCompatActivity() {
             imageView.setImageBitmap(bmp)
         } else {
             findViewById<ImageView>(R.id.messageContentImageView).visibility = View.GONE
+        }
+
+        // button to return to topic selection activity (SubscribeActivity)
+        val closeButton: Button = findViewById<Button>(R.id.cose_message_button)
+        closeButton.setOnClickListener {
+            val intent = Intent(this, SubscribeActivity::class.java )
+            startActivity(intent)
         }
 
         val map =
