@@ -12,7 +12,6 @@ import de.uulm.automotiveuulmapp.TopicAdapter
 import de.uulm.automotiveuulmapp.TopicFragment
 import de.uulm.automotiveuulmapp.topic.Callback
 import de.uulm.automotiveuulmapp.topic.TopicModel
-import junit.framework.Assert.assertEquals
 import org.json.JSONObject
 import org.junit.BeforeClass
 import org.junit.Test
@@ -47,7 +46,7 @@ class CustomJsonRequestTest {
         val topicListField = TopicAdapter::class.java.getDeclaredField("topicList")
         topicListField.isAccessible = true
         val topicListFieldValue: List<TopicModel> = topicListField.get(topicAdapter) as List<TopicModel>;
-        assertEquals(referenceTopicList, topicListFieldValue)
+        assert(referenceTopicList == topicListFieldValue)
 
     }
 
