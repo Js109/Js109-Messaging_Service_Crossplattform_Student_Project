@@ -2,8 +2,12 @@ package de.uulm.automotiveuulmapp.httpHandling
 
 import android.content.Context
 import android.widget.SearchView
-import com.android.volley.toolbox.HttpResponse
-import com.nhaarman.mockitokotlin2.*
+import androidx.recyclerview.widget.RecyclerView
+import androidx.test.platform.app.InstrumentationRegistry
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.anyOrNull
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import de.uulm.automotiveuulmapp.TopicAdapter
 import de.uulm.automotiveuulmapp.TopicFragment
 import de.uulm.automotiveuulmapp.topic.Callback
@@ -12,8 +16,6 @@ import junit.framework.Assert.assertEquals
 import org.json.JSONObject
 import org.junit.BeforeClass
 import org.junit.Test
-import org.junit.runner.RunWith
-import java.io.ByteArrayInputStream
 
 class CustomJsonRequestTest {
     companion object{
@@ -22,53 +24,32 @@ class CustomJsonRequestTest {
         @JvmStatic
         @BeforeClass
         fun init(){
-            context = mock<Context>()
+            context = InstrumentationRegistry.getInstrumentation().targetContext
             topicFragment = TopicFragment()
             topicFragment.onAttach(context)
         }
     }
 
-//    @Test
-//    fun noTopicsAvailable() {
-//        val emptyTopicList = listOf<TopicModel>();
-//        val mockHttpStack = setUpMockResponse(emptyArray())
-//
-//        val topicAdapter:  TopicAdapter = TopicAdapter(topicFragment, SearchView(context), )
-//        val topicListField = TopicAdapter::class.java.getDeclaredField("topicList")
-//        topicListField.isAccessible = true
-//        val topicListFieldValue: List<TopicModel> = topicListField.get(topicAdapter) as List<TopicModel>;
-//        assertEquals(emptyTopicList, topicListFieldValue)
-//    }
 
 
     @Test
     fun oneTopicAvailable() {
         val referenceTopicList = listOf(TopicModel(1, "Test", "test/test", "description", arrayOf("test"), false))
-        val jsonObject = JSONObject("{\"id\": 1,\"binding\": \"test/test\",\"title\": \"test\",\"tags\": [\"test\"],\"description\": \"description\"}")
+        val jsonObject = JSONObject("{\"array\":[{\"id\": 1,\"binding\": \"test/test\",\"title\": \"test\",\"tags\": [\"test\"],\"description\": \"description\"}]}")
 
-        val mockRestCallHelper = mock<RestCallHelper>(verboseLogging = true)
-        whenever(mockRestCallHelper.callRestEndpoint(any(), any(), any(), any(), any())).then {
+        val mockRestCallHelper = mock<RestCallHelper>()
+        whenever(mockRestCallHelper.callRestEndpoint(any(), any(), any(), anyOrNull(), any())).then {
             (it.arguments[2] as Callback).onSuccess(jsonObject)
         }
 
-        val topicAdapter:  TopicAdapter = TopicAdapter(topicFragment, SearchView(context), mockRestCallHelper)
+        val recyclerView = RecyclerView(context)
+        val topicAdapter:  TopicAdapter = TopicAdapter(topicFragment, recyclerView, SearchView(context), mockRestCallHelper)
         val topicListField = TopicAdapter::class.java.getDeclaredField("topicList")
         topicListField.isAccessible = true
         val topicListFieldValue: List<TopicModel> = topicListField.get(topicAdapter) as List<TopicModel>;
         assertEquals(referenceTopicList, topicListFieldValue)
 
     }
-
-
-    private fun setUpMockResponse(data: Array<Any>): MockHttpStack{
-        val mockHttpStack = de.uulm.automotiveuulmapp.httpHandling.MockHttpStack()
-        val byteArray = prepareByteArray(data)
-        val dataIs = ByteArrayInputStream(byteArray)
-        val httpResponse = HttpResponse(200, listOf(), byteArray.size, dataIs)
-        mockHttpStack.setResponseToReturn(httpResponse)
-        return mockHttpStack
-    }
-
 
     private fun prepareByteArray(array: Array<Any>): ByteArray {
         /*val bos = ByteArrayOutputStream()

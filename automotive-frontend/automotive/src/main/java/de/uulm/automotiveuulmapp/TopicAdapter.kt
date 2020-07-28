@@ -25,22 +25,26 @@ import org.json.JSONObject
  * @param fragment TopicFragment the RecyclerView is placed in. Needed to access preferences.
  * @param searchView SearchView whose query is used to filter the topics in the RecyclerView. Note that the firing of filter() must manually be set in the onQueryTextListener of the SearchView.
  */
-class TopicAdapter(private val fragment: TopicFragment, private val searchView: SearchView, private val restCallHelper: RestCallHelper) :
+class TopicAdapter(private val fragment: TopicFragment, recyclerView: RecyclerView, private val searchView: SearchView, private val restCallHelper: RestCallHelper) :
     RecyclerView.Adapter<TopicAdapter.TopicViewHolder>() {
-
-    init {
-        loadTopics()
-    }
 
     /**
      * List containing all currently available topics in the backend
      */
-    public var topicList: MutableList<TopicModel> = ArrayList()
+    public var topicList: MutableList<TopicModel>
 
     /**
      * List containing all topics that should be currently displayed by the RecyclerView
      */
-    private var currentList: List<TopicModel> = emptyList()
+    private var currentList: List<TopicModel>
+
+    init {
+        recyclerView.adapter = this
+        topicList = ArrayList()
+        currentList = emptyList()
+        loadTopics()
+    }
+
 
     /**
      * Fetches the topics from the backend asynchronously and stores them in topicList.

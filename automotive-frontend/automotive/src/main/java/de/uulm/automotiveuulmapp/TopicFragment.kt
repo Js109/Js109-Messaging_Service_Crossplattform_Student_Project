@@ -86,11 +86,9 @@ class TopicFragment : BaseFragment() {
         oemTopicCard.setOnClickListener { oemSwitch.callOnClick() }
 
         val topicSearch = view.findViewById<SearchView>(R.id.topicSearch)
-        val topicAdapter = TopicAdapter(this, topicSearch, restCallHelper = RestCallHelper())
-        view.findViewById<RecyclerView>(R.id.topicsRecyclerView).apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = topicAdapter
-        }
+        val recyclerView = view.findViewById<RecyclerView>(R.id.topicsRecyclerView)
+        val topicAdapter = TopicAdapter(this, recyclerView, topicSearch, restCallHelper = RestCallHelper())
+        recyclerView.layoutManager = LinearLayoutManager(context)
         topicSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
