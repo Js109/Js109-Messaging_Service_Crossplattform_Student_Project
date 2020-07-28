@@ -9,7 +9,7 @@ import com.android.volley.toolbox.Volley
 import de.uulm.automotiveuulmapp.topic.Callback
 import org.json.JSONObject
 
-class RestCallHelper (private val httpStack: BaseHttpStack?) {
+open class RestCallHelper {
 
     /**
      * Helper function to send http-requests to the REST-Api
@@ -20,16 +20,15 @@ class RestCallHelper (private val httpStack: BaseHttpStack?) {
      * @param failureCallback Function that should be executed (with error object as param) when the http request fail
      * @param body The Object in Json-Format to be sent within the http-body
      */
-    fun callRestEndpoint(
+    open fun callRestEndpoint(
         url: String,
         httpMethod: Int,
         callback: Callback,
         body: JSONObject? = null,
-        context: Context,
-        httpStack: BaseHttpStack? = null
+        context: Context
     ) {
         // Instantiate the RequestQueue.
-        val queue = Volley.newRequestQueue(context, httpStack)
+        val queue = Volley.newRequestQueue(context)
 
         val customJsonRequest =
             CustomJsonRequest(httpMethod,

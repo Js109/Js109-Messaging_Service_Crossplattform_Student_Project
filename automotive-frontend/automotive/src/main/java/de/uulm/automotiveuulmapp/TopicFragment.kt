@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.VolleyError
+import de.uulm.automotiveuulmapp.httpHandling.RestCallHelper
 import de.uulm.automotiveuulmapp.rabbitmq.RabbitMQService
 import de.uulm.automotiveuulmapp.topic.TopicChange
 import de.uulm.automotiveuulmapp.topic.TopicModel
@@ -85,7 +86,7 @@ class TopicFragment : BaseFragment() {
         oemTopicCard.setOnClickListener { oemSwitch.callOnClick() }
 
         val topicSearch = view.findViewById<SearchView>(R.id.topicSearch)
-        val topicAdapter = TopicAdapter(this, topicSearch)
+        val topicAdapter = TopicAdapter(this, topicSearch, restCallHelper = RestCallHelper())
         view.findViewById<RecyclerView>(R.id.topicsRecyclerView).apply {
             layoutManager = LinearLayoutManager(context)
             adapter = topicAdapter
