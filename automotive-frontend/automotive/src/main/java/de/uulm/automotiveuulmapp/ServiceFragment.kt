@@ -112,7 +112,7 @@ class ServiceFragment : BaseFragment() {
         val json = JSONObject()
         json.put("signUpToken", UUID.randomUUID())
         json.put("deviceType", ApplicationConstants.DEVICE_TYPE)
-        val restCallHelper = RestCallHelper()
+        val restCallHelper = RestCallHelper(context)
         restCallHelper.callRestEndpoint(url, Request.Method.POST, object: Callback{
             override fun onSuccess(response: JSONObject) {
                 val signUpToken = UUID.fromString(response["signUpToken"] as String)
@@ -125,6 +125,6 @@ class ServiceFragment : BaseFragment() {
             override fun onFailure(volleyError: VolleyError) {
                 // TODO retry registration later
             }
-        }, body = json, context = mContext)
+        }, body = json)
     }
 }

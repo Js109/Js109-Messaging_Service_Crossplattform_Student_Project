@@ -66,8 +66,11 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
     testImplementation 'junit:junit:4.12'
+    testImplementation 'org.assertj:assertj-core:3.11.1'
     //Mockito framework
-    androidTestImplementation 'org.mockito:mockito-core:3.4.4'
+    testImplementation 'org.mockito:mockito-core:3.4.4'
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
+    androidTestImplementation 'org.mockito:mockito-android:3.4.4'
     androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
     testImplementation 'androidx.test:core:1.2.0'
     testImplementation 'org.json:json:20090211'

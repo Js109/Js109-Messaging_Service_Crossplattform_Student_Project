@@ -1,4 +1,4 @@
-package de.uulm.automotiveuulmapp
+package de.uulm.automotiveuulmapp.topicFragment
 
 import android.app.Activity
 import android.content.*
@@ -14,15 +14,11 @@ import android.widget.*
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.android.volley.Request
-import com.android.volley.VolleyError
+import de.uulm.automotiveuulmapp.BaseFragment
+import de.uulm.automotiveuulmapp.R
 import de.uulm.automotiveuulmapp.httpHandling.RestCallHelper
 import de.uulm.automotiveuulmapp.rabbitmq.RabbitMQService
 import de.uulm.automotiveuulmapp.topic.TopicChange
-import de.uulm.automotiveuulmapp.topic.TopicModel
-import org.json.JSONArray
-import org.json.JSONObject
-import org.w3c.dom.Text
 
 class TopicFragment : BaseFragment() {
     lateinit var mContext: Context
@@ -86,16 +82,23 @@ class TopicFragment : BaseFragment() {
         oemTopicCard.setOnClickListener { oemSwitch.callOnClick() }
 
         val topicSearch = view.findViewById<SearchView>(R.id.topicSearch)
+        val topicAdapter = TopicAdapter(
+            this,
+            topicSearch,
+            RestCallHelper(context)
+        )
         val recyclerView = view.findViewById<RecyclerView>(R.id.topicsRecyclerView)
-        val topicAdapter = TopicAdapter(this, recyclerView, topicSearch, restCallHelper = RestCallHelper())
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.apply {
+            adapter = topicAdapter
+            layoutManager = LinearLayoutManager(context)
+        }
         topicSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
 
             override fun onQueryTextChange(query: String?): Boolean {
-                topicAdapter.filter()
+                topicAdapter.notifyQueryChanged()
                 oemTopicCard.isVisible = query == null || query.isEmpty()
                 return true
             }
@@ -104,6 +107,7 @@ class TopicFragment : BaseFragment() {
 
         return view
     }
+
 
     /**
      * Invoking service to change topic subscriptions
