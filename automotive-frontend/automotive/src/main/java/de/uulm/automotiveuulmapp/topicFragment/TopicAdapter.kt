@@ -1,6 +1,9 @@
 package de.uulm.automotiveuulmapp.topicFragment
 
-import android.content.Context
+import android.content.SharedPreferences
+import android.os.Message
+import android.os.Messenger
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,28 +11,32 @@ import android.widget.SearchView
 import android.widget.Switch
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.android.volley.Request
-import com.android.volley.VolleyError
-import de.uulm.automotiveuulmapp.ApplicationConstants
 import de.uulm.automotiveuulmapp.R
 import de.uulm.automotiveuulmapp.httpHandling.RestCallHelper
-import de.uulm.automotiveuulmapp.topic.Callback
+import de.uulm.automotiveuulmapp.rabbitmq.RabbitMQService
+import de.uulm.automotiveuulmapp.topic.TopicChange
 import de.uulm.automotiveuulmapp.topic.TopicModel
-import org.json.JSONArray
-import org.json.JSONObject
 
 /**
  * Adapter that fills an RecyclerView with topic card views from a list of topics it gets from the backend.
- * This list can optionally be filtered by calling a search query.
- * @param fragment TopicFragment the RecyclerView is placed in. Needed to access preferences.
+ * This list can optionally be filtered by calling a search query.s.
  * @param searchView SearchView whose query is used to filter the topics in the RecyclerView. Note that the firing of filter() must manually be set in the onQueryTextListener of the SearchView.
+ * @param restCallHelper RestCallHelper used to fetch the topics from the backend
+ * @param preferences optional Preferences, that allow the Adapter to load the subscribed property of the topics
+ * @param messenger Messenger used to send subscription changes to the AMQPService
  */
-class TopicAdapter(private val fragment: TopicFragment, private val searchView: SearchView, restCallHelper: RestCallHelper) :
+class TopicAdapter(
+    private val searchView: SearchView,
+    restCallHelper: RestCallHelper,
+    private val preferences: SharedPreferences? = null,
+    private val messenger: Messenger? = null
+) :
     RecyclerView.Adapter<TopicAdapter.TopicViewHolder>() {
 
-    private val topicFetcher = TopicFetcher(restCallHelper, fragment.activity?.getPreferences(Context.MODE_PRIVATE)) {notifyQueryChanged()}
+    private var currentList = emptyList<TopicModel>()
 
-    private var currentList = topicFetcher.getTopics()
+    private val topicFetcher = TopicFetcher(restCallHelper, preferences) { notifyQueryChanged() }
+
 
     /**
      * Inflates the topic card layout to create the views in the RecyclerView.
@@ -70,8 +77,31 @@ class TopicAdapter(private val fragment: TopicFragment, private val searchView: 
     private fun topicCardSwitchChange(topic: TopicModel, isChecked: Boolean) {
         topic.subscribed = isChecked
         storeTopicIsSubscribed(topic, isChecked)
-        fragment.sendTopicSubscription(topic.binding, isChecked)
+        sendTopicSubscription(topic.binding, isChecked)
         notifyQueryChanged()
+    }
+
+    /**
+     * Invoking service to change topic subscriptions
+     *
+     * @param topicName Name of the topic of which the subscription status should be changed
+     * @param topicStatus If the subscription should be enabled or disabled
+     */
+    private fun sendTopicSubscription(topicName: String, topicStatus: Boolean) {
+        messenger?.send(
+            Message.obtain(
+                null,
+                RabbitMQService.MSG_CHANGE_TOPICS,
+                0,
+                0,
+                TopicChange(topicName, topicStatus)
+            )
+        )
+        if (topicStatus) {
+            Log.d("Topic", "Subscribing to topic" + topicName)
+        } else {
+            Log.d("Topic", "Unsubscribing from topic" + topicName)
+        }
     }
 
     /**
@@ -80,7 +110,7 @@ class TopicAdapter(private val fragment: TopicFragment, private val searchView: 
      * @param subscribed Whether the subscription is active or not
      */
     private fun storeTopicIsSubscribed(topic: TopicModel, subscribed: Boolean) {
-        fragment.activity?.getPreferences(Context.MODE_PRIVATE)?.edit()?.apply {
+        preferences?.edit()?.apply {
             putBoolean("topic/${topic.id}", subscribed)
             apply()
         }

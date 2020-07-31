@@ -29,6 +29,5 @@ object TopicFilter {
             }
             return titleMatch.sortedBy { it.title } + descriptionMatch.sortedBy { it.title } + tagMatch.sortedBy { it.title }
         }
-
     }
 }

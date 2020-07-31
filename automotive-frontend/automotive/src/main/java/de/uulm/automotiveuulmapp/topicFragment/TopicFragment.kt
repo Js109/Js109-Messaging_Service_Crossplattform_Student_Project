@@ -83,9 +83,10 @@ class TopicFragment : BaseFragment() {
 
         val topicSearch = view.findViewById<SearchView>(R.id.topicSearch)
         val topicAdapter = TopicAdapter(
-            this,
             topicSearch,
-            RestCallHelper(context)
+            RestCallHelper(context),
+            activity?.getPreferences(Context.MODE_PRIVATE),
+            mService
         )
         val recyclerView = view.findViewById<RecyclerView>(R.id.topicsRecyclerView)
         recyclerView.apply {
@@ -106,29 +107,5 @@ class TopicFragment : BaseFragment() {
         })
 
         return view
-    }
-
-
-    /**
-     * Invoking service to change topic subscriptions
-     *
-     * @param topicName Name of the topic of which the subscription status should be changed
-     * @param topicStatus If the subscription should be enabled or disabled
-     */
-    fun sendTopicSubscription(topicName: String, topicStatus: Boolean) {
-        mService?.send(
-            Message.obtain(
-                null,
-                RabbitMQService.MSG_CHANGE_TOPICS,
-                0,
-                0,
-                TopicChange(topicName, topicStatus)
-            )
-        )
-        if (topicStatus) {
-            Log.d("Topic", "Subscribing to topic" + topicName)
-        } else {
-            Log.d("Topic", "Unsubscribing from topic" + topicName)
-        }
     }
 }
