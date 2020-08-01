@@ -17,7 +17,9 @@ import com.android.volley.Request
 import com.android.volley.VolleyError
 import de.uulm.automotiveuulmapp.data.RegistrationData
 import de.uulm.automotiveuulmapp.data.RegistrationDatabase
+import de.uulm.automotiveuulmapp.httpHandling.RestCallHelper
 import de.uulm.automotiveuulmapp.rabbitmq.RabbitMQService
+import de.uulm.automotiveuulmapp.topic.Callback
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.util.*
@@ -110,16 +112,19 @@ class ServiceFragment : BaseFragment() {
         val json = JSONObject()
         json.put("signUpToken", UUID.randomUUID())
         json.put("deviceType", ApplicationConstants.DEVICE_TYPE)
-        (activity as SubscribeActivity).callRestEndpoint(url, Request.Method.POST, { response ->
-            val signUpToken = UUID.fromString(response["signUpToken"] as String)
-            val queueId = UUID.fromString(response["queueID"] as String)
-            launch {
-                db.getRegistrationDAO().insert(RegistrationData(signUpToken, queueId))
+        val restCallHelper = RestCallHelper(context)
+        restCallHelper.callRestEndpoint(url, Request.Method.POST, object: Callback{
+            override fun onSuccess(response: JSONObject) {
+                val signUpToken = UUID.fromString(response["signUpToken"] as String)
+                val queueId = UUID.fromString(response["queueID"] as String)
+                launch {
+                    db.getRegistrationDAO().insert(RegistrationData(signUpToken, queueId))
+                }
+                callback(queueId)
             }
-            callback(queueId)
-        },
-        {
-           error: VolleyError -> // TODO retry registration later
+            override fun onFailure(volleyError: VolleyError) {
+                // TODO retry registration later
+            }
         }, body = json)
     }
 }

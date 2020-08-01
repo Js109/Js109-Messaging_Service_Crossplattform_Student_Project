@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/topicFragment"
-        android:name="de.uulm.automotiveuulmapp.TopicFragment"
+        android:name="de.uulm.automotiveuulmapp.topicFragment.TopicFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginStart="64dp"

@@ -15,4 +15,20 @@ data class TopicModel(
     var description: String,
     var tags: Array<String>,
     var subscribed: Boolean
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as TopicModel
+
+        if (id != other.id) return false
+        if (title != other.title) return false
+        if (binding != other.binding) return false
+        if (description != other.description) return false
+        if (!tags.contentEquals(other.tags)) return false
+        if (subscribed != other.subscribed) return false
+
+        return true
+    }
+}
