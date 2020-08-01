@@ -32,8 +32,14 @@ class Message(
         @ElementCollection(fetch = FetchType.LAZY)
         var properties: MutableList<String>?,
         @Lob
-        @Column(name = "attachment", columnDefinition = "BLOB")
         var attachment: ByteArray?,
         @ElementCollection(fetch = FetchType.LAZY)
-        var links: MutableList<URL>?
-)
+        var links: MutableList<URL>?,
+        lat: Long?,
+        lng: Long?,
+        radius: Int?
+) {
+        @OneToOne
+        val locationData: LocationData? = if(lat != null && lng != null && radius != null) LocationData(null,lat, lng, radius) else null;
+
+}

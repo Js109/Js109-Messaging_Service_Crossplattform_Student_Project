@@ -1,0 +1,21 @@
+<div class="location-boundaries">
+    <a class="btn btn-primary collapse-button" data-toggle="collapse" href="#locationCollapse" role="button" aria-expanded="false" aria-controls="locationCollapse">Location boundaries</a>
+    <div class="collapse" id="locationCollapse">
+        <div class="form-group row location-form-group">
+            <div class="col-xs-2">
+                <label for="latTextField">Latitude</label>
+                <input type="number" step="0.00000001" class="form-control" name="lat" id="latTextField" placeholder="lat" size="10" maxlength="10" onChange="onLatLngChange()">
+            </div>
+            <div class="col-xs-2">
+                <label for="lngTextField">Longitude</label>
+                <input type="number" step="0.00000001" class="form-control" name="lng" id="lngTextField" placeholder="lng" size="10" maxlength="10" onChange="onLatLngChange()">
+            </div>
+        </div>
+        <div class="radius-selection">
+            <div class="slidecontainer">
+                <input type="range" min="10" max="100" value="50" class="slider" id="radiusRange" name="radius">
+            </div>
+            <span id="radius-value"></span>
+        </div>
+    </div>
+</div>
