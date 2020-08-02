@@ -35,10 +35,6 @@ class Message(
         var attachment: ByteArray?,
         @ElementCollection(fetch = FetchType.LAZY)
         var links: MutableList<URL>?,
-        lat: Long?,
-        lng: Long?,
-        radius: Int?
-) {
         @OneToOne(cascade = [CascadeType.ALL])
-        val locationData: LocationData? = if(lat != null && lng != null && radius != null) LocationData(null,lat, lng, radius) else null
-}
+        var locationData: LocationData?
+)
