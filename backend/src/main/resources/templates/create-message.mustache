@@ -172,19 +172,15 @@
     // topic or properties required
 
     if (topic.value === "") {
-      let hasProperty = false;
+      let hasSelectedProperty = false;
       if (properties != null) {
-        if (properties.length === undefined) {
-          hasProperty = properties.checked;
-        } else {
-          properties.forEach(option => {
-            if (option.checked) {
-              hasProperty = true;
-            }
-          });
-        }
+        properties.forEach(option => {
+          if (option.checked) {
+            hasSelectedProperty = true;
+          }
+        });
       }
-      if (!hasProperty) {
+      if (!hasSelectedProperty) {
         isValid = false;
 
         if (properties != null) {
@@ -209,8 +205,10 @@
       removeValidationError(topic);
 
       if (properties != null) {
-        removeValidationError(properties);
-        if (properties.length === undefined) {
+          properties.forEach(option => {
+              removeValidationError(option);
+          });
+          if (properties.length === undefined) {
           properties.classList.remove("is-invalid");
         } else {
           properties.forEach(option => {
