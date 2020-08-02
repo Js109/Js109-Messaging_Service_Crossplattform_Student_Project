@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
-/**s
+/**
  * A Service class that takes care of all actions that execute on a scheduled time.
  *
  * @property messageRepository
