@@ -23,13 +23,11 @@ import de.uulm.automotiveuulmapp.topic.TopicModel
  * @param searchView SearchView whose query is used to filter the topics in the RecyclerView. Note that the firing of filter() must manually be set in the onQueryTextListener of the SearchView.
  * @param restCallHelper RestCallHelper used to fetch the topics from the backend
  * @param preferences optional Preferences, that allow the Adapter to load the subscribed property of the topics
- * @param messenger Messenger used to send subscription changes to the AMQPService
  */
 class TopicAdapter(
     private val searchView: SearchView,
     restCallHelper: RestCallHelper,
-    private val preferences: SharedPreferences? = null,
-    private val messenger: Messenger? = null
+    private val preferences: SharedPreferences? = null
 ) :
     RecyclerView.Adapter<TopicAdapter.TopicViewHolder>() {
 
@@ -37,6 +35,7 @@ class TopicAdapter(
 
     private val topicFetcher = TopicFetcher(restCallHelper, preferences) { notifyQueryChanged() }
 
+    var messenger: Messenger? = null
 
     /**
      * Inflates the topic card layout to create the views in the RecyclerView.
