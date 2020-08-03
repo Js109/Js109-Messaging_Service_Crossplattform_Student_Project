@@ -24,6 +24,7 @@ class TopicFragment : BaseFragment() {
     lateinit var mContext: Context
     private var mService: Messenger? = null
     private var bound: Boolean = false
+    private var topicAdapter: TopicAdapter? = null
 
     private val mConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -33,6 +34,7 @@ class TopicFragment : BaseFragment() {
             // service using a Messenger, so here we get a client-side
             // representation of that from the raw IBinder object.
             mService = Messenger(service)
+            topicAdapter?.messenger = mService
             bound = true
         }
 
@@ -85,8 +87,7 @@ class TopicFragment : BaseFragment() {
         val topicAdapter = TopicAdapter(
             topicSearch,
             RestCallHelper(context),
-            activity?.getPreferences(Context.MODE_PRIVATE),
-            mService
+            activity?.getPreferences(Context.MODE_PRIVATE)
         )
         val recyclerView = view.findViewById<RecyclerView>(R.id.topicsRecyclerView)
         recyclerView.apply {
@@ -105,6 +106,7 @@ class TopicFragment : BaseFragment() {
             }
 
         })
+        this.topicAdapter = topicAdapter
 
         return view
     }
