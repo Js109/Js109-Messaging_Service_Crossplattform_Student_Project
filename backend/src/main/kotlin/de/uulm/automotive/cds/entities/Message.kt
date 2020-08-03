@@ -41,5 +41,4 @@ class Message(
 ) {
         @OneToOne(cascade = [CascadeType.ALL])
         val locationData: LocationData? = if(lat != null && lng != null && radius != null) LocationData(null,lat, lng, radius) else null
-
 }
