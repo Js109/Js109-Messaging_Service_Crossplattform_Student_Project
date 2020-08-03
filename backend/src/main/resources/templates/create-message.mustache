@@ -317,6 +317,16 @@
       removeValidationError(lat.parentNode)
     }
 
+    // if location data tab is collapsed, content will not be sent.
+    if(isValid){
+        var locationDataCollapsed = document.getElementById("collapseButton").classList.contains("collapsed")
+        if(locationDataCollapsed){
+            document.getElementById("latTextField").disabled = true;
+            document.getElementById("lngTextField").disabled = true;
+            document.getElementById("radiusRange").disabled = true;
+        }
+    }
+
     return isValid;
   }
 
