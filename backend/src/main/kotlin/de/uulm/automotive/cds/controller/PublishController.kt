@@ -76,7 +76,7 @@ class PublishController(private val messageRepository: MessageRepository, privat
      * @return String name of the view
      */
     @PostMapping()
-    fun postMessage(@ModelAttribute("message") message: Message, @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) messagestarttime: LocalDateTime?, model: Model, @RequestParam("file") file: MultipartFile?, @RequestParam("urls") urls: Array<String>?, lat: Long?, lng: Long?, radius: Int?): String {
+    fun postMessage(@ModelAttribute("message") message: Message, @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) messagestarttime: LocalDateTime?, model: Model, @RequestParam("file") file: MultipartFile?, @RequestParam("urls") urls: Array<String>?, lat: Double?, lng: Double?, radius: Int?): String {
         var hasErrors = false
 
         message.attachment = file?.bytes
