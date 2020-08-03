@@ -10,16 +10,13 @@
     <div class="form-group">
       <label for="topic">Topic:</label>
       <select
-          class="browser-default custom-select {{#hasTopicPropertiesError}}is-invalid{{/hasTopicPropertiesError}}"
+          class="browser-default custom-select"
           name="topic" id="topic">
         <option selected></option>
         {{#topics}}
           <option value="{{binding}}">{{title}}</option>
         {{/topics}}
       </select>
-      {{#hasTopicPropertiesError}}
-        <div class="invalid-feedback">Either Topics or Properties are required.</div>
-      {{/hasTopicPropertiesError}}
     </div>
     <div class="form-group">
       <label>Property:</label>
@@ -27,40 +24,28 @@
         <div class="form-check">
 
           <input
-              class="form-check-input {{#hasTopicPropertiesError}}is-invalid{{/hasTopicPropertiesError}}"
+              class="form-check-input"
               name="properties" type="checkbox" value="{{binding}}" id="checkbox{{id}}"/>
           <label class="form-check-label" for="checkbox{{id}}">
             {{name}}
           </label>
         </div>
       {{/properties}}
-      {{#hasTopicPropertiesError}}
-        <div class="invalid-feedback">Either Topics or Properties are required.</div>
-      {{/hasTopicPropertiesError}}
     </div>
     <div class="form-group">
       <label for="sender">Sender:</label>
-      <input class="form-control {{#hasSenderError}}is-invalid{{/hasSenderError}}" name="sender"
+      <input class="form-control" name="sender"
              id="sender" placeholder="Sender">
-      {{#hasSenderError}}
-        <div class="invalid-feedback">Sender field is required.</div>
-      {{/hasSenderError}}
     </div>
     <div class="form-group">
       <label for="title">Title:</label>
-      <input class="form-control {{#hasTitleError}}is-invalid{{/hasTitleError}}" name="title"
+      <input class="form-control" name="title"
              id="title" placeholder="Title">
-      {{#hasTitleError}}
-        <div class="invalid-feedback">Title field is required.</div>
-      {{/hasTitleError}}
     </div>
     <div class="form-group">
       <label for="content">Message content:</label>
-      <textarea class="form-control {{#hasContentError}}is-invalid{{/hasContentError}}"
+      <textarea class="form-control"
                 name="content" id="content" placeholder="Content"></textarea>
-      {{#hasContentError}}
-        <div class="invalid-feedback">Either Content or Files are required.</div>
-      {{/hasContentError}}
     </div>
     <div class="form-group">
       <label for="messagestarttime">Send message at:</label>
@@ -70,9 +55,6 @@
     <div class="custom-file">
       <input type="file" id="fileSelection" name="file" class="custom-file-input">
       <label class="custom-file-label" for="customFile">Choose file</label>
-      {{#hasContentError}}
-        <div class="invalid-feedback">Either Content or Files are required.</div>
-      {{/hasContentError}}
     </div>
     <div class="form-group">
       <div class="container" id="url-list">
@@ -81,11 +63,6 @@
           <span>Add URL:</span>
         </button>
       </div>
-      {{#hasUrlError}}
-        <div class="invalid-feedback">Please insert URLs in the following Scheme:
-          http://www.example.com .
-        </div>
-      {{/hasUrlError}}
     </div>
     {{> location-data}}
     <button type="button" onclick="document.getElementById('fileSelection').value = ''"
@@ -96,7 +73,7 @@
   <script>
     // Add the following code if you want the name of the file appear on select
     $(".custom-file-input").on("change", function () {
-      var fileName = $(this).val().split("\\").pop();
+      let fileName = $(this).val().split("\\").pop();
       $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
     });
   </script>
@@ -104,6 +81,51 @@
 
 <script src="js/slider.js"></script>
 <script>
+
+  function initialValidationWarnings() {
+
+    let form = document.forms["message"];
+    let topic = form["topic"];
+    let sender = form["sender"];
+    let title = form["title"];
+    let content = form["content"];
+    let file = document.getElementById("fileSelection");
+    let urls = document.getElementById("url-list");
+    let lat = form["latTextField"];
+
+    {{#hasTopicPropertiesError}}
+      addValidationError(topic, "Either Topics or Properties are required.");
+    {{/hasTopicPropertiesError}}
+
+    {{#hasSenderError}}
+      addValidationError(sender, "Sender field is required");
+    {{/hasSenderError}}
+
+    {{#hasTitleError}}
+      addValidationError(title, "Title field is required");
+    {{/hasTitleError}}
+
+    {{#hasContentError}}
+      addValidationError(content, "Either Content or Files are required.");
+      addValidationError(file, "Either Content or Files are required.");
+    {{/hasContentError}}
+
+    {{#coordValueRangeError}}
+      addValidationError(lat.parentNode, "Please check your coordinate values!");
+    {{/coordValueRangeError}}
+
+    {{#onlyOneCoordError}}
+      addValidationError(lat.parentNode, "Please enter both coordinate values!")
+    {{/onlyOneCoordError}}
+
+    {{#hasUrlError}}
+      addValidationError(urls,
+          "Please insert URLs in the following Scheme: http://www.example.com .")
+    {{/hasUrlError}}
+  }
+
+  initialValidationWarnings()
+
   let cnt = 0;
 
   function addItem() {
@@ -205,10 +227,10 @@
       removeValidationError(topic);
 
       if (properties != null) {
-          properties.forEach(option => {
-              removeValidationError(option);
-          });
-          if (properties.length === undefined) {
+        properties.forEach(option => {
+          removeValidationError(option);
+        });
+        if (properties.length === undefined) {
           properties.classList.remove("is-invalid");
         } else {
           properties.forEach(option => {
@@ -283,16 +305,16 @@
     });
 
     // check for valid boundaries and completeness (lat and long entered)
-    if(lat.value < -90 || lat.value > 90 || lng.value < -180 || lng.value > 180){
-        removeValidationError(lat.parentNode)
-        isValid = false;
-        addValidationError(lat.parentNode, "Please check your coordinate values!");
-    } else if((lat.value === "" && lng.value !== "") || (lat.value !== "" && lng.value === "")) {
-        removeValidationError(lat.parentNode)
-        isValid = false;
-        addValidationError(lat.parentNode, "Please enter both coordinate values!")
+    if (lat.value < -90 || lat.value > 90 || lng.value < -180 || lng.value > 180) {
+      removeValidationError(lat.parentNode)
+      isValid = false;
+      addValidationError(lat.parentNode, "Please check your coordinate values!");
+    } else if ((lat.value === "" && lng.value !== "") || (lat.value !== "" && lng.value === "")) {
+      removeValidationError(lat.parentNode)
+      isValid = false;
+      addValidationError(lat.parentNode, "Please enter both coordinate values!")
     } else {
-        removeValidationError(lat.parentNode)
+      removeValidationError(lat.parentNode)
     }
 
     return isValid;

@@ -63,8 +63,7 @@ class PublishController(private val messageRepository: MessageRepository, privat
             endtime,
             isSent,
             properties,
-            id,
-            locationData
+            id
     )
 
     /**
@@ -141,7 +140,6 @@ class PublishController(private val messageRepository: MessageRepository, privat
 
 
         if (hasErrors) {
-            setModelMessage(model)
             return messageForm(model)
         }
 
@@ -150,10 +148,6 @@ class PublishController(private val messageRepository: MessageRepository, privat
         model["message"] = savedMessage.render()
 
         return "message"
-    }
-
-    private fun setModelMessage(model: Model) {
-
     }
 
     /**
@@ -166,7 +160,6 @@ class PublishController(private val messageRepository: MessageRepository, privat
             val endtime: LocalDateTime?,
             val isSent: Boolean?,
             val properties: MutableList<String>?,
-            val id: Long?,
-            val locationData: LocationData?
+            val id: Long?
     )
 }
