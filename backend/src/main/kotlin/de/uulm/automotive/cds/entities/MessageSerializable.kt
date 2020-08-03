@@ -16,13 +16,14 @@ import java.net.URL
  * @property attachment Image which should be contained in the message
  * @property links Links used in the message
  */
-class MessageSerializable (
-        var sender: String,
-        var title: String,
-        var messageText: String,
-        var attachment: ByteArray?,
-        var links: Array<URL>?
-): Serializable {
+class MessageSerializable(
+        val sender: String,
+        val title: String,
+        val messageText: String,
+        val attachment: ByteArray?,
+        val links: Array<URL>?,
+        val locationData: LocationDataSerializable?
+) : Serializable {
     /**
      * This converts a message object into a serialized byte array to be able to transfer it over amqp message
      *
@@ -30,17 +31,14 @@ class MessageSerializable (
      */
     fun toByteArray(): ByteArray {
         val bos = ByteArrayOutputStream()
+        val out = ObjectOutputStream(bos)
+        out.writeObject(this)
+        out.flush()
         try {
-            val out = ObjectOutputStream(bos)
-            out.writeObject(this)
-            out.flush()
-            return bos.toByteArray()
-        } finally {
-            try {
-                bos.close()
-            } catch (ex: IOException) {
-                // ignore close exception
-            }
+            out.close()
+        } catch (err: IOException) {
+            // ignore close exception
         }
+        return bos.toByteArray()
     }
 }
