@@ -35,8 +35,8 @@ class Message(
         var attachment: ByteArray?,
         @ElementCollection(fetch = FetchType.LAZY)
         var links: MutableList<URL>?,
-        lat: Long?,
-        lng: Long?,
+        lat: Double?,
+        lng: Double?,
         radius: Int?
 ) {
         @OneToOne(cascade = [CascadeType.ALL])

@@ -5,5 +5,5 @@ import javax.persistence.GeneratedValue
 import javax.persistence.Id
 
 @Entity
-class LocationData (@Id @GeneratedValue var id: Long?, var lat: Long, var lng: Long, var radius: Int) {
+class LocationData (@Id @GeneratedValue var id: Long?, var lat: Double, var lng: Double, var radius: Int) {
 }
