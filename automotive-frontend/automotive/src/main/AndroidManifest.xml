@@ -18,13 +18,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".TopicAdapterTestActivity"></activity>
+        <service
+            android:name=".messages.MessagePersistenceService"
+            android:exported="false"/>
+
+        <activity android:name=".TopicAdapterTestActivity" />
         <activity android:name=".SubscribeActivity" />
         <activity
             android:name=".welcome.WelcomeAppIntro"
             android:label="@string/title_activity_my_custom_app_intro"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".MessageContentActivity" />
+        <activity android:name=".messages.MessageContentActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -69,10 +69,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/message_content_image_container">
 
-            <fragment
+            <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/message_map"
                 android:name="com.google.android.libraries.maps.SupportMapFragment"
-                xmlns:map="http://schemas.android.com/apk/res-auto"
                 android:layout_width="0dp"
                 android:layout_height="500dp"
                 android:layout_marginBottom="16dp"
@@ -80,8 +79,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:context=".MapsActivity"
-                map:liteMode="true"/>
+                map:liteMode="true"
+                tools:context=".MapsActivity" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
@@ -92,6 +91,16 @@
             android:layout_marginEnd="16dp"
             android:text="@string/close_message_view"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/persist_message_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/persist_message"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
