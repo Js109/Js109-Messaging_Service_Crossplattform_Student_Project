@@ -1,5 +1,6 @@
 package de.uulm.automotive.cds.controller
 
+import de.uulm.automotive.cds.entities.LocationData
 import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.repositories.PropertyRepository
@@ -75,14 +76,14 @@ class PublishController(private val messageRepository: MessageRepository, privat
      * @return String name of the view
      */
     @PostMapping()
-    fun postMessage(@ModelAttribute("message") message: Message, @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) messagestarttime: LocalDateTime?, model: Model, @RequestParam("file") file: MultipartFile?, @RequestParam("urls") urls: Array<String>?): String {
+    fun postMessage(@ModelAttribute("message") message: Message, @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) messagestarttime: LocalDateTime?, model: Model, @RequestParam("file") file: MultipartFile?, @RequestParam("urls") urls: Array<String>?, lat: Double?, lng: Double?, radius: Int?): String {
         var hasErrors = false
 
         message.attachment = file?.bytes
         message.links = mutableListOf()
         urls?.forEach {
             if (it.contains(regexUrlWithoutProtocol)) {
-                if(it.matches(regexUrlWithoutProtocol)) {
+                if (it.matches(regexUrlWithoutProtocol)) {
                     message.links!!.add(URL("http://" + it))
                 } else if (it.matches(regexUrlHttp) || it.matches(regexUrlHttps)) {
                     message.links!!.add(URL(it))
@@ -122,10 +123,24 @@ class PublishController(private val messageRepository: MessageRepository, privat
         }
         if (message.content == "" && message.attachment?.isEmpty() == true) {
             model["hasContentError"] = true
+            hasErrors = true
         }
 
+        if ((lat != null && lng == null) || (lat == null && lng != null)) {
+            hasErrors = true
+            model["onlyOneCoordError"] = true
+        } else if(lat != null && lng != null) {
+            if (lat < -90 || lat > 90 || lng > 180 || lng < -180 || radius == null) {
+                hasErrors = true
+                model["coordValueRangeError"] = true
+            } else {
+                message.locationData = LocationData(null, lat, lng, radius)
+            }
+        }
+
+
         if (hasErrors) {
-            return "create-message"
+            return messageForm(model)
         }
 
 

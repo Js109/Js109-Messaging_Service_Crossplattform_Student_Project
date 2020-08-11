@@ -11,10 +11,11 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.rabbitmq.client.*
 import de.uulm.automotive.cds.entities.MessageSerializable
-import de.uulm.automotiveuulmapp.MessageContentActivity
+import de.uulm.automotiveuulmapp.messages.MessageContentActivity
 import de.uulm.automotiveuulmapp.R
 import de.uulm.automotiveuulmapp.geofencing.CurrentLocationFetcher
 import de.uulm.automotiveuulmapp.geofencing.LocationDataFencer
+import de.uulm.automotiveuulmapp.messages.MessagePersistenceService
 import de.uulm.automotiveuulmapp.topic.TopicChange
 import java.io.ByteArrayInputStream
 import java.io.IOException
@@ -130,6 +131,11 @@ class RabbitMQService : Service() {
         val deliverCallback =
             DeliverCallback { _: String?, delivery: Delivery ->
                 val message = convertByteArrayToMessage(delivery.body)
+                //TODO Check if message location is one of the favorites,
+                //if (fav)
+                //  persist
+                //else
+                //  headsup
                 notify(message)
             }
 
@@ -204,7 +210,7 @@ class RabbitMQService : Service() {
         }
     }
 
-    fun convertByteArrayToMessage(byteArray: ByteArray): MessageSerializable {
+    private fun convertByteArrayToMessage(byteArray: ByteArray): MessageSerializable {
         val bis = ByteArrayInputStream(byteArray)
         try {
             val input = ObjectInputStream(bis)
