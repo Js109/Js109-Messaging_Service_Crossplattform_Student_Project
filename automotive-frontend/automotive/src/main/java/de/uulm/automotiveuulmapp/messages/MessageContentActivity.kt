@@ -61,6 +61,7 @@ class MessageContentActivity : AppCompatActivity() {
         } ?: run {
             findViewById<ConstraintLayout>(R.id.message_map_container).visibility = View.GONE
         }
+
     }
 
     private fun isGoogleMapsUrl(url: URL): Boolean {
