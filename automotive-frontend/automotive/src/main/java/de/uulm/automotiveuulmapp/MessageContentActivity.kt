@@ -26,13 +26,13 @@ class MessageContentActivity : AppCompatActivity() {
         val titleView = findViewById<TextView>(R.id.messageContentTitleText)
         val messageContentView = findViewById<TextView>(R.id.messageContentText)
 
-        titleView.setText(message.title)
-        messageContentView.setText(message.messageText)
+        titleView.text = message.title
+        messageContentView.text = message.messageText
         // if attachment exists, decode base64-encoded byte array
         val image = message.attachment
         if(image != null && image.isNotEmpty()) {
             val bmp =
-                BitmapFactory.decodeByteArray(message.attachment, 0, message.attachment!!.size)
+                BitmapFactory.decodeByteArray(message.attachment, 0, message.attachment.size)
 
             val imageView = findViewById<ImageView>(R.id.messageContentImageView)
             imageView.setImageBitmap(bmp)
@@ -43,7 +43,7 @@ class MessageContentActivity : AppCompatActivity() {
         // button to return to topic selection activity (SubscribeActivity)
         val closeButton: Button = findViewById<Button>(R.id.cose_message_button)
         closeButton.setOnClickListener {
-            val intent = Intent(this, SubscribeActivity::class.java )
+            val intent = Intent(this, MainActivity::class.java )
             startActivity(intent)
         }
 

@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.util.*
 
-class ServiceFragment : BaseFragment() {
+class RegistrationServiceFragment : BaseFragment() {
     private lateinit var mContext: Context
     var mService: Messenger? = null
     var bound: Boolean = false

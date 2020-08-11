@@ -18,7 +18,7 @@ import java.lang.Thread.sleep
  * are not compatible from API version 29 on.
  */
 @RunWith(AndroidJUnit4::class)
-class InstrumentedAndroidMainActivityTest {
+class InstrumentedAndroidIntroActivityTest {
     @Test
     fun useAppContext() {
         // Context of the app under test.
@@ -27,8 +27,8 @@ class InstrumentedAndroidMainActivityTest {
     }
 
     @get:Rule
-    var activityRuleMain: ActivityTestRule<MainActivity> =
-        ActivityTestRule(MainActivity::class.java)
+    var activityRuleIntro: ActivityTestRule<IntroActivity> =
+        ActivityTestRule(IntroActivity::class.java)
 
     /**
      * A Test to check if the redirection to SubscribeActivity is working correctly at the
@@ -37,12 +37,12 @@ class InstrumentedAndroidMainActivityTest {
     @Test
     fun introNotStartingAtSecondStartup() {
         sleep(5_000)
-        var activityMonitor: Instrumentation.ActivityMonitor = getInstrumentation()
-            .addMonitor(SubscribeActivity::class.java.getName(), null, false)
+        val activityMonitor: Instrumentation.ActivityMonitor = getInstrumentation()
+            .addMonitor(MainActivity::class.java.getName(), null, false)
 
-        var targetActivity: SubscribeActivity =
-            activityMonitor.waitForActivity() as SubscribeActivity
+        val targetActivity: MainActivity =
+            activityMonitor.waitForActivity() as MainActivity
 
-        assertNotNull("Target Activity is not launched", targetActivity);
+        assertNotNull("Target Activity is not launched", targetActivity)
     }
 }
