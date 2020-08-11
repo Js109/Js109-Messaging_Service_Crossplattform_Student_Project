@@ -13,6 +13,8 @@ import com.rabbitmq.client.*
 import de.uulm.automotive.cds.entities.MessageSerializable
 import de.uulm.automotiveuulmapp.MessageContentActivity
 import de.uulm.automotiveuulmapp.R
+import de.uulm.automotiveuulmapp.geofencing.CurrentLocationFetcher
+import de.uulm.automotiveuulmapp.geofencing.LocationDataFencer
 import de.uulm.automotiveuulmapp.topic.TopicChange
 import java.io.ByteArrayInputStream
 import java.io.IOException
@@ -39,6 +41,7 @@ class RabbitMQService : Service() {
     private lateinit var channel: Channel
     private lateinit var queueName: String
 
+    private var locationFencer: LocationDataFencer? = null
 
     /**
      * Handler that receives messages from the thread
@@ -77,6 +80,8 @@ class RabbitMQService : Service() {
             serviceLooper = looper
             serviceHandler = ServiceHandler(looper)
         }
+
+        locationFencer = LocationDataFencer(CurrentLocationFetcher(applicationContext))
 
         createNotificationChannel()
     }
@@ -130,7 +135,7 @@ class RabbitMQService : Service() {
 
         Log.d("AMQP", " [*] Waiting for messages. To exit press CTRL+C")
         // start subscription on queue
-        channel.basicConsume(queueName, true, deliverCallback, CancelCallback {  })
+        channel.basicConsume(queueName, true, deliverCallback, CancelCallback { })
     }
 
     /**
@@ -159,24 +164,27 @@ class RabbitMQService : Service() {
      * @param message Message which should be displayed in the notification
      */
     private fun notify(message: MessageSerializable) {
-        val intent = Intent(this, MessageContentActivity::class.java)
-        intent.putExtra("message", message)
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle(message.title)
-            .setContentText(message.messageText)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingIntent)
-            .setCategory(Notification.CATEGORY_CALL)
+        if (locationFencer?.shouldAllow(message.locationData) == true) {
+            val intent = Intent(this, MessageContentActivity::class.java)
+            intent.putExtra("message", message)
+            val pendingIntent: PendingIntent =
+                PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle(message.title)
+                .setContentText(message.messageText)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+                .setCategory(Notification.CATEGORY_CALL)
 
-        val notificationId = nextInt()
+            val notificationId = nextInt()
 
-        with(NotificationManagerCompat.from(this)) {
-            // notificationId is a unique int for each notification that you must define
-            notify(notificationId, builder.build())
+            with(NotificationManagerCompat.from(this)) {
+                // notificationId is a unique int for each notification that you must define
+                notify(notificationId, builder.build())
+            }
+            Log.d("Notification", "Notification should be shown")
         }
-        Log.d("Notification", "Notification should be shown")
     }
 
     /**
@@ -184,7 +192,7 @@ class RabbitMQService : Service() {
      *
      * @param topicChange Whether the subscription should be changed to active or inactive
      */
-    fun changeSubscription(topicChange: TopicChange){
+    fun changeSubscription(topicChange: TopicChange) {
         val c = channel
         when {
             topicChange.active -> {
