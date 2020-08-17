@@ -1,12 +1,10 @@
-package de.uulm.automotiveuulmapp
+package de.uulm.automotiveuulmapp.messages
 
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.libraries.maps.CameraUpdateFactory
@@ -14,9 +12,12 @@ import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
 import de.uulm.automotive.cds.entities.MessageSerializable
+import de.uulm.automotiveuulmapp.R
+import de.uulm.automotiveuulmapp.SubscribeActivity
 import java.net.URL
 
 class MessageContentActivity : AppCompatActivity() {
+    lateinit var message: MessageSerializable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,12 +41,7 @@ class MessageContentActivity : AppCompatActivity() {
             findViewById<ImageView>(R.id.messageContentImageView).visibility = View.GONE
         }
 
-        // button to return to topic selection activity (SubscribeActivity)
-        val closeButton: Button = findViewById<Button>(R.id.cose_message_button)
-        closeButton.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java )
-            startActivity(intent)
-        }
+        initializeActionViews()
 
         val map =
             supportFragmentManager.findFragmentById(R.id.message_map) as SupportMapFragment
@@ -65,7 +61,6 @@ class MessageContentActivity : AppCompatActivity() {
         } ?: run {
             findViewById<ConstraintLayout>(R.id.message_map_container).visibility = View.GONE
         }
-
     }
 
     private fun isGoogleMapsUrl(url: URL): Boolean {
@@ -86,5 +81,29 @@ class MessageContentActivity : AppCompatActivity() {
         } else {
             Pair(coordsSplit[0].toDouble(), coordsSplit[1].toDouble())
         }
+    }
+
+    /**
+     * Sets up handler for close- and save-button of message
+     *
+     */
+    private fun initializeActionViews(){
+        // button to return to topic selection activity (SubscribeActivity)
+        val closeButton: Button = findViewById<Button>(R.id.cose_message_button)
+        closeButton.setOnClickListener {
+            val intent = Intent(this, SubscribeActivity::class.java )
+            startActivity(intent)
+        }
+
+        val persistenceButton = findViewById<Button>(R.id.persist_message_button)
+        persistenceButton.setOnClickListener { v: View -> run {
+            if(v.isEnabled){
+                MessagePersistenceService.startActionPersist(this, message)
+                v.isEnabled = false
+                Toast.makeText(applicationContext,"Message saved", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(applicationContext,"Message has already been saved", Toast.LENGTH_SHORT).show()
+            }
+        }}
     }
 }
