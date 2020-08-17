@@ -13,7 +13,7 @@ import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
 import de.uulm.automotive.cds.entities.MessageSerializable
 import de.uulm.automotiveuulmapp.R
-import de.uulm.automotiveuulmapp.SubscribeActivity
+import de.uulm.automotiveuulmapp.MainActivity
 import java.net.URL
 
 class MessageContentActivity : AppCompatActivity() {
@@ -91,7 +91,7 @@ class MessageContentActivity : AppCompatActivity() {
         // button to return to topic selection activity (SubscribeActivity)
         val closeButton: Button = findViewById<Button>(R.id.cose_message_button)
         closeButton.setOnClickListener {
-            val intent = Intent(this, SubscribeActivity::class.java )
+            val intent = Intent(this, MainActivity::class.java )
             startActivity(intent)
         }
 
