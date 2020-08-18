@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import de.uulm.automotiveuulmapp.welcome.WelcomeAppIntro
 
 /**
- * This is the MainActivity, which is the starting point of the application.
+ * This is the IntroActivity, which is the starting point of the application.
  * The onCreate() method is called first.
  * On the first Startup a Welcome Introduction is shown to the user controlled through
  * SharedPreferences 'isFirstRun' which will be set after the first run.
