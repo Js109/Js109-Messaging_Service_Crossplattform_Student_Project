@@ -33,4 +33,17 @@
     <string name="location_nav_item">Location Favorites</string>
     <string name="subscription_nav_item">Subscriptions</string>
 
+    <!-- Location view strings -->
+    <string name="location_name_label">Location Name</string>
+    <string name="address_label">Address</string>
+    <string name="location_not_accessible_error">Error: Location could not be read!</string>
+    <string name="location_permission_missing_error">Error: Check location permissions!</string>
+    <string name="device_location_button">Get device location button</string>
+    <string name="save_location_favourite_button">Save location favourite button</string>
+    <string name="location_name_field_hint">Location favourite name</string>
+    <string name="location_address_field_hint">Location address string</string>
+    <string name="marker_icon_description">Marker icon</string>
+    <string name="delete_location_button">Delete location button</string>
+    <string name="add_location_button">Add new location button</string>
+
 </resources>

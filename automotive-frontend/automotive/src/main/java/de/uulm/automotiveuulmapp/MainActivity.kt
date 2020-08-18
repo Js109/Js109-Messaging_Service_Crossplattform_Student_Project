@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(){
                     //TODO: Add navigation logic to message list activity
                 }
                 R.id.nav_item_locations -> {
-                    //TODO: Add navigation logic to message list activity
+                    fragment = LocationFavouritesFragment()
                 }
                 R.id.nav_item_subscriptions -> {
                     fragment = TopicFragment()

@@ -8,6 +8,7 @@ public abstract class ApplicationConstants {
     private ApplicationConstants() {
     }
     public static final String REGISTRATION_DB_NAME = "registrationData";
+    public static final String LOCATION_DATA_DB_NAME = "locationData";
     public static final String DEVICE_TYPE = "Android Emulator";
 
     // REST Endpoints
