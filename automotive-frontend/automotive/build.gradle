@@ -67,13 +67,20 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.assertj:assertj-core:3.11.1'
+    androidTestImplementation 'org.assertj:assertj-core:3.11.1'
     //Mockito framework
     testImplementation 'org.mockito:mockito-core:3.4.4'
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
-    androidTestImplementation 'org.mockito:mockito-android:3.4.4'
+    androidTestImplementation 'com.linkedin.dexmaker:dexmaker-mockito-inline:2.19.0'
     androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
     testImplementation 'androidx.test:core:1.2.0'
     testImplementation 'org.json:json:20090211'
+    androidTestImplementation 'com.google.maps.android:android-maps-utils:2.0.3'
+    implementation 'com.google.maps.android:android-maps-utils:2.0.3'
+    androidTestImplementation 'com.google.maps.android:maps-utils-ktx:1.7.0'
+    implementation 'com.google.maps.android:maps-utils-ktx:1.7.0'
+    androidTestImplementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     // Need for Android GUI tests
