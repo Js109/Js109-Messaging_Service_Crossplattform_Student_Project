@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import de.uulm.automotiveuulmapp.locationFavourites.LocationFavouritesFragment
 import de.uulm.automotiveuulmapp.topicFragment.TopicFragment
 
 class MainActivity : AppCompatActivity(){

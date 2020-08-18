@@ -18,4 +18,7 @@ interface LocationDataDAO {
     suspend fun insert(vararg locationData: LocationData)
     @Delete
     suspend fun delete(vararg locationData: LocationData)
+
+    @Query("SELECT * FROM " + ApplicationConstants.LOCATION_DATA_DB_NAME)
+    fun getAllInstant(): List<LocationData>
 }

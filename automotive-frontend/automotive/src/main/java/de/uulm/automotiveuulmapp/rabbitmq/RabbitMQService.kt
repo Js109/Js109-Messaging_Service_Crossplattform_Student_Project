@@ -15,6 +15,7 @@ import de.uulm.automotiveuulmapp.messages.MessageContentActivity
 import de.uulm.automotiveuulmapp.R
 import de.uulm.automotiveuulmapp.geofencing.CurrentLocationFetcher
 import de.uulm.automotiveuulmapp.geofencing.LocationDataFencer
+import de.uulm.automotiveuulmapp.locationFavourites.locationFavData.LocationDatabase
 import de.uulm.automotiveuulmapp.messages.MessagePersistenceService
 import de.uulm.automotiveuulmapp.topic.TopicChange
 import java.io.ByteArrayInputStream
@@ -82,7 +83,7 @@ class RabbitMQService : Service() {
             serviceHandler = ServiceHandler(looper)
         }
 
-        locationFencer = LocationDataFencer(CurrentLocationFetcher(applicationContext))
+        locationFencer = LocationDataFencer(CurrentLocationFetcher(applicationContext), LocationDatabase.getDatabaseInstance(applicationContext))
 
         createNotificationChannel()
     }
@@ -136,7 +137,9 @@ class RabbitMQService : Service() {
                 //  persist
                 //else
                 //  headsup
-                notify(message)
+                if (locationFencer?.shouldAllow(message.locationData) == true) {
+                    notify(message)
+                }
             }
 
         Log.d("AMQP", " [*] Waiting for messages. To exit press CTRL+C")
@@ -170,27 +173,25 @@ class RabbitMQService : Service() {
      * @param message Message which should be displayed in the notification
      */
     private fun notify(message: MessageSerializable) {
-        if (locationFencer?.shouldAllow(message.locationData) == true) {
-            val intent = Intent(this, MessageContentActivity::class.java)
-            intent.putExtra("message", message)
-            val pendingIntent: PendingIntent =
-                PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-            val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle(message.title)
-                .setContentText(message.messageText)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentIntent(pendingIntent)
-                .setCategory(Notification.CATEGORY_CALL)
+        val intent = Intent(this, MessageContentActivity::class.java)
+        intent.putExtra("message", message)
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle(message.title)
+            .setContentText(message.messageText)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
+            .setCategory(Notification.CATEGORY_CALL)
 
-            val notificationId = nextInt()
+        val notificationId = nextInt()
 
-            with(NotificationManagerCompat.from(this)) {
-                // notificationId is a unique int for each notification that you must define
-                notify(notificationId, builder.build())
-            }
-            Log.d("Notification", "Notification should be shown")
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(notificationId, builder.build())
         }
+        Log.d("Notification", "Notification should be shown")
     }
 
     /**
