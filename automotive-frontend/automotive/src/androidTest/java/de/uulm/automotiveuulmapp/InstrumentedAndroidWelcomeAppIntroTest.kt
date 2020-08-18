@@ -31,14 +31,14 @@ class InstrumentedAndroidWelcomeAppIntroTest {
      */
     @Test
     fun pressSkipButton() {
-        var activityMonitor = getInstrumentation()
-            .addMonitor(SubscribeActivity::class.java.getName(), null, false)
+        val activityMonitor = getInstrumentation()
+            .addMonitor(MainActivity::class.java.getName(), null, false)
 
         // Simulate click on Skip Button
         Espresso.onView(ViewMatchers.withId(R.id.welc1_button1)).perform(ViewActions.click())
 
-        var targetActivity: SubscribeActivity =
-            activityMonitor.waitForActivity() as SubscribeActivity
-        assertNotNull("Target Activity is not launched", targetActivity);
+        val targetActivity: MainActivity =
+            activityMonitor.waitForActivity() as MainActivity
+        assertNotNull("Target Activity is not launched", targetActivity)
     }
 }

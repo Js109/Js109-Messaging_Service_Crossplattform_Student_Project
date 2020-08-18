@@ -28,4 +28,9 @@
     <string name="close_message_view">close</string>
     <string name="persist_message">Save Message</string>
 
+    <!-- Navigation view Strings-->
+    <string name="message_nav_item">Saved Messages</string>
+    <string name="location_nav_item">Location Favorites</string>
+    <string name="subscription_nav_item">Subscriptions</string>
+
 </resources>

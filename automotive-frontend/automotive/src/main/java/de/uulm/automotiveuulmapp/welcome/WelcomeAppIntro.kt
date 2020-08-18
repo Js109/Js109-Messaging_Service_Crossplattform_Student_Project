@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.github.appintro.AppIntro
-import de.uulm.automotiveuulmapp.SubscribeActivity
+import de.uulm.automotiveuulmapp.MainActivity
 
 /**
  * This is the WelcomeAppIntro which is the Introduction for the user
@@ -28,7 +28,7 @@ class WelcomeAppIntro : AppIntro()  {
     // defines what will happen when the user presses "Done"
     override fun onDonePressed(currentFragment: Fragment?) {
         super.onDonePressed(currentFragment)
-        val i = Intent(this@WelcomeAppIntro, SubscribeActivity::class.java)
+        val i = Intent(this@WelcomeAppIntro, MainActivity::class.java)
         startActivity(i)
         finish()
     }

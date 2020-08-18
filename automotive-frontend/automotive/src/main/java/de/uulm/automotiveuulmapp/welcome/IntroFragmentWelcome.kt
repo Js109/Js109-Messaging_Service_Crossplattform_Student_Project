@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import de.uulm.automotiveuulmapp.R
-import de.uulm.automotiveuulmapp.SubscribeActivity
+import de.uulm.automotiveuulmapp.MainActivity
 
 /**
  * A simple [Fragment] subclass as the first Welcome App Introduction slider content.
@@ -33,7 +33,7 @@ class IntroFragmentWelcome : Fragment(), OnClickListener {
      * @param v
      */
     override fun onClick(v: View?) {
-        val i = Intent(activity, SubscribeActivity::class.java)
+        val i = Intent(activity, MainActivity::class.java)
         startActivity(i)
     }
 }

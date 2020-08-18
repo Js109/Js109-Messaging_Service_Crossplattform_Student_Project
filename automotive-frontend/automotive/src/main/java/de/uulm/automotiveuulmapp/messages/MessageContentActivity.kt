@@ -13,7 +13,7 @@ import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
 import de.uulm.automotive.cds.entities.MessageSerializable
 import de.uulm.automotiveuulmapp.R
-import de.uulm.automotiveuulmapp.SubscribeActivity
+import de.uulm.automotiveuulmapp.MainActivity
 import java.net.URL
 
 class MessageContentActivity : AppCompatActivity() {
@@ -23,7 +23,7 @@ class MessageContentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message_content)
 
-        message = intent.getSerializableExtra("message") as MessageSerializable
+        val message = intent.getSerializableExtra("message") as MessageSerializable
         val titleView = findViewById<TextView>(R.id.messageContentTitleText)
         val messageContentView = findViewById<TextView>(R.id.messageContentText)
 
@@ -33,7 +33,7 @@ class MessageContentActivity : AppCompatActivity() {
         val image = message.attachment
         if(image != null && image.isNotEmpty()) {
             val bmp =
-                BitmapFactory.decodeByteArray(message.attachment, 0, message.attachment!!.size)
+                BitmapFactory.decodeByteArray(message.attachment, 0, message.attachment.size)
 
             val imageView = findViewById<ImageView>(R.id.messageContentImageView)
             imageView.setImageBitmap(bmp)
@@ -91,7 +91,7 @@ class MessageContentActivity : AppCompatActivity() {
         // button to return to topic selection activity (SubscribeActivity)
         val closeButton: Button = findViewById<Button>(R.id.cose_message_button)
         closeButton.setOnClickListener {
-            val intent = Intent(this, SubscribeActivity::class.java )
+            val intent = Intent(this, MainActivity::class.java )
             startActivity(intent)
         }
 

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_item_subscriptions"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_popup_reminder"
+        android:title="@string/subscription_nav_item" />
+    <item
+        android:id="@+id/nav_item_messages"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_dialog_email"
+        android:title="@string/message_nav_item" />
+    <item
+        android:id="@+id/nav_item_locations"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_menu_mylocation"
+        android:title="@string/location_nav_item" />
+</menu>
