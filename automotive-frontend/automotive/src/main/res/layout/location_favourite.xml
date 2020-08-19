@@ -7,7 +7,7 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:contentDescription="@string/marker_icon_description"
         app:layout_constraintBottom_toBottomOf="@+id/location_address_text_field"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,8 +33,8 @@
 
     <ImageButton
         android:id="@+id/delete_location_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="90dp"
+        android:layout_height="0dp"
         android:contentDescription="@string/delete_location_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
