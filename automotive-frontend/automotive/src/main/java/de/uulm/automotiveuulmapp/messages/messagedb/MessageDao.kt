@@ -1,9 +1,7 @@
 package de.uulm.automotiveuulmapp.messages.messagedb
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.lifecycle.LiveData
+import androidx.room.*
 
 @Dao
 interface MessageDao {
@@ -15,4 +13,7 @@ interface MessageDao {
 
     @Query("DELETE FROM messageentity WHERE uid = :messageId")
     fun delete(messageId: Int)
+
+    @Update
+    fun update(msg: MessageEntity)
 }

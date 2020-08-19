@@ -23,7 +23,7 @@ class MessageContentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message_content)
 
-        val message = intent.getSerializableExtra("message") as MessageSerializable
+        message = intent.getSerializableExtra("message") as MessageSerializable
         val titleView = findViewById<TextView>(R.id.messageContentTitleText)
         val messageContentView = findViewById<TextView>(R.id.messageContentText)
 
@@ -33,7 +33,7 @@ class MessageContentActivity : AppCompatActivity() {
         val image = message.attachment
         if(image != null && image.isNotEmpty()) {
             val bmp =
-                BitmapFactory.decodeByteArray(message.attachment, 0, message.attachment.size)
+                BitmapFactory.decodeByteArray(message.attachment, 0, message.attachment!!.size)
 
             val imageView = findViewById<ImageView>(R.id.messageContentImageView)
             imageView.setImageBitmap(bmp)
