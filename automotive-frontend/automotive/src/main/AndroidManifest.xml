@@ -23,10 +23,6 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity android:name=".MainActivity" />
-        <service
-            android:name=".messages.MessagePersistenceService"
-            android:exported="false"/>
-        <activity android:name=".TopicAdapterTestActivity" />
         <activity
             android:name=".welcome.WelcomeAppIntro"
             android:label="@string/title_activity_my_custom_app_intro"
@@ -41,6 +37,9 @@
         </activity>
 
         <service
+            android:name=".messages.MessagePersistenceService"
+            android:exported="false" />
+        <service
             android:name=".rabbitmq.RabbitMQService"
             android:enabled="true"
             android:exported="true" />
@@ -48,6 +47,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCdP9Z5FYGgS10fS_aV_vzt5uuXDzc5vS4" />
-    </application>
 
+        <!--        Test Activities -->
+        <activity android:name=".TopicAdapterTestActivity" />
+        <activity android:name=".MessageAdapterTestActivity" />
+    </application>
 </manifest>

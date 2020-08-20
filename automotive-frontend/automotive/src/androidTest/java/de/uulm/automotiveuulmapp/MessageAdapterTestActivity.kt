@@ -7,10 +7,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 /**
- * Activity for testing the TopicAdapter.
+ * Activity for testing the MessageAdapter.
  * Contains only a SearchView and a RecyclerView and provides access to them via public fields.
  */
-class TopicAdapterTestActivity() : AppCompatActivity() {
+class MessageAdapterTestActivity : AppCompatActivity() {
     var recyclerView : RecyclerView? = null
     var searchView : SearchView? = null
 

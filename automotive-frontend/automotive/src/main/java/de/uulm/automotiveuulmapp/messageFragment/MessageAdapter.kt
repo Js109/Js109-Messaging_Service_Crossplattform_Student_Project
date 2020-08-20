@@ -40,7 +40,7 @@ class MessageAdapter(private val searchView: SearchView, private val messageDao:
         val message = currentMessages[position]
 
         val logo = holder.itemView.findViewById<TextView>(R.id.message_logo_text)
-        logo.text = message.title[0].toString().toUpperCase()
+        logo.text = message.sender[0].toString().toUpperCase()
 
         val title = holder.itemView.findViewById<TextView>(R.id.message_title_text)
         title.text = message.title

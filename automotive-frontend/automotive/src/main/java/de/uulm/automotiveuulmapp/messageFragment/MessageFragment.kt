@@ -29,7 +29,7 @@ class MessageFragment : BaseFragment() {
         val messageAdapter = MessageAdapter(searchView, MessageDatabase.getDatabaseInstance(recyclerView.context).messageDao(), activity)
 
         recyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = LinearLayoutManager(context).apply { reverseLayout = true}
             adapter = messageAdapter
         }
 
