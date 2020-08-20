@@ -1,11 +1,13 @@
 package de.uulm.automotiveuulmapp.geofencing
 
 import android.location.Location
+import androidx.lifecycle.LiveData
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
 import de.uulm.automotive.cds.entities.LocationDataSerializable
+import de.uulm.automotiveuulmapp.locationFavourites.locationFavData.LocationDatabase
 
-class LocationDataFencer(private val currentLocationFetcher: CurrentLocationFetcher) {
+class LocationDataFencer(private val currentLocationFetcher: CurrentLocationFetcher, private val locationDatabase: LocationDatabase) {
 
     fun shouldAllow(locationData: LocationDataSerializable?): Boolean {
         if (locationData == null)
@@ -33,8 +35,14 @@ class LocationDataFencer(private val currentLocationFetcher: CurrentLocationFetc
      * Checks if the Location matches a stored location
      */
     fun storedLocationsFencing(locationData: LocationDataSerializable): Boolean {
-        // Todo
-        return false
+        return locationDatabase.getLocationDao().getAllInstant().any {
+            calculateDistance(
+                it.lat,
+                it.lng,
+                locationData.lat,
+                locationData.lng
+            ) <= locationData.radius
+        }
     }
 
     private fun calculateDistance(

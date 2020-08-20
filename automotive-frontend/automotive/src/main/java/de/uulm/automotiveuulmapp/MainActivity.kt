@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import de.uulm.automotiveuulmapp.locationFavourites.LocationFavouritesFragment
 import de.uulm.automotiveuulmapp.topicFragment.TopicFragment
 
 class MainActivity : AppCompatActivity(){
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity(){
                     //TODO: Add navigation logic to message list activity
                 }
                 R.id.nav_item_locations -> {
-                    //TODO: Add navigation logic to message list activity
+                    fragment = LocationFavouritesFragment()
                 }
                 R.id.nav_item_subscriptions -> {
                     fragment = TopicFragment()

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ImageButton
+        android:id="@+id/add_location_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/add_location_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_input_add" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/new_location_form"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_location_button">
+
+        <ImageButton
+            android:id="@+id/save_new_location_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:contentDescription="@string/save_location_favourite_button"
+            android:src="@android:drawable/ic_menu_save"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/locationFavNameLabel" />
+
+        <TextView
+            android:id="@+id/locationFavNameLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:labelFor="@id/location_fav_addr_textfield"
+            android:lineSpacingExtra="18sp"
+            android:text="@string/address_label"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="@+id/location_fav_addr_textfield"
+            app:layout_constraintEnd_toStartOf="@+id/location_fav_name_textfield"
+            app:layout_constraintStart_toStartOf="@+id/LocationFavNameLabel"
+            app:layout_constraintTop_toTopOf="@+id/location_fav_addr_textfield" />
+
+        <EditText
+            android:id="@+id/location_fav_addr_textfield"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:autofillHints="@string/location_address_field_hint"
+            android:inputType="textPostalAddress"
+            app:layout_constraintEnd_toEndOf="@+id/location_fav_name_textfield"
+            app:layout_constraintStart_toStartOf="@+id/location_fav_name_textfield"
+            app:layout_constraintTop_toBottomOf="@+id/location_fav_name_textfield" />
+
+        <EditText
+            android:id="@+id/location_fav_name_textfield"
+            android:layout_width="400dp"
+            android:layout_height="wrap_content"
+            android:autofillHints="@string/location_name_field_hint"
+            android:inputType="text"
+            app:layout_constraintBottom_toBottomOf="@+id/LocationFavNameLabel"
+            app:layout_constraintStart_toEndOf="@+id/LocationFavNameLabel"
+            app:layout_constraintTop_toTopOf="@+id/LocationFavNameLabel" />
+
+        <ImageButton
+            android:id="@+id/my_location_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/device_location_button"
+            android:src="@android:drawable/ic_menu_mylocation"
+            app:layout_constraintBottom_toBottomOf="@+id/location_fav_addr_textfield"
+            app:layout_constraintStart_toEndOf="@+id/location_fav_addr_textfield"
+            app:layout_constraintTop_toTopOf="@+id/location_fav_addr_textfield" />
+
+        <TextView
+            android:id="@+id/LocationFavNameLabel"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:labelFor="@id/location_fav_name_textfield"
+            android:lineSpacingExtra="18sp"
+            android:text="@string/location_name_label"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
