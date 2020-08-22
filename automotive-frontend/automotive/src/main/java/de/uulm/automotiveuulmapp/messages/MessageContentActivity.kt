@@ -91,8 +91,7 @@ class MessageContentActivity : AppCompatActivity() {
         // button to return to topic selection activity (SubscribeActivity)
         val closeButton: Button = findViewById<Button>(R.id.cose_message_button)
         closeButton.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java )
-            startActivity(intent)
+            finish()
         }
 
         val persistenceButton = findViewById<Button>(R.id.persist_message_button)
