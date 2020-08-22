@@ -9,10 +9,11 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.Person
 import com.rabbitmq.client.*
 import de.uulm.automotive.cds.entities.MessageSerializable
-import de.uulm.automotiveuulmapp.messages.MessageContentActivity
 import de.uulm.automotiveuulmapp.R
+import de.uulm.automotiveuulmapp.messages.MessageContentActivity
 import de.uulm.automotiveuulmapp.geofencing.CurrentLocationFetcher
 import de.uulm.automotiveuulmapp.geofencing.LocationDataFencer
 import de.uulm.automotiveuulmapp.locationFavourites.locationFavData.LocationDatabase
@@ -83,7 +84,10 @@ class RabbitMQService : Service() {
             serviceHandler = ServiceHandler(looper)
         }
 
-        locationFencer = LocationDataFencer(CurrentLocationFetcher(applicationContext), LocationDatabase.getDatabaseInstance(applicationContext))
+        locationFencer = LocationDataFencer(
+            CurrentLocationFetcher(applicationContext),
+            LocationDatabase.getDatabaseInstance(applicationContext)
+        )
 
         createNotificationChannel()
     }
@@ -173,22 +177,46 @@ class RabbitMQService : Service() {
      * @param message Message which should be displayed in the notification
      */
     private fun notify(message: MessageSerializable) {
-        val intent = Intent(this, MessageContentActivity::class.java)
-        intent.putExtra("message", message)
-        val pendingIntent: PendingIntent =
-            PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle(message.title)
-            .setContentText(message.messageText)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingIntent)
-            .setCategory(Notification.CATEGORY_CALL)
-
+        // notificationId is a unique int for each notification that you must define
         val notificationId = nextInt()
 
+        val showMessageContentIntent = Intent(this, MessageContentActivity::class.java)
+        showMessageContentIntent.putExtra(MessageContentActivity.EXTRA_MESSAGE, message)
+        showMessageContentIntent.putExtra(MessageContentActivity.EXTRA_NOTIFICATION_ID, notificationId)
+
+
+        val pendingShowMessageContentIntent: PendingIntent =
+            PendingIntent.getActivity(
+                this,
+                1,
+                showMessageContentIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+
+        val storeMessageIntent = PendingIntent.getService(
+            this,
+            0,
+            MessagePersistenceService.generateNotificationPersistIntent(this, message, notificationId),
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val storeAction = NotificationCompat.Action.Builder(
+            android.R.drawable.ic_menu_save,
+            "Save",
+            storeMessageIntent
+        ).build()
+
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingShowMessageContentIntent)
+            .setCategory(Notification.CATEGORY_CALL)
+            .setContentTitle(message.title)
+            .setContentText(message.messageText)
+            .addAction(storeAction)
+
+
         with(NotificationManagerCompat.from(this)) {
-            // notificationId is a unique int for each notification that you must define
             notify(notificationId, builder.build())
         }
         Log.d("Notification", "Notification should be shown")
