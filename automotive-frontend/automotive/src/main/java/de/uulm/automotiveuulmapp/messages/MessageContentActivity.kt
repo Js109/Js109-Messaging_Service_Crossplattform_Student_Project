@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.NotificationManagerCompat
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.LatLng
@@ -17,13 +18,25 @@ import de.uulm.automotiveuulmapp.MainActivity
 import java.net.URL
 
 class MessageContentActivity : AppCompatActivity() {
+    companion object {
+        const val EXTRA_MESSAGE = "de.uulm.automotiveuulmapp.messages.extra.MESSAGE"
+        const val EXTRA_NOTIFICATION_ID = "de.uulm.automotiveuulmapp.messages.extra.NOTIFICATION_ID"
+    }
+
     lateinit var message: MessageSerializable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message_content)
 
-        message = intent.getSerializableExtra("message") as MessageSerializable
+        // close notification if Activity was started from one
+        if(intent.hasExtra(EXTRA_NOTIFICATION_ID)) {
+            NotificationManagerCompat.from(this).cancel(
+                intent.getIntExtra(EXTRA_NOTIFICATION_ID, 0)
+            )
+        }
+
+        message = intent.getSerializableExtra(EXTRA_MESSAGE) as MessageSerializable
         val titleView = findViewById<TextView>(R.id.messageContentTitleText)
         val messageContentView = findViewById<TextView>(R.id.messageContentText)
 
@@ -92,8 +105,7 @@ class MessageContentActivity : AppCompatActivity() {
         // button to return to topic selection activity (SubscribeActivity)
         val closeButton: Button = findViewById<Button>(R.id.cose_message_button)
         closeButton.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java )
-            startActivity(intent)
+            finish()
         }
 
         val persistenceButton = findViewById<Button>(R.id.persist_message_button)
