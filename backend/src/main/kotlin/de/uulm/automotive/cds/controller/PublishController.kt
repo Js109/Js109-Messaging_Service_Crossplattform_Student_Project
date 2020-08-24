@@ -2,6 +2,7 @@ package de.uulm.automotive.cds.controller
 
 import de.uulm.automotive.cds.entities.LocationData
 import de.uulm.automotive.cds.entities.Message
+import de.uulm.automotive.cds.entities.Property
 import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.repositories.PropertyRepository
 import de.uulm.automotive.cds.repositories.TopicRepository
@@ -18,6 +19,7 @@ import java.time.LocalDateTime
 /**
  * Controller for the OEM web view.
  */
+@CrossOrigin("*")
 @Controller
 @RequestMapping("/publish")
 class PublishController(private val messageRepository: MessageRepository, private val topicRepository: TopicRepository, private val propertyRepository: PropertyRepository, private val messageService: MessageService) {
@@ -138,11 +140,9 @@ class PublishController(private val messageRepository: MessageRepository, privat
             }
         }
 
-
         if (hasErrors) {
             return messageForm(model)
         }
-
 
         val savedMessage = messageRepository.save(message)
         model["message"] = savedMessage.render()
@@ -159,7 +159,7 @@ class PublishController(private val messageRepository: MessageRepository, privat
             val starttime: LocalDateTime?,
             val endtime: LocalDateTime?,
             val isSent: Boolean?,
-            val properties: MutableList<String>?,
+            val properties: MutableList<Property>?,
             val id: Long?
     )
 }

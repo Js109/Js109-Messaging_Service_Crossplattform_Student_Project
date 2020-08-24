@@ -162,17 +162,20 @@ definitions:
   Topic:
     type: "object"
     properties:
-      title:
-        type: "string"
-        example: "Kultur"
+      id:
+        type: "number"
+        example: 42
       binding:
         type: "string"
         example: "landschaft/Kultur"
+      title:
+        type: "string"
+        example: "Kultur"
+      tags:
+        $ref: "#/definitions/Tag"
       description:
         type: "string"
         example: "Hier werden alle kulturbezogenen Themen veröffentlicht."
-      tags:
-        $ref: "#/definitions/Tag"
   SignUpInfo:
     type: "object"
     properties:
@@ -204,14 +207,10 @@ definitions:
       topic: 
         type: "string"
         example: "landschaft/kultur"
-      properties:
-        type: array
-        items:
-          $ref: "#/definitions/Property"
-      sender: 
+      sender:
         type: "string"
         example: "Audi"
-      title: 
+      title:
         type: "string"
         example: "Nachrichtentitel"
       content: 
@@ -220,11 +219,15 @@ definitions:
       starttime: 
         type: "string"
         format: "date-time"
-        example: "2020-22-08T16:09:31Z"
+        example: "2020-08-19T11:32"
       endtime: 
         type: "string"
         format: "date-time"
-        example: "2020-22-08T16:09:31Z"
+        example: "2020-08-19T11:32"
+      properties:
+        type: array
+        items:
+          $ref: "#/definitions/Property"
       attachment:
         type: "string"
         format: "byte"

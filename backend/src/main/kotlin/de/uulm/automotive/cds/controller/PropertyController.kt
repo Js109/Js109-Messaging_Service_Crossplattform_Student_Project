@@ -4,6 +4,7 @@ import de.uulm.automotive.cds.entities.Property
 import de.uulm.automotive.cds.repositories.PropertyRepository
 import org.springframework.web.bind.annotation.*
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/property")
 /**
