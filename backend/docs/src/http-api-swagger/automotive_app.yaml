@@ -224,10 +224,12 @@ definitions:
       properties:
         type: array
         items:
-          $ref: "#/definitions/Property"
+          type: "string"
+          example: "device/audi/a3"
       attachment:
         type: "string"
         format: "byte"
+        example: "HTP40c5xijnt"
       links:
         type: "array"
         items:
