@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.*
  * Controller for storing and reading properties.
  */
 class PropertyController (val propertyRepository: PropertyRepository) {
-    @GetMapping()
+    @GetMapping
     fun getProperties(): Iterable<Property> {
         return propertyRepository.findAll()
     }
 
-    @PostMapping()
+    @PostMapping
     fun postProperty(@RequestBody property: Property) {
         propertyRepository.save(property)
     }

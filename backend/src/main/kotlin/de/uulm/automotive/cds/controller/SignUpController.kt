@@ -27,7 +27,7 @@ class SignUpController @Autowired constructor(private val amqpService: AmqpChann
      * @param info SignUp Info of the client
      * @return TokenDTO with the signUp Token and the QueueID of the client
      */
-    @PostMapping("/")
+    @PostMapping
     fun signUp(@RequestBody info: SignUpInfo): TokenDTO {
         // check if the Token is already saved in the Database
         val signUpToken = tokenRepository.findBySignUpToken(info.signUpToken)

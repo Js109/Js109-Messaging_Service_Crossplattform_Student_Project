@@ -18,7 +18,7 @@ class TopicController @Autowired constructor(private val topicRepository: TopicR
      *
      * @return List of Topic elements stored via jpa
      */
-    @GetMapping()
+    @GetMapping
     fun getTopics(): Iterable<Topic> {
         return topicRepository.findAll()
     }
@@ -29,7 +29,7 @@ class TopicController @Autowired constructor(private val topicRepository: TopicR
      *
      * @param topic Topic to be stored
      */
-    @PostMapping()
+    @PostMapping
     fun postTopics(@RequestBody topic: Topic) {
         topicRepository.save(topic)
     }

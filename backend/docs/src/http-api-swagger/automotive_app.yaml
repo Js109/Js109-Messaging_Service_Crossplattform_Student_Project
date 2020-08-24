@@ -97,7 +97,7 @@ paths:
           description: "Successful Operation"
         "400":
           description: "Bad Request"
-  /messages/{id}:
+  /message/{id}:
     parameters: 
       - name: id
         in: path
@@ -119,6 +119,20 @@ paths:
           description: "Not Found"
 
   /property:
+    get:
+      tags:
+        - "Administration - OEM-Web Frontend"
+      summary: "Retrieves all existing properties the backend"
+      description: "Loads all previously created properties and sends them as a list within the response body."
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: "#/definitions/Property"
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Not Found"
     post:
       tags:
         - "Administration - OEM-Web Frontend"
@@ -136,26 +150,6 @@ paths:
           description: "Successful Operation"
         "400":
           description: "Bad Request"
-  /property/{id}:
-    parameters: 
-      - name: id
-        in: path
-        required: true
-        type: number
-    get:
-      tags:
-        - "Administration - OEM-Web Frontend"
-      summary: "Retrieves the property with the given id form the backend"
-      description: "If a property with the given id is stored in the backend it will be send as a reply. Otherwise 404 will be returned."
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: "#/definitions/Property"
-        "400":
-          description: "Bad Request"
-        "404":
-          description: "Not Found"
 
 
 definitions:
@@ -224,6 +218,9 @@ definitions:
         type: "string"
         format: "date-time"
         example: "2020-08-19T11:32"
+      isSent:
+        type: boolean
+        example: false
       properties:
         type: array
         items:
@@ -250,6 +247,9 @@ definitions:
       lng:
         type: number
         example: 9.9788416
+      radius:
+        type: number
+
 
   Tag:
     type: "string"

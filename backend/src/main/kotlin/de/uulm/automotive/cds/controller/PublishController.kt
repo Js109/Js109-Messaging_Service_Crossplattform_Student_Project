@@ -34,7 +34,7 @@ class PublishController(private val messageRepository: MessageRepository, privat
      *
      * @return String name of the view
      */
-    @GetMapping()
+    @GetMapping
     fun messageForm(model: Model): String {
         model["title"] = "Message"
         model["topics"] = topicRepository.findAllByOrderByTitleAsc()
@@ -77,7 +77,7 @@ class PublishController(private val messageRepository: MessageRepository, privat
      * @param file File which should contain an image
      * @return String name of the view
      */
-    @PostMapping()
+    @PostMapping
     fun postMessage(@ModelAttribute("message") message: Message, @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) messagestarttime: LocalDateTime?, model: Model, @RequestParam("file") file: MultipartFile?, @RequestParam("urls") urls: Array<String>?, lat: Double?, lng: Double?, radius: Int?): String {
         var hasErrors = false
 
@@ -159,7 +159,7 @@ class PublishController(private val messageRepository: MessageRepository, privat
             val starttime: LocalDateTime?,
             val endtime: LocalDateTime?,
             val isSent: Boolean?,
-            val properties: MutableList<Property>?,
+            val properties: MutableList<String>?,
             val id: Long?
     )
 }

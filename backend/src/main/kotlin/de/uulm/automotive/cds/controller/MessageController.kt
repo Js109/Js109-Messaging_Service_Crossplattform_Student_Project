@@ -38,7 +38,7 @@ class MessageController(private val repository: MessageRepository) {
      *
      * @param message
      */
-    @PostMapping()
+    @PostMapping
     fun saveMessage(@RequestBody message: Message) {
         message.isSent = false
         if (message.starttime == null) {
