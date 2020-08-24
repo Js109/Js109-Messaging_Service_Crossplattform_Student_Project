@@ -1,8 +1,10 @@
 package de.uulm.automotiveuulmapp.messages
 
 import android.app.IntentService
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.room.Room
 import de.uulm.automotive.cds.entities.MessageSerializable
@@ -20,7 +22,8 @@ class MessagePersistenceService : IntentService("MessagePersistenceService") {
 
     override fun onCreate() {
         super.onCreate()
-        db = Room.databaseBuilder(applicationContext, MessageDatabase::class.java, "message-db").build()
+        db = Room.databaseBuilder(applicationContext, MessageDatabase::class.java, "message-db")
+            .fallbackToDestructiveMigration().build()
     }
 
     override fun onHandleIntent(intent: Intent?) {
@@ -28,13 +31,19 @@ class MessagePersistenceService : IntentService("MessagePersistenceService") {
             ACTION_PERSIST -> {
                 val msg = intent.getSerializableExtra(EXTRA_MESSAGE) as MessageSerializable
                 handleActionPersist(msg)
+                // close notification if intent was called from one
+                if (intent.hasExtra(EXTRA_NOTIFICATION_ID)) {
+                    NotificationManagerCompat.from(this).cancel(
+                        intent.getIntExtra(EXTRA_NOTIFICATION_ID, 0)
+                    )
+                }
             }
             ACTION_READ -> {
-                val messages= handleActionRead()
+                val messages = handleActionRead()
                 sendBroadcast(ParcelableMessage.convertToParcelableArray(messages))
             }
             ACTION_DELETE -> {
-                if(intent.hasExtra(EXTRA_MESSAGE_ID)){
+                if (intent.hasExtra(EXTRA_MESSAGE_ID)) {
                     val msgId = intent.extras?.getInt(EXTRA_MESSAGE_ID)
                     handleActionDelete(msgId!!)
                 }
@@ -49,7 +58,8 @@ class MessagePersistenceService : IntentService("MessagePersistenceService") {
      * @param messages Message parcelables read from the db
      */
     private fun sendBroadcast(messages: ArrayList<ParcelableMessage>) {
-        val intent = Intent("load_messages") //put the same message as in the filter you used in the activity when registering the receiver
+        val intent =
+            Intent("load_messages") //put the same message as in the filter you used in the activity when registering the receiver
         intent.putParcelableArrayListExtra("messages", messages)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
@@ -58,7 +68,14 @@ class MessagePersistenceService : IntentService("MessagePersistenceService") {
      * Persisting message into the room database
      */
     private fun handleActionPersist(msg: MessageSerializable) {
-        val msgEntity = MessageEntity(null, msg.sender!!, msg.title!!, msg.messageText,msg.attachment, msg.links )
+        val msgEntity = MessageEntity(
+            null,
+            msg.sender,
+            msg.title,
+            msg.messageText,
+            msg.attachment,
+            msg.links
+        )
         db.messageDao().insert(msgEntity)
     }
 
@@ -76,13 +93,15 @@ class MessagePersistenceService : IntentService("MessagePersistenceService") {
 
     companion object {
         // Action names that describe tasks that this IntentService can perform
-        private const val ACTION_PERSIST = "de.uulm.automotiveuulmapp.action.PERSIST"
-        private const val ACTION_READ = "de.uulm.automotiveuulmapp.action.READ"
-        private const val ACTION_DELETE = "de.uulm.automotiveuulmapp.action.DELETE"
+        const val ACTION_PERSIST = "de.uulm.automotiveuulmapp.action.PERSIST"
+        const val ACTION_READ = "de.uulm.automotiveuulmapp.action.READ"
+        const val ACTION_DELETE = "de.uulm.automotiveuulmapp.action.DELETE"
 
         // Parameters this IntentService can accept
-        private const val EXTRA_MESSAGE = "de.uulm.automotiveuulmapp.extra.MESSAGE"
-        private const val EXTRA_MESSAGE_ID = "de.uulm.automotiveuulmapp.extra.MESSAGE_ID"
+        const val EXTRA_MESSAGE = "de.uulm.automotiveuulmapp.extra.MESSAGE"
+        const val EXTRA_MESSAGE_ID = "de.uulm.automotiveuulmapp.extra.MESSAGE_ID"
+        const val EXTRA_NOTIFICATION_ID = "de.uulm.automotiveuulmapp.extra.NOTIFICATION_ID"
+
         /**
          * Starts this service to perform action Persist with the given parameters. If
          * the service is already performing a task this action will be queued.
@@ -96,6 +115,22 @@ class MessagePersistenceService : IntentService("MessagePersistenceService") {
                 putExtra(EXTRA_MESSAGE, msg)
             }
             context.startService(intent)
+        }
+
+        /**
+         * Creates an Intent for persisting the given message via notification.
+         * The intent will close the notification when called
+         */
+        fun generateNotificationPersistIntent(
+            context: Context,
+            msg: MessageSerializable,
+            notificationId: Int
+        ): Intent {
+            return Intent(context, MessagePersistenceService::class.java).apply {
+                action = ACTION_PERSIST
+                putExtra(EXTRA_MESSAGE, msg)
+                putExtra(EXTRA_NOTIFICATION_ID, notificationId)
+            }
         }
 
         /**
