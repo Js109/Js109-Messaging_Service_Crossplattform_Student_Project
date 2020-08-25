@@ -6,12 +6,16 @@ import com.google.maps.android.SphericalUtil
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import de.uulm.automotive.cds.entities.LocationDataSerializable
+import de.uulm.automotiveuulmapp.locationFavourites.locationFavData.LocationDataDAO
+import de.uulm.automotiveuulmapp.locationFavourites.locationFavData.LocationDatabase
 import org.assertj.core.api.Java6Assertions.assertThat
+import org.junit.Before
 import org.junit.Test
 
 class LocationDataFencerTest {
     private val mockLocationFetcher = mock<CurrentLocationFetcher>()
-    private val fencer = LocationDataFencer(mockLocationFetcher)
+    private val mockLocationDatabase = mock<LocationDatabase>()
+    private val fencer = LocationDataFencer(mockLocationFetcher, mockLocationDatabase)
 
     private val ulmLat = 48.355362
     private val ulmLng = 9.985251
@@ -31,6 +35,13 @@ class LocationDataFencerTest {
     private val almostTenKilometersEast = SphericalUtil.computeOffset(ulmPos, 9990.0, 90.0)
     private val almostTenKilometersSouth = SphericalUtil.computeOffset(ulmPos, 9990.0, 180.0)
     private val almostTenKilometersWest = SphericalUtil.computeOffset(ulmPos, 9990.0, 270.0)
+
+    @Before
+    fun setupMockDatabase() {
+        val mockDao = mock<LocationDataDAO>()
+        whenever(mockDao.getAllInstant()).thenReturn(emptyList())
+        whenever(mockLocationDatabase.getLocationDao()).thenReturn(mockDao)
+    }
 
     fun setCurrentLocationToUlm() {
         val location = mock<Location>()

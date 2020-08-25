@@ -55,7 +55,7 @@ class MessageAdapter(private val searchView: SearchView, private val messageDao:
 
         holder.itemView.setOnClickListener {
             val intent = Intent(searchView.context, MessageContentActivity::class.java)
-            intent.putExtra(MessageContentActivity.EXTRA_MESSAGE, MessageSerializable(message.sender, message.title, message.messageText, message.attachment, message.links, null))
+            intent.putExtra(MessageContentActivity.EXTRA_PERSISTED_MESSAGE_ID, message.uid)
             startActivity(searchView.context, intent, null)
         }
     }
