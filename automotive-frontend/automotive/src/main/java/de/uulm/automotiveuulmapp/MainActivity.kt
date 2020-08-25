@@ -1,5 +1,6 @@
 package de.uulm.automotiveuulmapp
 
+/* For CarUxRestrictions */
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -10,7 +11,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import de.uulm.automotiveuulmapp.locationFavourites.LocationFavouritesFragment
 import de.uulm.automotiveuulmapp.topicFragment.TopicFragment
 
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity() {
     companion object {
         const val REQUEST_LOCATION_PERMISSIONS_CODE = 1
     }
@@ -21,9 +22,9 @@ class MainActivity : AppCompatActivity(){
         val navBar = findViewById<BottomNavigationView>(R.id.bottomNavigationBar)
         loadFragment(TopicFragment())
 
-        navBar.setOnNavigationItemSelectedListener{item ->
+        navBar.setOnNavigationItemSelectedListener { item ->
             var fragment: Fragment? = null
-            when(item.itemId) {
+            when (item.itemId) {
                 R.id.nav_item_messages -> {
                     //TODO: Add navigation logic to message list activity
                 }
@@ -48,8 +49,13 @@ class MainActivity : AppCompatActivity(){
             && ActivityCompat.checkSelfPermission(
                 applicationContext,
                 Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION),
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(
+                arrayOf(
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ),
                 REQUEST_LOCATION_PERMISSIONS_CODE
             )
         }
