@@ -99,15 +99,6 @@ class PublishController(private val messageRepository: MessageRepository, privat
             }
         }
 
-        if (messagestarttime == null) {
-            message.starttime = LocalDateTime.now()
-            message.isSent = true
-            messageService.sendMessage(message)
-        } else {
-            message.starttime = messagestarttime
-            message.isSent = false
-        }
-
         model["title"] = "Messages"
         model["message"] = message.render()
 
@@ -143,6 +134,16 @@ class PublishController(private val messageRepository: MessageRepository, privat
         if (hasErrors) {
             return messageForm(model)
         }
+
+        if (messagestarttime == null) {
+            message.starttime = LocalDateTime.now()
+            message.isSent = true
+            messageService.sendMessage(message)
+        } else {
+            message.starttime = messagestarttime
+            message.isSent = false
+        }
+
 
         val savedMessage = messageRepository.save(message)
         model["message"] = savedMessage.render()

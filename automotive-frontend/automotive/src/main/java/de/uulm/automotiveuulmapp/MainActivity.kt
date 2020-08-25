@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import de.uulm.automotiveuulmapp.messageFragment.MessageFragment
 import de.uulm.automotiveuulmapp.locationFavourites.LocationFavouritesFragment
 import de.uulm.automotiveuulmapp.topicFragment.TopicFragment
 
@@ -22,16 +23,18 @@ class MainActivity : AppCompatActivity(){
         loadFragment(TopicFragment())
 
         navBar.setOnNavigationItemSelectedListener{item ->
-            var fragment: Fragment? = null
-            when(item.itemId) {
+            val fragment = when(item.itemId) {
                 R.id.nav_item_messages -> {
-                    //TODO: Add navigation logic to message list activity
+                    MessageFragment()
                 }
                 R.id.nav_item_locations -> {
-                    fragment = LocationFavouritesFragment()
+                    LocationFavouritesFragment()
                 }
                 R.id.nav_item_subscriptions -> {
-                    fragment = TopicFragment()
+                    TopicFragment()
+                }
+                else -> {
+                    null
                 }
             }
             loadFragment(fragment)
