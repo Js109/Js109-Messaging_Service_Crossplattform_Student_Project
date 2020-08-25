@@ -2,6 +2,7 @@ package de.uulm.automotive.cds.controller
 
 import de.uulm.automotive.cds.entities.LocationData
 import de.uulm.automotive.cds.entities.Message
+import de.uulm.automotive.cds.entities.Property
 import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.repositories.PropertyRepository
 import de.uulm.automotive.cds.repositories.TopicRepository
@@ -18,6 +19,7 @@ import java.time.LocalDateTime
 /**
  * Controller for the OEM web view.
  */
+@CrossOrigin("*")
 @Controller
 @RequestMapping("/publish")
 class PublishController(private val messageRepository: MessageRepository, private val topicRepository: TopicRepository, private val propertyRepository: PropertyRepository, private val messageService: MessageService) {
@@ -32,7 +34,7 @@ class PublishController(private val messageRepository: MessageRepository, privat
      *
      * @return String name of the view
      */
-    @GetMapping()
+    @GetMapping
     fun messageForm(model: Model): String {
         model["title"] = "Message"
         model["topics"] = topicRepository.findAllByOrderByTitleAsc()
@@ -75,7 +77,7 @@ class PublishController(private val messageRepository: MessageRepository, privat
      * @param file File which should contain an image
      * @return String name of the view
      */
-    @PostMapping()
+    @PostMapping
     fun postMessage(@ModelAttribute("message") message: Message, @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) messagestarttime: LocalDateTime?, model: Model, @RequestParam("file") file: MultipartFile?, @RequestParam("urls") urls: Array<String>?, lat: Double?, lng: Double?, radius: Int?): String {
         var hasErrors = false
 
@@ -128,7 +130,6 @@ class PublishController(private val messageRepository: MessageRepository, privat
                 message.locationData = LocationData(null, lat, lng, radius)
             }
         }
-
 
         if (hasErrors) {
             return messageForm(model)
