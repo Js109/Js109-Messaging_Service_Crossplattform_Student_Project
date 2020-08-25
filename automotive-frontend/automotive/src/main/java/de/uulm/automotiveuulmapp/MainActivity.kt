@@ -5,6 +5,9 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.car.uxrestrictions.CarUxRestrictions
+import androidx.car.*
+import androidx.car.uxrestrictions.OnUxRestrictionsChangedListener
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -39,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         navBar.setOnNavigationItemReselectedListener {
-            //do nothing when reselected
+            // do nothing when reselected
         }
 
         if (ActivityCompat.checkSelfPermission(
@@ -72,4 +75,18 @@ class MainActivity : AppCompatActivity() {
         }
         return false
     }
+
+    // private val mCarUxRestrictionsManager: CarUxRestrictionsManager? = null
+    private var mCurrentUxRestrictions: CarUxRestrictions? = null
+
+    /* Implement the onUxRestrictionsChangedListener interface */
+    private val mUxrChangeListener: OnUxRestrictionsChangedListener =
+        object : OnUxRestrictionsChangedListener {
+            override
+            fun onUxRestrictionsChanged(carUxRestrictions: CarUxRestrictions?) {
+                mCurrentUxRestrictions = carUxRestrictions
+                /* Handle the new restrictions */
+                // handleUxRestrictionsChanged(carUxrestrictions)
+            }
+        }
 }
