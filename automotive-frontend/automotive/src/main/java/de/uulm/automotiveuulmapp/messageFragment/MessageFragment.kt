@@ -26,7 +26,7 @@ class MessageFragment : BaseFragment() {
 
         val searchView = view.findViewById<SearchView>(R.id.messageSearch)
 
-        val messageAdapter = MessageAdapter(searchView, MessageDatabase.getDatabaseInstance(recyclerView.context).messageDao(), activity)
+        val messageAdapter = MessageAdapter(searchView, MessageDatabase.getDaoInstance(recyclerView.context), activity)
 
         recyclerView.apply {
             layoutManager = LinearLayoutManager(context).apply { reverseLayout = true}

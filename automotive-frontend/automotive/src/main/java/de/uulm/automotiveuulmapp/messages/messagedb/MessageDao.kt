@@ -11,6 +11,9 @@ interface MessageDao {
     @Query("SELECT * FROM messageentity")
     fun getAll() : List<MessageEntity>
 
+    @Query("SELECT * FROM messageentity")
+    fun getLiveData() : LiveData<List<MessageEntity>>
+
     @Query("SELECT * FROM messageentity WHERE uid = :messageId")
     fun get(messageId: Int): MessageEntity
 
@@ -19,4 +22,7 @@ interface MessageDao {
 
     @Update
     fun update(msg: MessageEntity)
+
+    @Query("SELECT COUNT(*) FROM messageentity WHERE read = 0")
+    fun newMessageCount(): LiveData<Int>
 }
