@@ -21,7 +21,6 @@
             android:layout_marginBottom="8dp"
             android:background="@drawable/circle"
             android:gravity="center"
-            android:text="B"
             android:textSize="36sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -40,6 +39,20 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/readSymbol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="❗"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        </TextView>
 
 
         <TextView

@@ -18,6 +18,8 @@ import de.uulm.automotiveuulmapp.geofencing.CurrentLocationFetcher
 import de.uulm.automotiveuulmapp.geofencing.LocationDataFencer
 import de.uulm.automotiveuulmapp.locationFavourites.locationFavData.LocationDatabase
 import de.uulm.automotiveuulmapp.messages.MessagePersistenceService
+import de.uulm.automotiveuulmapp.messages.messagedb.MessageDatabase
+import de.uulm.automotiveuulmapp.messages.messagedb.MessageEntity
 import de.uulm.automotiveuulmapp.topic.TopicChange
 import java.io.ByteArrayInputStream
 import java.io.IOException
@@ -136,13 +138,12 @@ class RabbitMQService : Service() {
         val deliverCallback =
             DeliverCallback { _: String?, delivery: Delivery ->
                 val message = convertByteArrayToMessage(delivery.body)
-                //TODO Check if message location is one of the favorites,
-                //if (fav)
-                //  persist
-                //else
-                //  headsup
-                if (locationFencer?.shouldAllow(message.locationData) == true) {
+                if (message.locationData == null || locationFencer?.currentPositionFencing(message.locationData) == true) {
                     notify(message)
+                } else if (locationFencer?.storedLocationsFencing(message.locationData) == true) {
+                    MessageDatabase.getDaoInstance(this).insert(
+                        MessageEntity(null, message.sender, message.title, message.messageText, message.attachment, message.links, false, false)
+                    )
                 }
             }
 

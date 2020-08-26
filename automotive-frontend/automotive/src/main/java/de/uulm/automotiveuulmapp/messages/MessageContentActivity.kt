@@ -43,11 +43,15 @@ class MessageContentActivity : AppCompatActivity() {
             }
             intent.hasExtra(EXTRA_PERSISTED_MESSAGE_ID) -> {
                 AsyncTask.execute {
-                    val me = MessageDatabase.getDatabaseInstance(this).messageDao().get(
+                    val dao = MessageDatabase.getDaoInstance(this)
+                    val me = dao.get(
                         intent.getIntExtra(
                             EXTRA_PERSISTED_MESSAGE_ID, 0
                         )
                     )
+                    if (!me.read) {
+                        dao.update(me.apply { read = true })
+                    }
                     runOnUiThread {
                         setupView(
                             MessageSerializable(

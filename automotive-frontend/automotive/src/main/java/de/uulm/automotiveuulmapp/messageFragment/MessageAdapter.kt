@@ -9,30 +9,41 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.SearchView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
-import de.uulm.automotive.cds.entities.MessageSerializable
 import de.uulm.automotiveuulmapp.R
 import de.uulm.automotiveuulmapp.messages.MessageContentActivity
 import de.uulm.automotiveuulmapp.messages.messagedb.MessageDao
 import de.uulm.automotiveuulmapp.messages.messagedb.MessageEntity
+import org.w3c.dom.Text
 
-class MessageAdapter(private val searchView: SearchView, private val messageDao: MessageDao, activity: Activity?) : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
+class MessageAdapter(
+    private val searchView: SearchView,
+    private val messageDao: MessageDao,
+    activity: Activity?
+) : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
 
+    private var messagesLiveData: LiveData<List<MessageEntity>>? = null
     private var messages = emptyList<MessageEntity>()
     private var currentMessages = emptyList<MessageEntity>()
 
     init {
-        AsyncTask.execute{
-            messages = messageDao.getAll()
+        AsyncTask.execute {
+            messagesLiveData = messageDao.getLiveData()
             activity?.runOnUiThread {
-                notifyQueryChanged()
+                messagesLiveData?.observeForever {
+                    messages = it
+                    notifyQueryChanged()
+                }
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
-        val messageCard = LayoutInflater.from(parent.context).inflate(R.layout.message_card, parent, false)
+        val messageCard =
+            LayoutInflater.from(parent.context).inflate(R.layout.message_card, parent, false)
         return MessageViewHolder(messageCard)
     }
 
@@ -48,10 +59,18 @@ class MessageAdapter(private val searchView: SearchView, private val messageDao:
         val content = holder.itemView.findViewById<TextView>(R.id.message_content_text)
         content.text = message.messageText
 
+        val readSymbol = holder.itemView.findViewById<TextView>(R.id.readSymbol)
+        readSymbol.visibility = if (message.read) View.GONE else View.VISIBLE
+
         val checkbox = holder.itemView.findViewById<CheckBox>(R.id.message_favourite_checkbox)
-        checkbox.setOnCheckedChangeListener { _, _ ->  }
+        checkbox.setOnCheckedChangeListener { _, _ -> }
         checkbox.isChecked = message.favourite
-        checkbox.setOnCheckedChangeListener { _, isChecked ->  AsyncTask.execute { messageDao.update(message.apply { favourite = isChecked }) } }
+        checkbox.setOnCheckedChangeListener { _, isChecked ->
+            AsyncTask.execute {
+                messageDao.update(
+                    message.apply { favourite = isChecked })
+            }
+        }
 
         holder.itemView.setOnClickListener {
             val intent = Intent(searchView.context, MessageContentActivity::class.java)
