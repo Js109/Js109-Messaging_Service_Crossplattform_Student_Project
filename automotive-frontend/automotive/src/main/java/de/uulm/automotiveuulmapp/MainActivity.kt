@@ -4,14 +4,19 @@ package de.uulm.automotiveuulmapp
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.View
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.car.uxrestrictions.CarUxRestrictions
 import androidx.car.*
 import androidx.car.uxrestrictions.OnUxRestrictionsChangedListener
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import de.uulm.automotiveuulmapp.messageFragment.MessageFragment
 import de.uulm.automotiveuulmapp.locationFavourites.LocationFavouritesFragment
+import de.uulm.automotiveuulmapp.messages.messagedb.MessageDatabase
 import de.uulm.automotiveuulmapp.topicFragment.TopicFragment
 
 class MainActivity : AppCompatActivity() {
@@ -19,23 +24,30 @@ class MainActivity : AppCompatActivity() {
         const val REQUEST_LOCATION_PERMISSIONS_CODE = 1
     }
 
+    lateinit var hasNewMessagesLiveData: LiveData<Int>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
         val navBar = findViewById<BottomNavigationView>(R.id.bottomNavigationBar)
         loadFragment(TopicFragment())
 
+        navBar.setOnNavigationItemSelectedListener{item ->
+            val fragment = when(item.itemId) {
         navBar.setOnNavigationItemSelectedListener { item ->
             var fragment: Fragment? = null
             when (item.itemId) {
                 R.id.nav_item_messages -> {
-                    //TODO: Add navigation logic to message list activity
+                    MessageFragment()
                 }
                 R.id.nav_item_locations -> {
-                    fragment = LocationFavouritesFragment()
+                    LocationFavouritesFragment()
                 }
                 R.id.nav_item_subscriptions -> {
-                    fragment = TopicFragment()
+                    TopicFragment()
+                }
+                else -> {
+                    null
                 }
             }
             loadFragment(fragment)
@@ -43,6 +55,12 @@ class MainActivity : AppCompatActivity() {
 
         navBar.setOnNavigationItemReselectedListener {
             // do nothing when reselected
+        }
+
+        hasNewMessagesLiveData = MessageDatabase.getDaoInstance(this).newMessageCount()
+        hasNewMessagesLiveData.observeForever { count ->
+            val newMessagesSymbol = findViewById<TextView>(R.id.newMessagesSymbol)
+            newMessagesSymbol.visibility = if (count > 0) View.VISIBLE else View.INVISIBLE
         }
 
         if (ActivityCompat.checkSelfPermission(

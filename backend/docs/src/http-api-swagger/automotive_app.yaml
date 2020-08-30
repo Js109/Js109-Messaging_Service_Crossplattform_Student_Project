@@ -38,7 +38,7 @@ paths:
           description: "Not Found"
     post:
       tags:
-        - "Client - Android Automotive Application"
+        - "Administration - OEM-Web Frontend"
       summary: "Store new topic for the Notifications."
       description: "Stores the topic given in the body. If the id is left out one will be generated."
       produces:
@@ -46,13 +46,13 @@ paths:
       parameters:
         - in: "body"
           name: "body"
-          description: "Client-Id which should subscribe to topic"
+          description: "new topic to be stored"
           required: true
           schema:
             $ref: "#/definitions/Topic"
       responses:
         "200":
-          description: "successful operation"
+          description: "Successful Operation"
         "400":
           description: "Bad Request"
         "404":
@@ -74,26 +74,102 @@ paths:
             $ref: "#/definitions/SignUpInfo"
       responses:
         "200":
-          description: "successful operation"
+          description: "Successful Operation"
         "400":
           description: "Bad Request"
         "404":
           description: "Not Found"
+  /message:
+    post:
+      tags:
+        - "Administration - OEM-Web Frontend"
+      summary: "Posts a new message the will be published to the appropriate clients"
+      description: "Only sender, title, content and either topic or properties need to be set"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Message to be published"
+          required: true
+          schema:
+            $ref: "#/definitions/Message"
+      responses:
+        "200":
+          description: "Successful Operation"
+        "400":
+          description: "Bad Request"
+  /message/{id}:
+    parameters: 
+      - name: id
+        in: path
+        required: true
+        type: number
+    get:
+      tags:
+        - "Administration - OEM-Web Frontend"
+      summary: "Retrieves the message with the given id form the backend"
+      description: "If a message with the given id is stored in the backend it will be send as a reply. Otherwise 404 will be returned."
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Not Found"
+
+  /property:
+    get:
+      tags:
+        - "Administration - OEM-Web Frontend"
+      summary: "Retrieves all existing properties the backend"
+      description: "Loads all previously created properties and sends them as a list within the response body."
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: "#/definitions/Property"
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Not Found"
+    post:
+      tags:
+        - "Administration - OEM-Web Frontend"
+      summary: "Stores a new property in the backend."
+      description: "If no id is given a new one will be generated."
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Property to be stored"
+          required: true
+          schema:
+            $ref: "#/definitions/Property"
+      responses:
+        "200":
+          description: "Successful Operation"
+        "400":
+          description: "Bad Request"
+
+
 definitions:
   Topic:
     type: "object"
     properties:
-      title:
-        type: "string"
-        example: "Kultur"
+      id:
+        type: "number"
+        example: 42
       binding:
         type: "string"
         example: "landschaft/Kultur"
+      title:
+        type: "string"
+        example: "Kultur"
+      tags:
+        $ref: "#/definitions/Tag"
       description:
         type: "string"
         example: "Hier werden alle kulturbezogenen Themen veröffentlicht."
-      tags:
-        $ref: "#/definitions/Tag"
   SignUpInfo:
     type: "object"
     properties:
@@ -104,6 +180,77 @@ definitions:
         type: string
         format: uuid
         example: "bd604ecb-b6d3-49f7-a0f7-eaff204019be"
+  Property:
+    type: "object"
+    properties:
+      id:
+        type: number
+        example: 3
+      name: 
+        type: "string"
+        example: "Audi A3"
+      binding:
+        type: "string"
+        example: "device/audi/a3"
+  Message:
+    type: "object"
+    properties:
+      id:
+        type: number
+        example: 3
+      topic: 
+        type: "string"
+        example: "landschaft/kultur"
+      sender:
+        type: "string"
+        example: "Audi"
+      title:
+        type: "string"
+        example: "Nachrichtentitel"
+      content: 
+        type: "string"
+        example: "Textinhalt der Nachricht"
+      starttime: 
+        type: "string"
+        format: "date-time"
+        example: "2020-08-19T11:32"
+      endtime: 
+        type: "string"
+        format: "date-time"
+        example: "2020-08-19T11:32"
+      isSent:
+        type: boolean
+        example: false
+      properties:
+        type: array
+        items:
+          type: "string"
+          example: "device/audi/a3"
+      attachment:
+        type: "string"
+        format: "byte"
+        example: "HTP40c5xijnt"
+      links:
+        type: "array"
+        items:
+          type: "string"
+          example: "https://uulm.de"
+      locationData:
+        $ref: "#/definitions/LocationData"
+  LocationData:
+    type: "object"
+    properties:
+      id:
+        type: number
+        example: 4
+      lat:
+        type: number
+        example: 48.3584855
+      lng:
+        type: number
+        example: 9.9788416
+      radius:
+        type: number
 
 
   Tag:

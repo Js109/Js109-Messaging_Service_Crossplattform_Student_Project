@@ -1,10 +1,15 @@
 package de.uulm.automotiveuulmapp;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * This class should contain all globally required constants
  * to improve maintainability
  */
 public abstract class ApplicationConstants {
+    @NotNull
+    public static final String MESSAGE_DB_NAME = "message-db";
+
     private ApplicationConstants() {
     }
     public static final String REGISTRATION_DB_NAME = "registrationData";

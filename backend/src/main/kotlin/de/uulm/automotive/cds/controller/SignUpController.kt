@@ -6,10 +6,7 @@ import de.uulm.automotive.cds.models.TokenDTO
 import de.uulm.automotive.cds.repositories.SignUpRepository
 import de.uulm.automotive.cds.services.AmqpChannelService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.HashMap
@@ -17,6 +14,7 @@ import kotlin.collections.HashMap
 /**
  * Rest-Point for SignUp of new clients.
  */
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/signup")
 class SignUpController @Autowired constructor(private val amqpService: AmqpChannelService, private val tokenRepository: SignUpRepository) {
@@ -29,7 +27,7 @@ class SignUpController @Autowired constructor(private val amqpService: AmqpChann
      * @param info SignUp Info of the client
      * @return TokenDTO with the signUp Token and the QueueID of the client
      */
-    @PostMapping("/")
+    @PostMapping
     fun signUp(@RequestBody info: SignUpInfo): TokenDTO {
         // check if the Token is already saved in the Database
         val signUpToken = tokenRepository.findBySignUpToken(info.signUpToken)

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDateTime
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/message")
 /**
@@ -37,7 +38,7 @@ class MessageController(private val repository: MessageRepository) {
      *
      * @param message
      */
-    @PostMapping()
+    @PostMapping
     fun saveMessage(@RequestBody message: Message) {
         message.isSent = false
         if (message.starttime == null) {

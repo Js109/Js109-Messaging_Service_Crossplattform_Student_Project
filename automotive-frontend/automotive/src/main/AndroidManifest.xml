@@ -55,6 +55,9 @@
         </activity>
 
         <service
+            android:name=".messages.MessagePersistenceService"
+            android:exported="false" />
+        <service
             android:name=".rabbitmq.RabbitMQService"
             android:enabled="true"
             android:exported="true" />
