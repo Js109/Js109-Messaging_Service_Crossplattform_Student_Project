@@ -25,7 +25,6 @@
             android:name=".messages.MessagePersistenceService"
             android:exported="false" />
 
-        <activity android:name=".TopicAdapterTestActivity" />
         <activity android:name=".MainActivity">
 
             <meta-data
@@ -35,13 +34,7 @@
         <activity
             android:name=".welcome.WelcomeAppIntro"
             android:label="@string/title_activity_my_custom_app_intro"
-            android:theme="@style/AppTheme.NoActionBar">
-
-            <meta-data
-                android:name="distractionOptimized"
-                android:value="true" />
-        </activity>
-
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".messages.MessageContentActivity" />
         <activity android:name=".IntroActivity">
             <meta-data
@@ -65,6 +58,10 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCdP9Z5FYGgS10fS_aV_vzt5uuXDzc5vS4" />
+
+        <!--        Test Activities -->
+        <activity android:name=".TopicAdapterTestActivity" />
+        <activity android:name=".MessageAdapterTestActivity" />
     </application>
 
 </manifest>

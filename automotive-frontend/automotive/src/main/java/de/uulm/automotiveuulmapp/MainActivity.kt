@@ -2,20 +2,21 @@ package de.uulm.automotiveuulmapp
 
 /* For CarUxRestrictions */
 import android.Manifest
-import android.car.Car;
+import android.car.Car
 import android.car.drivingstate.CarUxRestrictions
 import android.car.drivingstate.CarUxRestrictionsManager
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import de.uulm.automotiveuulmapp.messageFragment.MessageFragment
 import de.uulm.automotiveuulmapp.locationFavourites.LocationFavouritesFragment
+import de.uulm.automotiveuulmapp.messageFragment.MessageFragment
 import de.uulm.automotiveuulmapp.messages.messagedb.MessageDatabase
 import de.uulm.automotiveuulmapp.topicFragment.TopicFragment
 
@@ -77,6 +78,45 @@ class MainActivity : AppCompatActivity() {
                 REQUEST_LOCATION_PERMISSIONS_CODE
             )
         }
+
+        // hier Definition der Restrictions, die verwendet werden sollen?
+        var mCurrentUxRestrictions: CarUxRestrictions? = null
+
+        /* Implement the onUxRestrictionsChangedListener interface */
+        val mUxrChangeListener: CarUxRestrictionsManager.OnUxRestrictionsChangedListener =
+            object : CarUxRestrictionsManager.OnUxRestrictionsChangedListener {
+                override
+                fun onUxRestrictionsChanged(carUxRestrictions: CarUxRestrictions?) {
+                    mCurrentUxRestrictions = carUxRestrictions
+                    /* Handle the new restrictions */
+
+                    if (carUxRestrictions?.isRequiresDistractionOptimization == true) {
+                        Toast.makeText(this@MainActivity, "true", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@MainActivity, "false", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        var mCar = Car.createCar(applicationContext)
+        if (mCar != null) {
+            val carUxRestrictionsManager =
+                mCar.getCarManager(Car.CAR_UX_RESTRICTION_SERVICE) as CarUxRestrictionsManager
+
+            carUxRestrictionsManager?.registerListener(mUxrChangeListener)
+            mUxrChangeListener.onUxRestrictionsChanged(
+                carUxRestrictionsManager?.currentCarUxRestrictions
+            )
+        } else {
+            println("mCar is null")
+        }
+        /* Lösung muss mit https://developer.android.com/reference/android/car/drivingstate/CarUxRestrictions
+        und dem Builder CarUxRestrictionsConfiguration dafür möglich sein:
+        https://source.android.com/devices/automotive/driver_distraction/car_uxr oder oben wo die Toasts benutzt werden?
+        */
+        /* val activeUxR: Int = mCurrentCarUxRestrictions.getActiveRestrictions()
+        if (activeUxR and CarUxRestrictions.UX_RESTRICTIONS_NO_VIDEO !== 0) {
+            handleStopPlayingVideo()
+        } */
     }
 
     private fun loadFragment(fragment: Fragment?): Boolean {
@@ -90,43 +130,4 @@ class MainActivity : AppCompatActivity() {
         }
         return false
     }
-    /*
-    mDrivingStateManager = mCar.getCarManager(
-    Car.CAR_DRIVING_STATE_SERVICE) as CarDrivingStateManager
-    mDrivingStateManager.registerListener(mDrivingStateEventListener)
-    mDrivingStateEvent = mDrivingStateManager.getCurrentCarDrivingState()
-    val mDrivingStateEventListener = object:CarDrivingStateManager.CarDrivingStateEventListener() {
-        fun onDrivingStateChanged(event:CarDrivingStateEvent) {
-            mDrivingStateEvent = event
-            /* handle the state change accordingly */
-            handleDrivingStateChange()
-        }
-    } */
-
-    private val mCarUxRestrictionsManager: CarUxRestrictionsManager? = null
-    private var mCurrentUxRestrictions: CarUxRestrictions? = null
-
-    /* Implement the onUxRestrictionsChangedListener interface */
-    private val mUxrChangeListener: CarUxRestrictionsManager.OnUxRestrictionsChangedListener =
-        object : CarUxRestrictionsManager.OnUxRestrictionsChangedListener {
-            override
-            fun onUxRestrictionsChanged(carUxRestrictions: CarUxRestrictions?) {
-                mCurrentUxRestrictions = carUxRestrictions
-                /* Handle the new restrictions */
-                // handleUxRestrictionsChanged(carUxrestrictions)
-
-                var mCar = Car.createCar(applicationContext)
-                if (mCar == null) {
-                    // handle car connection error
-                }
-
-                val carUxRestrictionsManager =
-                    mCar.getCarManager(Car.CAR_UX_RESTRICTION_SERVICE)
-
-                mCarUxRestrictionsManager!!.registerListener(this)
-                onUxRestrictionsChanged(
-                    mCarUxRestrictionsManager!!.currentCarUxRestrictions
-                )
-            }
-        }
 }
