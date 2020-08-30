@@ -17,7 +17,10 @@ public abstract class ApplicationConstants {
     public static final String DEVICE_TYPE = "Android Emulator";
 
     // REST Endpoints
-    private static final String APPLICATION_URL = "http://10.0.2.2:8080";
+    // comment the following line to unuse the global deployed backend
+    private static final String APPLICATION_URL = "http://elbitbackend.schuster.domains:8085";
+    // uncomment the following line to deploy locally versus local Intellij
+    // private static final String APPLICATION_URL = "http://10.0.2.2:8080";
     public static final String ENDPOINT_SIGNUP = APPLICATION_URL + "/signup/";
     public static final String ENDPOINT_TOPIC = APPLICATION_URL + "/topic";
 }
