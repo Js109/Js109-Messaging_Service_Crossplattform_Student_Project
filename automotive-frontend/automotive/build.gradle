@@ -47,6 +47,8 @@ android {
         jvmTarget = "1.8"
     }
     useLibrary 'org.apache.http.legacy'
+    /* For CarUxRestrictions and allows us to use Android Car API functionalities inside our Android App */
+    useLibrary 'android.car'
 }
 
 repositories {
@@ -65,8 +67,6 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
-    /* For CarUxRestrictions */
-    implementation 'androidx.car:car:1.0.0-alpha7'
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.assertj:assertj-core:3.11.1'

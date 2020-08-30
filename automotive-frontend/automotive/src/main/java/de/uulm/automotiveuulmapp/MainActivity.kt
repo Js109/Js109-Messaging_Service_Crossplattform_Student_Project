@@ -2,14 +2,14 @@ package de.uulm.automotiveuulmapp
 
 /* For CarUxRestrictions */
 import android.Manifest
+import android.car.Car;
+import android.car.drivingstate.CarUxRestrictions
+import android.car.drivingstate.CarUxRestrictionsManager
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.car.uxrestrictions.CarUxRestrictions
-import androidx.car.*
-import androidx.car.uxrestrictions.OnUxRestrictionsChangedListener
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
@@ -32,11 +32,8 @@ class MainActivity : AppCompatActivity() {
         val navBar = findViewById<BottomNavigationView>(R.id.bottomNavigationBar)
         loadFragment(TopicFragment())
 
-        navBar.setOnNavigationItemSelectedListener{item ->
-            val fragment = when(item.itemId) {
         navBar.setOnNavigationItemSelectedListener { item ->
-            var fragment: Fragment? = null
-            when (item.itemId) {
+            val fragment = when (item.itemId) {
                 R.id.nav_item_messages -> {
                     MessageFragment()
                 }
@@ -93,18 +90,43 @@ class MainActivity : AppCompatActivity() {
         }
         return false
     }
+    /*
+    mDrivingStateManager = mCar.getCarManager(
+    Car.CAR_DRIVING_STATE_SERVICE) as CarDrivingStateManager
+    mDrivingStateManager.registerListener(mDrivingStateEventListener)
+    mDrivingStateEvent = mDrivingStateManager.getCurrentCarDrivingState()
+    val mDrivingStateEventListener = object:CarDrivingStateManager.CarDrivingStateEventListener() {
+        fun onDrivingStateChanged(event:CarDrivingStateEvent) {
+            mDrivingStateEvent = event
+            /* handle the state change accordingly */
+            handleDrivingStateChange()
+        }
+    } */
 
-    // private val mCarUxRestrictionsManager: CarUxRestrictionsManager? = null
+    private val mCarUxRestrictionsManager: CarUxRestrictionsManager? = null
     private var mCurrentUxRestrictions: CarUxRestrictions? = null
 
     /* Implement the onUxRestrictionsChangedListener interface */
-    private val mUxrChangeListener: OnUxRestrictionsChangedListener =
-        object : OnUxRestrictionsChangedListener {
+    private val mUxrChangeListener: CarUxRestrictionsManager.OnUxRestrictionsChangedListener =
+        object : CarUxRestrictionsManager.OnUxRestrictionsChangedListener {
             override
             fun onUxRestrictionsChanged(carUxRestrictions: CarUxRestrictions?) {
                 mCurrentUxRestrictions = carUxRestrictions
                 /* Handle the new restrictions */
                 // handleUxRestrictionsChanged(carUxrestrictions)
+
+                var mCar = Car.createCar(applicationContext)
+                if (mCar == null) {
+                    // handle car connection error
+                }
+
+                val carUxRestrictionsManager =
+                    mCar.getCarManager(Car.CAR_UX_RESTRICTION_SERVICE)
+
+                mCarUxRestrictionsManager!!.registerListener(this)
+                onUxRestrictionsChanged(
+                    mCarUxRestrictionsManager!!.currentCarUxRestrictions
+                )
             }
         }
 }
