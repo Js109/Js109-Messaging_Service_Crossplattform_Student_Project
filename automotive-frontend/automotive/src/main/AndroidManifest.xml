@@ -38,6 +38,9 @@
             android:name=".messages.MessagePersistenceService"
             android:exported="false" />
         <service
+            android:name=".notifications.DismissNotificationService"
+            android:exported="false" />
+        <service
             android:name=".rabbitmq.RabbitMQService"
             android:enabled="true"
             android:exported="true" />

@@ -20,6 +20,7 @@ import de.uulm.automotiveuulmapp.locationFavourites.locationFavData.LocationData
 import de.uulm.automotiveuulmapp.messages.MessagePersistenceService
 import de.uulm.automotiveuulmapp.messages.messagedb.MessageDatabase
 import de.uulm.automotiveuulmapp.messages.messagedb.MessageEntity
+import de.uulm.automotiveuulmapp.notifications.DismissNotificationService
 import de.uulm.automotiveuulmapp.topic.TopicChange
 import java.io.ByteArrayInputStream
 import java.io.IOException
@@ -207,6 +208,19 @@ class RabbitMQService : Service() {
             storeMessageIntent
         ).build()
 
+        val dismissMessageIntent = PendingIntent.getService(
+            this,
+            0,
+            DismissNotificationService.generateDismissNotificationIntent(this, notificationId),
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val dismissAction = NotificationCompat.Action.Builder(
+            android.R.drawable.ic_delete,
+            "Dismiss",
+            dismissMessageIntent
+        ).build()
+
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -215,6 +229,7 @@ class RabbitMQService : Service() {
             .setContentTitle(message.title)
             .setContentText(message.messageText)
             .addAction(storeAction)
+            .addAction(dismissAction)
 
 
         with(NotificationManagerCompat.from(this)) {
