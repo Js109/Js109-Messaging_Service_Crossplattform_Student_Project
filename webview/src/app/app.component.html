@@ -1,0 +1,73 @@
+<div class="container">
+  <h3>Publish Message</h3>
+
+  <form enctype="multipart/form-data" action="/publish" onsubmit="return validateForm()"
+        name="message" method="post">
+    <div class="form-group">
+      <label for="topic">Topic:</label>
+      <select
+        class="browser-default custom-select"
+        name="topic" id="topic"
+        [(ngModel)]="message.topic">
+        <option selected></option>
+        <option *ngFor="let t of topics" [ngValue]="t.binding">{{t.title}}</option>
+      </select>
+    </div>
+<!--    <div class="form-group">-->
+<!--      <label>Property:</label>-->
+<!--      <div class="form-check">-->
+<!--        <input-->
+<!--          class="form-check-input"-->
+<!--          name="properties" type="checkbox" value="binding" id="checkboxid"/>-->
+<!--        <label class="form-check-label" for="checkboxid">-->
+<!--          name-->
+<!--        </label>-->
+<!--      </div>-->
+<!--    </div>-->
+    <div class="form-group">
+      <label for="sender">Sender:</label>
+      <input class="form-control" name="sender"
+             id="sender" placeholder="Sender"
+             [(ngModel)]="message.sender">
+    </div>
+    <div class="form-group">
+      <label for="title">Title:</label>
+      <input class="form-control" name="title"
+             id="title" placeholder="Title"
+             [(ngModel)]="message.title">
+    </div>
+    <div class="form-group">
+      <label for="content">Message content:</label>
+      <textarea class="form-control"
+                name="content" id="content" placeholder="Content" [(ngModel)]="message.content"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="messagestarttime">Send message at:</label>
+      <input class="browser-default custom-select" name="messagestarttime" type="datetime-local"
+             id="messagestarttime"/>
+    </div>
+    <div class="custom-file">
+      <input type="file" id="fileSelection" name="file" class="custom-file-input">
+      <label class="custom-file-label" for="customFile">Choose file</label>
+    </div>
+    <div class="form-group">
+      <div class="container" id="url-list">
+        <label for="urls">Links:</label>
+        <button class="btn btn-success" onclick="addItem()" type="button">
+          <span>Add URL:</span>
+        </button>
+      </div>
+    </div>
+    <button type="button" onclick="document.getElementById('fileSelection').value = ''"
+            class="btn btn-primary">clear
+    </button>
+    <button type="button" class="btn btn-primary" (click)="sendMessage()">Submit</button>
+  </form>
+  <script>
+    // Add the following code if you want the name of the file appear on select
+    $(".custom-file-input").on("change", function () {
+      let fileName = $(this).val().split("\\").pop();
+      $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+  </script>
+</div>
