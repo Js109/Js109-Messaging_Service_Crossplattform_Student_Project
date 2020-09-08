@@ -36,15 +36,50 @@ export class MessageComponent implements OnInit {
 
   locationData: LocationData = {radius: 50};
 
+  hasTopicPropertiesError = false;
+  hasSenderError = false;
+  hasTitleError = false;
+  hasContentError = false;
+  coordValueRangeError = false;
+  onlyOneCoordError = false;
+  urlErrors: boolean[] = [];
+  hasUrlErrors;
+
   sendMessage(): void {
-    this.http.post(environment.backendApiPath + '/message', this.message, {}).subscribe(
-      value => {
-        console.log('send');
-      },
-      error => {
-        console.log(error);
-      }
-    );
+    if (this.validateInputs()) {
+      this.http.post(environment.backendApiPath + '/message', this.message, {}).subscribe(
+        value => {
+          console.log('send');
+        },
+        error => {
+          console.log(error);
+        }
+      );
+    }
+  }
+
+  validateInputs(): boolean {
+    this.hasTopicPropertiesError = this.message.topic === '' && this.message.properties.length === 0;
+    this.hasSenderError = this.message.sender === '';
+    this.hasTitleError = this.message.title === '';
+    this.hasContentError = this.message.content === '' && this.message.content.length === 0;
+    const locationData = this.message.locationData;
+    if (locationData != null) {
+      this.coordValueRangeError = locationData.lat < -90 || locationData.lat > 90 || locationData.lng < -180 || locationData.lng > 180;
+      this.onlyOneCoordError = (locationData.lat == null && locationData.lng != null)
+                            || (locationData.lat != null && locationData.lng == null);
+    }
+    const urlRegex = new RegExp(
+      '((http|https)\\/\\/)?(www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)');
+    this.urlErrors = this.message.links.map((url) => !urlRegex.test(url));
+    this.hasUrlErrors = this.urlErrors.some((element) => element);
+    return this.hasTopicPropertiesError
+      || this.hasSenderError
+      || this.hasTitleError
+      || this.hasContentError
+      || this.coordValueRangeError
+      || this.onlyOneCoordError
+      || this.hasUrlErrors;
   }
 
   addLink(): void {
