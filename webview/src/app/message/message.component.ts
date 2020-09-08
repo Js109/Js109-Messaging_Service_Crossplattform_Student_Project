@@ -39,7 +39,7 @@ export class MessageComponent implements OnInit {
   sendMessage(): void {
     this.http.post(environment.backendApiPath + '/message', this.message, {}).subscribe(
       value => {
-        console.log('send');
+        console.log('message was sent');
       },
       error => {
         console.log(error);

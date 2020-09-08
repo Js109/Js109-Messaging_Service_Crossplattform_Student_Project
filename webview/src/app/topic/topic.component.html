@@ -1,1 +1,33 @@
-<p>topic works!</p>
+<ng-container>
+  <h3>Topic</h3>
+
+  <label for="title">Title:</label>
+  <input class="form-control" name="title"
+         id="title" placeholder="title"
+         [(ngModel)]="topic.title">
+
+  <label for="binding">Title:</label>
+  <input class="form-control" name="binding"
+         id="binding" placeholder="binding"
+         [(ngModel)]="topic.binding">
+
+  <label for="description">Description:</label>
+  <textarea class="form-control"
+            name="description" id="description" placeholder="Description"
+            [(ngModel)]="topic.description"></textarea>
+
+
+  <label for="tag">Tags:</label>
+  <button class="btn btn-success" (click)="addTag()" type="button">
+    <span>Add Tag</span>
+  </button>
+  <ng-container *ngFor="let _ of topic.tags; let i = index;trackBy:trackById">
+    <div class="row input-group">
+      <input name="tag" type="text" placeholder="tag" class="form-control"
+             [(ngModel)]="topic.tags[i]"/>
+      <button class="btn btn-danger" (click)="removeTag(i)">Remove Tag</button>
+    </div>
+  </ng-container>
+
+  <button type="button" class="btn btn-primary" (click)="createTopic()">Submit</button>
+</ng-container>
