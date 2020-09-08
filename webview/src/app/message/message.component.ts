@@ -62,7 +62,7 @@ export class MessageComponent implements OnInit {
     this.hasTopicPropertiesError = this.message.topic === '' && this.message.properties.length === 0;
     this.hasSenderError = this.message.sender === '';
     this.hasTitleError = this.message.title === '';
-    this.hasContentError = this.message.content === '' && this.message.content.length === 0;
+    this.hasContentError = this.message.content === '' && this.message.attachment.length === 0;
     const locationData = this.message.locationData;
     if (locationData != null) {
       this.coordValueRangeError = locationData.lat < -90 || locationData.lat > 90 || locationData.lng < -180 || locationData.lng > 180;
@@ -73,13 +73,13 @@ export class MessageComponent implements OnInit {
       '((http|https)\\/\\/)?(www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)');
     this.urlErrors = this.message.links.map((url) => !urlRegex.test(url));
     this.hasUrlErrors = this.urlErrors.some((element) => element);
-    return this.hasTopicPropertiesError
+    return !(this.hasTopicPropertiesError
       || this.hasSenderError
       || this.hasTitleError
       || this.hasContentError
       || this.coordValueRangeError
       || this.onlyOneCoordError
-      || this.hasUrlErrors;
+      || this.hasUrlErrors);
   }
 
   addLink(): void {

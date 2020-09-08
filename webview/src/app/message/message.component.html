@@ -41,7 +41,7 @@
          id="title" placeholder="Title"
          [(ngModel)]="message.title"
          [ngClass]="{'is-invalid' : hasTitleError}">
-  <div *ngIf="hasTitleError" class="invalid-feedback">Sender field is required.</div>
+  <div *ngIf="hasTitleError" class="invalid-feedback">Title field is required.</div>
 
   <label for="content">Message content:</label>
   <textarea class="form-control"
