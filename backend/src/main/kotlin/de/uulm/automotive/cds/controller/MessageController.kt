@@ -2,6 +2,7 @@ package de.uulm.automotive.cds.controller
 
 import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.repositories.MessageRepository
+import de.uulm.automotive.cds.services.MessageService
 import org.springframework.http.HttpStatus
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -15,7 +16,7 @@ import java.time.LocalDateTime
 /**
  * Controller for Messages.
  */
-class MessageController(private val repository: MessageRepository) {
+class MessageController(private val repository: MessageRepository, private val messageService: MessageService) {
 
     /**
      * Returns the view for one message.
@@ -40,9 +41,12 @@ class MessageController(private val repository: MessageRepository) {
      */
     @PostMapping
     fun saveMessage(@RequestBody message: Message) {
-        message.isSent = false
         if (message.starttime == null) {
             message.starttime = LocalDateTime.now()
+            message.isSent = true
+            messageService.sendMessage(message)
+        } else {
+            message.isSent = false
         }
         repository.save(message)
     }

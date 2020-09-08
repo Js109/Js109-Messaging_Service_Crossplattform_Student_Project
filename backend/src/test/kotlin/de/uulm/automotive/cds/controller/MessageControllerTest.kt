@@ -11,6 +11,7 @@ import de.uulm.automotive.cds.repositories.TopicRepository
 import de.uulm.automotive.cds.services.AmqpChannelService
 import de.uulm.automotive.cds.services.MessageService
 import io.mockk.every
+import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -145,6 +146,7 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) {
     @Test
     fun `save basic Message`() {
         every { messageRepository.save(any<Message>()) } returns messageBasicAttributesOnly
+        every { messageService.sendMessage(any()) } returns mockk()
 
         mockMvc.post("/message") {
             accept = MediaType.APPLICATION_JSON
@@ -161,6 +163,7 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) {
     @Test
     fun `save complete Message`() {
         every { messageRepository.save(any<Message>()) } returns messageBasicAttributesOnly
+        every { messageService.sendMessage(any()) } returns mockk()
 
         mockMvc.post("/message") {
             accept = MediaType.APPLICATION_JSON
