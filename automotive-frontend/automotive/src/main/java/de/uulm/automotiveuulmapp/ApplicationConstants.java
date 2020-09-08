@@ -17,12 +17,11 @@ public abstract class ApplicationConstants {
     public static final String DEVICE_TYPE = "Android Emulator";
 
     // REST Endpoints
-    // comment the following line to unuse the global deployed backend ->
-    // "http://elbitbackend.schuster.domains:8085";
-    private static final String APPLICATION_URL = System.getProperty("BACKENDURL");
-    // uncomment the following line to deploy locally versus local Intellij or set the BACKENDURL
-    // environment variable to the needed value
-    // private static final String APPLICATION_URL = "http://10.0.2.2:8080";
+    // environment variable BACKENDURL is set in the run configuration.
+    // If you need to edit, do it in the run configuration
+    // values at the moment: http://10.0.2.2:8080 (local backend),
+    // http://elbitbackend.schuster.domains:8085 (global backend)
+    private static final String APPLICATION_URL = System.getenv("BACKENDURL");
     public static final String ENDPOINT_SIGNUP = APPLICATION_URL + "/signup/";
     public static final String ENDPOINT_TOPIC = APPLICATION_URL + "/topic";
 }
