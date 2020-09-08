@@ -4,6 +4,7 @@ import {Topic} from '../models/Topic';
 import {Message} from '../models/Message';
 import {Property} from '../models/Property';
 import {LocationData} from '../models/LocationData';
+import {environment} from '../../environments/environment';
 
 @Component({
   selector: 'app-message',
@@ -36,7 +37,7 @@ export class MessageComponent implements OnInit {
   locationData: LocationData = {radius: 50};
 
   sendMessage(): void {
-    this.http.post('http://localhost:8080/message', this.message, {}).subscribe(
+    this.http.post(environment.backendApiPath + '/message', this.message, {}).subscribe(
       value => {
         console.log('send');
       },
@@ -84,9 +85,9 @@ export class MessageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.http.get('http://localhost:8080/topic', {responseType: 'json'})
+    this.http.get(environment.backendApiPath + '/topic', {responseType: 'json'})
       .subscribe((topics: Topic[]) => this.topics = topics);
-    this.http.get('http://localhost:8080/property', {responseType: 'json'})
+    this.http.get(environment.backendApiPath + '/property', {responseType: 'json'})
       .subscribe((properties: Property[]) => this.properties = properties.map(value => [value, false]));
   }
 }

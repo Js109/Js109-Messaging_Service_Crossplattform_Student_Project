@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  backendApiPath: 'http://localhost:8080'
+  backendApiPath: 'http://elbitbackend.schuster.domains:8085'
 };
 
 /*
