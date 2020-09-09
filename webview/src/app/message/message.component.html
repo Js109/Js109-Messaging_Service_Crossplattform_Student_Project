@@ -5,17 +5,23 @@
   <select
     class="browser-default custom-select"
     name="topic" id="topic"
-    [(ngModel)]="message.topic">
+    [(ngModel)]="message.topic"
+    [ngClass]="{'is-invalid' : hasTopicPropertiesError}">
     <option selected></option>
     <option *ngFor="let t of topics" [ngValue]="t.binding">{{t.title}}</option>
   </select>
+  <div *ngIf="hasTopicPropertiesError" class="invalid-feedback">Either Topics or Properties are required.</div>
 
   <label>Property:</label>
   <ng-container *ngFor="let p of properties">
     <div class="form-check">
       <input
         class="form-check-input"
-        name="properties" type="checkbox" [(ngModel)]="p[1]" id="checkboxid" (change)="propertiesSelect()"/>
+        name="properties" type="checkbox"
+        id="checkboxid"
+        [(ngModel)]="p[1]"
+        [ngClass]="{'is-invalid' : hasTopicPropertiesError}"
+        (change)="propertiesSelect()"/>
       <label class="form-check-label" for="checkboxid">
         {{p[0].name}}
       </label>
@@ -25,60 +31,75 @@
   <label for="sender">Sender:</label>
   <input class="form-control" name="sender"
          id="sender" placeholder="Sender"
-         [(ngModel)]="message.sender">
+         [(ngModel)]="message.sender"
+         [ngClass]="{'is-invalid' : hasSenderError}">
+  <div *ngIf="hasSenderError" class="invalid-feedback">Sender field is required.</div>
+
 
   <label for="title">Title:</label>
   <input class="form-control" name="title"
          id="title" placeholder="Title"
-         [(ngModel)]="message.title">
+         [(ngModel)]="message.title"
+         [ngClass]="{'is-invalid' : hasTitleError}">
+  <div *ngIf="hasTitleError" class="invalid-feedback">Title field is required.</div>
 
   <label for="content">Message content:</label>
   <textarea class="form-control"
-            name="content" id="content" placeholder="Content" [(ngModel)]="message.content"></textarea>
+            name="content" id="content" placeholder="Content" [(ngModel)]="message.content"
+            [ngClass]="{'is-invalid' : hasContentError}"></textarea>
+  <div *ngIf="hasContentError" class="invalid-feedback">Either Content or Files are required.</div>
 
   <label for="starttime">Send message at:</label>
   <input name="starttime" class="browser-default custom-select" type="datetime-local" [(ngModel)]="message.starttime"/>
 
   <div class="custom-file">
-    <input type="file" id="fileSelection" name="attachmentFile" class="custom-file-input" (change)="fileSelect($event)">
+    <input type="file" id="fileSelection" name="attachmentFile" class="custom-file-input"
+           [ngClass]="{'is-invalid' : hasContentError}" (change)="fileSelect($event)">
     <label class="custom-file-label" for="fileSelection">{{fileName}}</label>
   </div>
+  <div *ngIf="hasContentError" class="invalid-feedback">Either Content or Files are required.</div>
 
-  <label for="url">Links:</label>
+  <div>Links:</div>
   <button class="btn btn-success" (click)="addLink()" type="button">
     <span>Add URL:</span>
   </button>
   <ng-container *ngFor="let _ of message.links; let i = index;trackBy:trackById">
-    <div class="row input-group">
+    <div class="input-group">
       <input name="url" type="text" placeholder="http://www.example.com" class="form-control"
-             [(ngModel)]="message.links[i]"/>
+             [(ngModel)]="message.links[i]"
+             [ngClass]="{'is-invalid' : urlErrors[i]}"/>
       <button class="btn btn-danger" (click)="removeLink(i)">Remove URL</button>
     </div>
   </ng-container>
+  <div *ngIf="hasUrlErrors" class="text-danger small">"Please insert URLs in the following Scheme:
+    http://www.example.com."
+  </div>
 
   <div class="location-boundaries">
     <a class="btn btn-primary collapse-button" id="collapseButton" data-toggle="collapse" href="#locationCollapse"
        role="button" aria-expanded="false" aria-controls="locationCollapse" (click)="locationDataHide()">Location
       boundaries</a>
     <div class="collapse" id="locationCollapse">
-      <div class="form-group row location-form-group">
-        <div class="col-xs-2">
+      <div class="row location-form-group">
+        <div class="col-sm-4">
           <label for="latTextField">Latitude</label>
           <input type="number" step="0.00000001" class="form-control" name="lat" id="latTextField" placeholder="lat"
-                 size="10" maxlength="10" [(ngModel)]="locationData.lat">
+                 size="10" maxlength="10" [(ngModel)]="locationData.lat"
+                 [ngClass]="{'is-invalid' : onlyOneCoordError || coordValueRangeError}">
         </div>
-        <div class="col-xs-2">
+        <div class="col-sm-4">
           <label for="lngTextField">Longitude</label>
           <input type="number" step="0.00000001" class="form-control" name="lng" id="lngTextField" placeholder="lng"
-                 size="10" maxlength="10" [(ngModel)]="locationData.lng">
+                 size="10" maxlength="10" [(ngModel)]="locationData.lng"
+                 [ngClass]="{'is-invalid' : onlyOneCoordError || coordValueRangeError}">
         </div>
       </div>
+      <div *ngIf="onlyOneCoordError" class="text-danger small">Please enter both coordinate values!</div>
+      <div *ngIf="coordValueRangeError" class="text-danger small">Please check your coordinate values!</div>
       <div class="radius-selection">
-        <div class="row">
-          <input type="range" min="10" max="100" class="slider" id="radiusRange" name="radius"
-                 [(ngModel)]="locationData.radius">
-          <span>{{locationData.radius}} km</span>
-        </div>
+        <input type="range" min="10" max="100" class="slider" id="radiusRange" name="radius"
+               [(ngModel)]="locationData.radius">
+        <span>{{locationData.radius}} km</span>
       </div>
     </div>
   </div>
