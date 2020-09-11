@@ -1,0 +1,15 @@
+<ng-container>
+  <h3>Property</h3>
+
+  <label for="name">Name:</label>
+  <input class="form-control" name="name"
+         id="name" placeholder="name"
+         [(ngModel)]="property.name">
+
+  <label for="binding">Title:</label>
+  <input class="form-control" name="binding"
+         id="binding" placeholder="binding"
+         [(ngModel)]="property.binding">
+
+  <button type="button" class="btn btn-primary" (click)="createProperty()">Submit</button>
+</ng-container>
