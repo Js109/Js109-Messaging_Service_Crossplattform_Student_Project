@@ -36,7 +36,7 @@ lintDebug:
   stage: build
   script:
     - cd automotive-frontend
-    - ./gradlew -Pci --console=plain :automotive:lintDebug -PbuildDir=lint
+    - ./gradlew -Pci --console=plain :automotive:lintLocalbackendRelease -PbuildDir=lint
 
 assembleDebug:
   <<: *automotive-setup
