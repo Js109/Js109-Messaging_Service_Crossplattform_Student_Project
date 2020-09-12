@@ -77,3 +77,19 @@ test-backend:
     - cd backend/
     - ./gradlew test
   needs: ["build-backend"]
+
+.webview-setup: &webview-setup
+  image: trion/ng-cli
+  before_script:
+    - cd webview/
+    - npm ci
+  only:
+    changes:
+      - webview/**/*
+
+build-webview:
+  <<: *webview-setup
+  stage: build
+  script:
+    - cd webview/
+    - ng build --prod
