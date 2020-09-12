@@ -33,7 +33,7 @@ stages:
 
 lintDebug:
   <<: *automotive-setup
-  stage: build
+  stage: test
   script:
     - cd automotive-frontend
     - ./gradlew -Pci --console=plain :automotive:lintLocalbackendRelease -PbuildDir=lint
@@ -53,7 +53,7 @@ debugTests:
   stage: test
   script:
     - cd automotive-frontend
-    - ./gradlew -Pci --console=plain :automotive:testDebug
+    - ./gradlew -Pci --console=plain :automotive:testLocalbackendRelease
 
 .backend-setup: &backend-setup
   image: openjdk:11.0.5
