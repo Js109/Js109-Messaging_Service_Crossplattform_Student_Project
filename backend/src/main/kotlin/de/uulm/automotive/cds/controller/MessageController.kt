@@ -46,7 +46,7 @@ class MessageController(private val repository: MessageRepository, private val m
     fun saveMessage(@RequestBody message: Message): ResponseEntity<MessageBadRequestInfo> {
 
         val (hasErrors, errors) = validateMessage(message)
-        if(hasErrors) {
+        if (hasErrors) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors)
         }
 
@@ -65,22 +65,23 @@ class MessageController(private val repository: MessageRepository, private val m
         var hasErrors = false
         val errors = MessageBadRequestInfo()
 
-        if (message.sender == "") {
+        //double negative is used for empty checks to also include null checks, as message.field.isEmpty() == true would not be true for null
+        if (message.sender?.isNotEmpty() != true) {
             errors.senderError = "Sender field is required."
             hasErrors = true
         }
 
-        if (message.title == "") {
+        if (message.title?.isNotEmpty() != true) {
             errors.titleError = "Title field is required."
             hasErrors = true
         }
 
-        if (message.topic == "" && (message.properties == null || message.properties!!.isEmpty())) {
+        if (message.topic?.isNotEmpty() != true && message.properties?.isNotEmpty() != true) {
             errors.topicError = "Either Topics or Properties are required."
             hasErrors = true
         }
 
-        if (message.content == "" && message.attachment?.isNotEmpty() != true) {
+        if (message.content?.isNotEmpty() != true && message.attachment?.isNotEmpty() != true) {
             errors.contentError = "Either Content or Files are required."
             hasErrors = true
         }
