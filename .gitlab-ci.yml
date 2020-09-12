@@ -91,5 +91,4 @@ build-webview:
   <<: *webview-setup
   stage: build
   script:
-    - cd webview/
     - ng build --prod
