@@ -19,7 +19,7 @@ import java.net.URL
 class MessageSerializable(
     val sender: String,
     val title: String,
-    val messageText: String,
+    val messageText: String?,
     val attachment: ByteArray?,
     val links: Array<URL>?,
     val locationData: LocationDataSerializable?
