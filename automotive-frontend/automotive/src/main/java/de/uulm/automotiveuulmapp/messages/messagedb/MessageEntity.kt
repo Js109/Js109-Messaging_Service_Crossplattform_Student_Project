@@ -10,7 +10,7 @@ data class MessageEntity(
     val uid: Int?,
     val sender: String,
     val title: String,
-    val messageText: String,
+    val messageText: String?,
     val attachment: ByteArray?,
     val links: Array<URL>?,
     var favourite: Boolean = false,

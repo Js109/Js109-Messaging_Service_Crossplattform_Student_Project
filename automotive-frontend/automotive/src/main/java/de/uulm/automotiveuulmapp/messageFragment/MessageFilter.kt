@@ -20,7 +20,7 @@ object MessageFilter {
             it.title.toLowerCase().contains(query)
         }
         val textMatch = nonTitleMatch.filter {
-            it.messageText.toLowerCase().contains(query)
+            it.messageText?.toLowerCase()?.contains(query) == true
         }
         return titleMatch + textMatch
     }
