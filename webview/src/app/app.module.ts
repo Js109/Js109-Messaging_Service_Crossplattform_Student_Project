@@ -8,7 +8,7 @@ import {MessageComponent} from './message/message.component';
 import { AppRoutingModule } from './app-routing.module';
 import { PropertyComponent } from './property/property.component';
 import { TopicComponent } from './topic/topic.component';
-import {RouterModule} from "@angular/router";
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   declarations: [

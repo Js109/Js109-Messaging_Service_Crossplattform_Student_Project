@@ -76,3 +76,40 @@ test-backend:
     - cd backend/
     - ./gradlew test
   needs: ["build-backend"]
+
+.webview-setup: &webview-setup
+  variables:
+    CLI_VERSION: 10.0.8
+  image: trion/ng-cli-e2e:${CLI_VERSION}
+  before_script:
+    - cd webview/
+    - npm ci
+  only:
+    changes:
+      - webview/**/*
+
+build-webview:
+  <<: *webview-setup
+  stage: build
+  script:
+    - ng build --prod
+
+test-webview:karma:
+  <<: *webview-setup
+  stage: test
+  allow_failure: false
+  script:
+    - ng test --progress false --watch false
+
+test-webview:e2e:
+  <<: *webview-setup
+  stage: test
+  allow_failure: false
+  script:
+    - ng e2e
+
+test-webview:ngLint:
+  <<: *webview-setup
+  stage: test
+  script:
+    - ng lint
