@@ -460,7 +460,7 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) {
     }
 
     @Test
-    fun `latitude and longitude invalid range creates 200`() {
+    fun `latitude and longitude in valid range creates 200`() {
         every { messageRepository.save(any<Message>()) } returns messageBasicAttributesOnly
         every { messageService.sendMessage(any()) } returns mockk()
 
