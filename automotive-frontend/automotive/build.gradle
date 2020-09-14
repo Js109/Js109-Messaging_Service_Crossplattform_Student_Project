@@ -30,12 +30,13 @@ android {
             versionNameSuffix "-debug"
             debuggable true
             minifyEnabled false
+            getIsDefault().set(true)
         }
     }
     // Specifies one flavor dimension.
     flavorDimensions "version"
     productFlavors {
-        localbackend {
+        localBackend {
             // Assigns this product flavor to the "version" flavor dimension.
             // If you are using only one dimension, this property is optional,
             // and the plugin automatically assigns all the module's flavors to
@@ -43,8 +44,9 @@ android {
             dimension "version"
             applicationIdSuffix ".localbackend"
             versionNameSuffix "-localbackend"
+            getIsDefault().set(true)
         }
-        globalbackend {
+        globalBackend {
             dimension "version"
             applicationIdSuffix ".globalbackend"
             versionNameSuffix "-globalbackend"
