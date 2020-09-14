@@ -26,34 +26,33 @@ stages:
     - set +o pipefail
     - yes | android-sdk-linux/tools/bin/sdkmanager --licenses
     - set -o pipefail
+    # navigate into project folder
+    - cd automotive-frontend
 
   only:
     changes:
       - automotive-frontend/**/*
 
-lintDebug:
+build-android:assemble:
   <<: *automotive-setup
   stage: build
   script:
-    - cd automotive-frontend
-    - ./gradlew -Pci --console=plain :automotive:lintDebug -PbuildDir=lint
-
-assembleDebug:
-  <<: *automotive-setup
-  stage: build
-  script:
-    - cd automotive-frontend
     - ./gradlew assembleDebug
   artifacts:
     paths:
       - automotive/build/outputs/
 
-debugTests:
+test-android:
   <<: *automotive-setup
   stage: test
   script:
-    - cd automotive-frontend
-    - ./gradlew -Pci --console=plain :automotive:testDebug
+    - ./gradlew -Pci --console=plain :automotive:testLocalbackendRelease
+
+test-android:lint:
+  <<: *automotive-setup
+  stage: test
+  script:
+    - ./gradlew -Pci --console=plain :automotive:lintLocalbackendRelease -PbuildDir=lint
 
 .backend-setup: &backend-setup
   image: openjdk:11.0.5
