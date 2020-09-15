@@ -1,6 +1,7 @@
 package de.uulm.automotive.cds.controller
 
 import de.uulm.automotive.cds.entities.Topic
+import de.uulm.automotive.cds.models.CreateTopicDTO
 import de.uulm.automotive.cds.repositories.TopicRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
@@ -30,7 +31,7 @@ class TopicController @Autowired constructor(private val topicRepository: TopicR
      * @param topic Topic to be stored
      */
     @PostMapping
-    fun postTopics(@RequestBody topic: Topic) {
-        topicRepository.save(topic)
+    fun postTopics(@RequestBody topic: CreateTopicDTO) {
+        topicRepository.save(topic.toEntity())
     }
 }

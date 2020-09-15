@@ -1,6 +1,7 @@
 package de.uulm.automotive.cds.controller
 
 import de.uulm.automotive.cds.entities.Message
+import de.uulm.automotive.cds.models.CreateMessageDTO
 import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.services.MessageService
 import org.springframework.http.HttpStatus
@@ -40,7 +41,8 @@ class MessageController(private val repository: MessageRepository, private val m
      * @param message
      */
     @PostMapping
-    fun saveMessage(@RequestBody message: Message) {
+    fun saveMessage(@RequestBody messageDto: CreateMessageDTO) {
+        val message = messageDto.toEntity()
         if (message.starttime == null) {
             message.starttime = LocalDateTime.now()
             message.isSent = true

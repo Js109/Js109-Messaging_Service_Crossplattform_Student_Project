@@ -1,6 +1,7 @@
 package de.uulm.automotive.cds.controller
 
 import de.uulm.automotive.cds.entities.Property
+import de.uulm.automotive.cds.models.CreatePropertyDTO
 import de.uulm.automotive.cds.repositories.PropertyRepository
 import org.springframework.web.bind.annotation.*
 
@@ -17,7 +18,7 @@ class PropertyController (val propertyRepository: PropertyRepository) {
     }
 
     @PostMapping
-    fun postProperty(@RequestBody property: Property) {
-        propertyRepository.save(property)
+    fun postProperty(@RequestBody property: CreatePropertyDTO) {
+        propertyRepository.save(property.toEntity())
     }
 }

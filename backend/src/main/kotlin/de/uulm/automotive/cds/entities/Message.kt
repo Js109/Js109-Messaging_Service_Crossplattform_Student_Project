@@ -37,4 +37,8 @@ class Message(
         var links: MutableList<URL>?,
         @OneToOne(cascade = [CascadeType.ALL])
         var locationData: LocationData?
-)
+) : de.uulm.automotive.cds.models.Entity {
+        override fun isValid(): Boolean {
+                TODO("Not yet implemented")
+        }
+}

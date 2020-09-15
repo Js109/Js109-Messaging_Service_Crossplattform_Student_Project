@@ -1,6 +1,7 @@
 package de.uulm.automotive.cds.models
 
 import de.uulm.automotive.cds.entities.Token
+import org.modelmapper.ModelMapper
 import java.util.*
 
 /**
@@ -15,15 +16,16 @@ data class TokenDTO (
 )
 {
     companion object {
+        private val mapper: ModelMapper = ModelMapper()
+
         /**
          * Maps the Entity Token to the corresponding Data Transfer Object (DTO)
-         * TODO replace with Object Mapper
          *
          * @param token Token Entity
          * @return Mapped DTO
          */
         fun getTokenDTO(token: Token): TokenDTO {
-            return TokenDTO(token.signUpToken, token.queueId)
+            return mapper.map(token, TokenDTO::class.java)
         }
     }
 }
