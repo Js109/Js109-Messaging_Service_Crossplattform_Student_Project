@@ -98,7 +98,7 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) {
             content { jsonPath("topic").value(messageBasicAttributesOnly.topic!!) }
             content { jsonPath("sender").value(messageBasicAttributesOnly.sender!!) }
             content { jsonPath("title").value(messageBasicAttributesOnly.title!!) }
-            content { jsonPath("content").value(messageBasicAttributesOnly.content) }
+            content { jsonPath("content").value(messageBasicAttributesOnly.content!!) }
             content { jsonPath("isSent").value(messageBasicAttributesOnly.isSent!!) }
             content { jsonPath("starttime").doesNotExist() }
             content { jsonPath("endtime").doesNotExist() }
@@ -121,7 +121,7 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) {
             content { jsonPath("topic").value(messageBasicAttributesOnly.topic!!) }
             content { jsonPath("sender").value(messageBasicAttributesOnly.sender!!) }
             content { jsonPath("title").value(messageBasicAttributesOnly.title!!) }
-            content { jsonPath("content").value(messageBasicAttributesOnly.content) }
+            content { jsonPath("content").value(messageBasicAttributesOnly.content!!) }
             content { jsonPath("isSent").value(messageBasicAttributesOnly.isSent!!) }
             content { jsonPath("starttime").doesNotExist() }
             content { jsonPath("endtime").doesNotExist() }
@@ -175,5 +175,317 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) {
         }
 
         verify(exactly = 1) { messageRepository.save(any<Message>()) }
+    }
+
+    @Test
+    fun `missing sender creates 404`() {
+        every { messageRepository.save(any<Message>()) } returns messageBasicAttributesOnly
+        every { messageService.sendMessage(any()) } returns mockk()
+
+        val errorMessage = Message(
+                1,
+                "test topic",
+                null,
+                "test title",
+                "test content",
+                null,
+                null,
+                false,
+                null,
+                null,
+                null,
+                null
+        )
+
+        mockMvc.post("/message") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(errorMessage)
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isBadRequest }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            content { jsonPath("senderError").exists() }
+            content { jsonPath("senderError").isNotEmpty }
+            content { jsonPath("topicError").doesNotExist() }
+            content { jsonPath("titleError").doesNotExist() }
+            content { jsonPath("contentError").doesNotExist() }
+            content { jsonPath("locationError").doesNotExist() }
+        }
+    }
+
+    @Test
+    fun `missing title creates 404`() {
+        every { messageRepository.save(any<Message>()) } returns messageBasicAttributesOnly
+        every { messageService.sendMessage(any()) } returns mockk()
+
+        val errorMessage = Message(
+                1,
+                "test topic",
+                "test sender",
+                null,
+                "test content",
+                null,
+                null,
+                false,
+                null,
+                null,
+                null,
+                null
+        )
+
+        mockMvc.post("/message") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(errorMessage)
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isBadRequest }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            content { jsonPath("titleError").exists() }
+            content { jsonPath("titleError").isNotEmpty }
+            content { jsonPath("topicError").doesNotExist() }
+            content { jsonPath("senderError").doesNotExist() }
+            content { jsonPath("contentError").doesNotExist() }
+            content { jsonPath("locationError").doesNotExist() }
+        }
+    }
+
+    @Test
+    fun `missing topic or properties creates 404`() {
+        every { messageRepository.save(any<Message>()) } returns messageBasicAttributesOnly
+        every { messageService.sendMessage(any()) } returns mockk()
+
+        val errorMessage = Message(
+                1,
+                null,
+                "test sender",
+                "test title",
+                "test content",
+                null,
+                null,
+                false,
+                null,
+                null,
+                null,
+                null
+        )
+
+        mockMvc.post("/message") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(errorMessage)
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isBadRequest }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            content { jsonPath("topicError").exists() }
+            content { jsonPath("topicError").isNotEmpty }
+            content { jsonPath("titleError").doesNotExist() }
+            content { jsonPath("senderError").doesNotExist() }
+            content { jsonPath("contentError").doesNotExist() }
+            content { jsonPath("locationError").doesNotExist() }
+        }
+    }
+
+    @Test
+    fun `only properties and no topic creates 200`() {
+        every { messageRepository.save(any<Message>()) } returns messageBasicAttributesOnly
+        every { messageService.sendMessage(any()) } returns mockk()
+
+        val errorMessage = Message(
+                1,
+                null,
+                "test sender",
+                "test title",
+                "test content",
+                null,
+                null,
+                null,
+                mutableListOf("test property"),
+                null,
+                null,
+                null
+        )
+
+        mockMvc.post("/message") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(errorMessage)
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isOk }
+        }
+    }
+
+    @Test
+    fun `missing content or attachment creates 404`() {
+        every { messageRepository.save(any<Message>()) } returns messageBasicAttributesOnly
+        every { messageService.sendMessage(any()) } returns mockk()
+
+        val errorMessage = Message(
+                1,
+                "test topic",
+                "test sender",
+                "test title",
+                null,
+                null,
+                null,
+                false,
+                null,
+                null,
+                null,
+                null
+        )
+
+        mockMvc.post("/message") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(errorMessage)
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isBadRequest }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            content { jsonPath("contentError").exists() }
+            content { jsonPath("contentError").isNotEmpty }
+            content { jsonPath("titleError").doesNotExist() }
+            content { jsonPath("senderError").doesNotExist() }
+            content { jsonPath("topicError").doesNotExist() }
+            content { jsonPath("locationError").doesNotExist() }
+        }
+    }
+
+    @Test
+    fun `only attachment and no content creates 200`() {
+        every { messageRepository.save(any<Message>()) } returns messageBasicAttributesOnly
+        every { messageService.sendMessage(any()) } returns mockk()
+
+        val errorMessage = Message(
+                1,
+                "test topic",
+                "test sender",
+                "test title",
+                null,
+                null,
+                null,
+                null,
+                null,
+                ByteArray(10) { pos -> pos.toByte() },
+                null,
+                null
+        )
+
+        mockMvc.post("/message") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(errorMessage)
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isOk }
+        }
+    }
+
+    @Test
+    fun `longitude out of valid range creates 404`() {
+        every { messageRepository.save(any<Message>()) } returns messageBasicAttributesOnly
+        every { messageService.sendMessage(any()) } returns mockk()
+
+        val errorMessage = Message(
+                1,
+                "test topic",
+                "test sender",
+                "test title",
+                "test content",
+                null,
+                null,
+                false,
+                null,
+                null,
+                null,
+                LocationData(null, 0.0, 181.0, 10)
+        )
+
+        mockMvc.post("/message") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(errorMessage)
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isBadRequest }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            content { jsonPath("locationError").exists() }
+            content { jsonPath("locationError").isNotEmpty }
+            content { jsonPath("titleError").doesNotExist() }
+            content { jsonPath("senderError").doesNotExist() }
+            content { jsonPath("topicError").doesNotExist() }
+            content { jsonPath("contentError").doesNotExist() }
+        }
+    }
+
+    @Test
+    fun `latitude out of valid range creates 404`() {
+        every { messageRepository.save(any<Message>()) } returns messageBasicAttributesOnly
+        every { messageService.sendMessage(any()) } returns mockk()
+
+        val errorMessage = Message(
+                1,
+                "test topic",
+                "test sender",
+                "test title",
+                "test content",
+                null,
+                null,
+                false,
+                null,
+                null,
+                null,
+                LocationData(null, 91.0, 0.0, 10)
+        )
+
+        mockMvc.post("/message") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(errorMessage)
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isBadRequest }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            content { jsonPath("locationError").exists() }
+            content { jsonPath("locationError").isNotEmpty }
+            content { jsonPath("titleError").doesNotExist() }
+            content { jsonPath("senderError").doesNotExist() }
+            content { jsonPath("topicError").doesNotExist() }
+            content { jsonPath("contentError").doesNotExist() }
+        }
+    }
+
+    @Test
+    fun `latitude and longitude in valid range creates 200`() {
+        every { messageRepository.save(any<Message>()) } returns messageBasicAttributesOnly
+        every { messageService.sendMessage(any()) } returns mockk()
+
+        val errorMessage = Message(
+                1,
+                "test topic",
+                "test sender",
+                "test title",
+                "test content",
+                null,
+                null,
+                false,
+                null,
+                null,
+                null,
+                LocationData(null, 90.0, 180.0, 10)
+        )
+
+        mockMvc.post("/message") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(errorMessage)
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isOk }
+        }
     }
 }

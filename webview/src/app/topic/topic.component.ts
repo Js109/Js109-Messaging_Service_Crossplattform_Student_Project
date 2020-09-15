@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Topic} from "../models/Topic";
-import {environment} from "../../environments/environment";
+import {Topic} from '../models/Topic';
+import {environment} from '../../environments/environment';
 
 @Component({
   selector: 'app-topic',
@@ -18,7 +18,7 @@ export class TopicComponent implements OnInit {
     binding: '',
     tags: [],
     description: ''
-  }
+  };
 
   ngOnInit(): void {
   }

@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import de.uulm.automotiveuulmapp.ApplicationConstants
 
-@Database(entities = [MessageEntity::class], version = 3)
+@Database(entities = [MessageEntity::class], version = 4)
 @TypeConverters(Converters::class)
 abstract class MessageDatabase: RoomDatabase() {
     abstract fun messageDao(): MessageDao

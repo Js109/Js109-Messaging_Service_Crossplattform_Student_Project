@@ -25,7 +25,7 @@ class Message(
         var topic: String?,
         var sender: String?,
         var title: String?,
-        var content: String,
+        var content: String?,
         var starttime: LocalDateTime?,
         var endtime: LocalDateTime?,
         var isSent: Boolean?,
