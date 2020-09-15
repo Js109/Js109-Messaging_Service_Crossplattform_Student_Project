@@ -1,14 +1,7 @@
 package de.uulm.automotive.cds.controller
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.ninjasquad.springmockk.MockkBean
 import de.uulm.automotive.cds.entities.Property
-import de.uulm.automotive.cds.repositories.MessageRepository
-import de.uulm.automotive.cds.repositories.PropertyRepository
-import de.uulm.automotive.cds.repositories.SignUpRepository
-import de.uulm.automotive.cds.repositories.TopicRepository
-import de.uulm.automotive.cds.services.AmqpChannelService
-import de.uulm.automotive.cds.services.MessageService
 import io.mockk.every
 import io.mockk.verify
 import org.junit.jupiter.api.AfterEach
@@ -24,25 +17,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 
 
 @WebMvcTest
-internal class PropertyControllerTest(@Autowired val mockMvc: MockMvc) {
-
-    @MockkBean
-    private lateinit var messageRepository: MessageRepository
-
-    @MockkBean
-    private lateinit var propertyRepository: PropertyRepository
-
-    @MockkBean
-    private lateinit var topicRepository: TopicRepository
-
-    @MockkBean
-    private lateinit var signUpRepository: SignUpRepository
-
-    @MockkBean
-    private lateinit var messageService: MessageService
-
-    @MockkBean
-    private lateinit var amqpChannelService: AmqpChannelService
+internal class PropertyControllerTest(@Autowired val mockMvc: MockMvc): BaseControllerTest() {
 
     private val property = Property()
     private val property2 = Property()
