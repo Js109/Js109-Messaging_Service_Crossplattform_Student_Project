@@ -20,7 +20,7 @@ import javax.persistence.*
  * @property links Links used in the message
  */
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.JOINED)
 class Message(
         @Id @GeneratedValue var id: Long? = null,
         var topic: String?,

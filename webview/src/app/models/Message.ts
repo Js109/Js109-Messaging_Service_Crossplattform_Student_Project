@@ -1,6 +1,7 @@
 import {LocationData} from './LocationData';
 
 export interface Message {
+  id?: number;
   topic: string;
   sender: string;
   title: string;

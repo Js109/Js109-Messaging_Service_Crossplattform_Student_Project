@@ -1,14 +1,11 @@
 package de.uulm.automotive.cds.controller
 
-import de.uulm.automotive.cds.entities.LocationData
 import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.models.MessageBadRequestInfo
 import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.services.MessageService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.ui.Model
-import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDateTime
