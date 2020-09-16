@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TemplateLoadComponent } from './template-load.component';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {MatDialogModule} from '@angular/material/dialog';
 
 describe('TemplateLoadComponent', () => {
   let component: TemplateLoadComponent;
@@ -8,7 +10,8 @@ describe('TemplateLoadComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TemplateLoadComponent ]
+      declarations: [ TemplateLoadComponent ],
+      imports: [HttpClientTestingModule, MatDialogModule]
     })
     .compileComponents();
   }));
