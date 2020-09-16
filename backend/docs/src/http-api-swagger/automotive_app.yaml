@@ -122,13 +122,15 @@ paths:
     get:
       tags:
         - "Administration - OEM-Web Frontend"
-      summary: "Retrieves all existing properties the backend"
-      description: "Loads all previously created properties and sends them as a list within the response body."
+      summary: "Retrieves all existing properties in the backend"
+      description: "Loads all previously created properties and returns them as a list within the response body."
       responses:
         "200":
           description: OK
           schema:
-            $ref: "#/definitions/Property"
+            type: "array"
+            items:
+              $ref: "#/definitions/Property"
         "400":
           description: "Bad Request"
         "404":
@@ -148,6 +150,57 @@ paths:
       responses:
         "200":
           description: "Successful Operation"
+        "400":
+          description: "Bad Request"
+
+  /template:
+    post:
+      tags:
+        - "Administration - OEM-Web Frontend"
+      summary: "Stores a new template in the backend."
+      description: "If no id is given a new one will be generated."
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Property to be stored"
+          required: true
+          schema:
+            $ref: "#/definitions/TemplateMessage"
+      responses:
+        "200":
+          description: "Successful Operation"
+        "400":
+          description: "Bad Request"
+    get:
+      tags:
+        - "Administration - OEM-Web Frontend"
+      summary: "Retrieves all existing templates in the backend"
+      description: "Loads all previously created templates and returns them as a list within the response body."
+      responses:
+        "200":
+          description: "OK"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/TemplateMessage"
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Not Found"
+  /template/{id}:
+    parameters: 
+      - name: id
+        in: path
+        required: true
+        type: number
+    delete:
+      tags:
+        - "Administration - OEM-Web Frontend"
+      summary: "Deletes template"
+      description: "Deletes the template with the given id in the backend."
+      responses:
+        "200":
+          description: "OK"
         "400":
           description: "Bad Request"
 
@@ -237,6 +290,17 @@ definitions:
           example: "https://uulm.de"
       locationData:
         $ref: "#/definitions/LocationData"
+  
+  TemplateMessage:
+    allOf:
+      - $ref: "#/definitions/Message"
+      - type: object
+        properties:
+          templateName:
+            type: "string"
+            example: "Name des Templates"
+    
+
   LocationData:
     type: "object"
     properties:
