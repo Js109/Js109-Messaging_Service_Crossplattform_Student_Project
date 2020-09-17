@@ -1,0 +1,9 @@
+<h2 mat-dialog-title>Template Title</h2>
+<mat-dialog-content>
+  Enter the name for the template.
+  <input class="form-control"
+         [(ngModel)]="templateName"/>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="templateName">Ok</button>
+</mat-dialog-actions>

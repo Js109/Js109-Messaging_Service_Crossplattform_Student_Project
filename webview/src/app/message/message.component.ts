@@ -36,6 +36,8 @@ export class MessageComponent implements OnInit {
 
   locationData: LocationData = {radius: 50};
 
+  showTemplateList = true;
+
   hasTopicPropertiesError = false;
   hasSenderError = false;
   hasTitleError = false;
@@ -119,10 +121,36 @@ export class MessageComponent implements OnInit {
     }
   }
 
+  toggleTemplateList(): void {
+    this.showTemplateList = !this.showTemplateList;
+  }
+
+  loadTemplate($event: Message): void {
+     this.message = $event;
+     if (this.message.locationData != null) {
+      this.locationData = $event.locationData;
+     }
+     this.properties = this.properties.map(property => [property[0], $event.properties.some(value => value === property[0].binding)]);
+  }
+
   ngOnInit(): void {
     this.http.get(environment.backendApiPath + '/topic', {responseType: 'json'})
       .subscribe((topics: Topic[]) => this.topics = topics);
     this.http.get(environment.backendApiPath + '/property', {responseType: 'json'})
       .subscribe((properties: Property[]) => this.properties = properties.map(value => [value, false]));
+  }
+
+  clearMessage(): void {
+    this.message = {
+      topic: '',
+      properties: [],
+      content: '',
+      sender: '',
+      title: '',
+      links: [],
+      starttime: '',
+      attachment: [],
+      locationData: null
+    };
   }
 }
