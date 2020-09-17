@@ -166,8 +166,11 @@ export class MessageComponent implements OnInit {
 
   setEndtimeFromExpirationOffset(): void {
     if (this.expirationOffsetType != null && this.expirationOffset != null) {
-      const referenceTime = this.message.starttime != null ? new Date(this.message.starttime) : new Date();
-      const referenceTimeInMillis = referenceTime.getMilliseconds();
+      const currentTime = new Date();
+      const referenceTime = (this.message.starttime != null && this.message.starttime.length !== 0)
+        ? new Date(new Date(this.message.starttime).getTime() - currentTime.getTimezoneOffset() * 60 * 1000)
+        : new Date(currentTime.getTime() - currentTime.getTimezoneOffset() * 60 * 1000);
+      const referenceTimeInMillis = referenceTime.getTime();
       let endTimeInMillis = null;
       switch (this.expirationOffsetType) {
         case OffsetType.Minute: {
