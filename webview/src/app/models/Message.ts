@@ -9,6 +9,7 @@ export interface Message {
   content: string;
   links: string[];
   starttime: string;
+  endtime: string;
   attachment: number[];
   locationData: LocationData | null;
 }
