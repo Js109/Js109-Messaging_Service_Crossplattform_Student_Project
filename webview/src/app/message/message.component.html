@@ -18,19 +18,25 @@
       <div *ngIf="hasTopicPropertiesError" class="invalid-feedback">Either Topics or Properties are required.</div>
 
       <label>Property:</label>
-      <ng-container *ngFor="let p of properties">
-        <div class="form-check">
-          <input
-            class="form-check-input"
-            name="properties" type="checkbox"
-            id="checkboxid"
-            [(ngModel)]="p[1]"
-            [ngClass]="{'is-invalid' : hasTopicPropertiesError}"
-            (change)="propertiesSelect()"/>
-          <label class="form-check-label" for="checkboxid">
-            {{p[0].name}}
-          </label>
+
+      <ng-container *ngIf="properties != null">
+        <div *ngFor="let p of properties">
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              name="properties" type="checkbox"
+              id="checkboxid"
+              [(ngModel)]="p[1]"
+              [ngClass]="{'is-invalid' : hasTopicPropertiesError}"
+              (change)="propertiesSelect()"/>
+            <label class="form-check-label" for="checkboxid">
+              {{p[0].name}}
+            </label>
+          </div>
         </div>
+      </ng-container>
+      <ng-container *ngIf="properties == null">
+        <h4>No properties available at the moment!</h4>
       </ng-container>
 
       <label for="sender">Sender:</label>
@@ -59,20 +65,21 @@
              [(ngModel)]="message.starttime"/>
 
       <label>Endtime:</label>
-      <div class="row">
-        <select class="browser-default custom-select col-sm-4"
-          name="endtime2" id="endtime2"
-          [(ngModel)]="expirationOffsetType">
-          <option [ngValue]="null"selected>no expiration</option>
-          <option [ngValue]="0" >Minutes</option>
+      <div style="display: flex">
+        <select class="browser-default custom-select col"
+                name="endtimeTypeSelection" id="endtimeTypeSelection"
+                [(ngModel)]="expirationOffsetType">
+          <option [ngValue]="null" selected>no expiration</option>
+          <option [ngValue]="0">Minutes</option>
           <option [ngValue]="1">Hours</option>
           <option [ngValue]="2">Days</option>
           <option [ngValue]="3">Weeks</option>
         </select>
-        <input name="endtime" type="number" class="form-control col-sm-4" name="endTime" id="endTime" placeholder=""
-               size="10" maxlength="10" [(ngModel)]="expirationOffset" [disabled]="expirationOffsetType == null" >
+        <input name="endtime" type="number" class="form-control col" name="endTime" id="endTime" placeholder=""
+               size="10" maxlength="10" [(ngModel)]="expirationOffset" [disabled]="expirationOffsetType == null">
       </div>
 
+      <label>Add File:</label>
       <div class="custom-file">
         <input type="file" id="fileSelection" name="attachmentFile" class="custom-file-input"
                [ngClass]="{'is-invalid' : hasContentError}" (change)="fileSelect($event)">
@@ -81,8 +88,8 @@
       <div *ngIf="hasContentError" class="invalid-feedback">Either Content or Files are required.</div>
 
       <div>Links:</div>
-      <button class="btn btn-success" (click)="addLink()" type="button">
-        <span>Add URL:</span>
+      <button class="btn btn-success top-height" (click)="addLink()" type="button">
+        <span>Add URL</span>
       </button>
       <ng-container *ngFor="let _ of message.links; let i = index;trackBy:trackById">
         <div class="input-group">
@@ -97,7 +104,7 @@
       </div>
 
       <div class="location-boundaries">
-        <a class="btn btn-primary collapse-button" id="collapseButton"
+        <a class="btn btn-primary collapse-button top-height" id="collapseButton"
            role="button" aria-expanded="false" aria-controls="locationCollapse" (click)="locationDataHide()">Location
           boundaries</a>
         <div [ngClass]="{'collapse' : message.locationData == null}" id="locationCollapse">
@@ -124,8 +131,9 @@
           </div>
         </div>
       </div>
-      <button type="button" class="btn btn-primary" (click)="sendMessage()">Submit</button>
-      <button type="button" class="btn btn-danger" (click)="clearMessage()">Clear</button>
+      <button type="button" class="btn btn-primary top-height" (click)="sendMessage()">Submit</button>
+      <button type="button" class="btn btn-danger top-height" style="margin-left: 10px" (click)="clearMessage()">Clear
+      </button>
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
