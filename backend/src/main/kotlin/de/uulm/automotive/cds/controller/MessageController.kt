@@ -43,7 +43,7 @@ class MessageController(private val repository: MessageRepository, private val m
     @GetMapping
     fun showMessage(): Iterable<Message> {
 
-        return repository.findAll().filter { it.starttime < it.endtime}
+        return repository.findAll()
     }
 
     /**
