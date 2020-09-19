@@ -2,3 +2,16 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.elektrobit-green-background {
+  background-color: #00EB00;
+}
+.elektrobit-grey-background {
+  background-color: #3F3F3F;
+}
+.white {
+  color: white;
+}
+.xxfont {
+  font-size: xx-large;
+}

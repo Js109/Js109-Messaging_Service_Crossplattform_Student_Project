@@ -17,6 +17,7 @@ import {MatDialogModule} from '@angular/material/dialog';
 import { SaveTemplateDialogComponent } from './message/template-load/save-template-dialog/save-template-dialog.component';
 import {MatButtonModule} from '@angular/material/button';
 import {MatToolbarModule} from '@angular/material/toolbar';
+import { MessageHistoryComponent } from './message-history/message-history.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import {MatToolbarModule} from '@angular/material/toolbar';
     PropertyComponent,
     TopicComponent,
     TemplateLoadComponent,
-    SaveTemplateDialogComponent
+    SaveTemplateDialogComponent,
+    MessageHistoryComponent
   ],
   imports: [
     BrowserModule,
