@@ -28,7 +28,7 @@ class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelS
      */
     fun sendMessage(message: Message) {
         val channel = amqpChannelService.openChannel()
-        val messageSerializable = MessageSerializable(message.sender!!, message.title!!, message.content, message.attachment, message.links?.toTypedArray(), message.locationData?.serialize())
+        val messageSerializable = MessageSerializable(message.sender!!, message.title!!, message.content, message.attachment, message.links?.toTypedArray(), message.locationData?.serialize(), message.endtime)
 
         if (message.properties == null || message.properties?.size == 0) {
             channel.basicPublish("amq.topic", message.topic, null, messageSerializable.toByteArray())
