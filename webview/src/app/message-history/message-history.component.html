@@ -1,0 +1,101 @@
+<head>
+
+</head>
+<body>
+<div class="container">
+  <h2>Message History</h2>
+
+  <!-- Actual search box -->
+  <div class="form-group has-search">
+    <span class="fa fa-search form-control-feedback"></span>
+    <input type="text" class="form-control" placeholder="Search">
+  </div>
+
+  <label>Period of time:</label>
+  <input name="starttime_period" class="browser-default custom-select" type="datetime-local"
+         [(ngModel)]="starttimePeriod"/>
+
+  <input name="endtime_period" class="browser-default custom-select" type="datetime-local"
+         [(ngModel)]="endtimePeriod"/>
+
+
+  <div class="dropdown">
+    <label>Topics:</label>
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+      Dropdown
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+      <button class="dropdown-item" type="button">Action</button>
+      <button class="dropdown-item" type="button">Another action</button>
+      <button class="dropdown-item" type="button">Something else here</button>
+    </div>
+  </div>
+  <button type="button" class="btn btn-primary" style="margin-top:10px" (click)="showMessages()">Show</button>
+
+  <table class="table table-bordered">
+    <thead>
+    <tr>
+      <th scope="col">Sender</th>
+      <th scope="col">Titel</th>
+      <th scope="col">Inhalt</th>
+      <th scope="col">abgeschickt?</th>
+      <th scope="col">Datum</th>
+      <th scope="col">Löschen</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let message of MessagesArray">
+      <td>{{message.sender}}</td>
+      <td>{{message.title}}</td>
+      <td>{{message.sender}}</td>
+      <td>{{message.content}}</td>
+      <td>{{message.date}}</td>
+    </tr>
+
+    <tr>
+      <th scope="row">1</th>
+
+      <td>Mark</td>
+      <td>Otto</td>
+      <td>@mdo</td>
+    </tr>
+    <tr>
+      <th scope="row">2</th>
+      <td>Jacob</td>
+      <td>Thornton</td>
+      <td>@fat</td>
+    </tr>
+    <tr>
+      <th scope="row">3</th>
+      <td colspan="2">Larry the Bird</td>
+      <td>@twitter</td>
+    </tr>
+    <tr>
+      <th scope="row">4</th>
+      <td colspan="2">yo</td>
+      <td>@twitter</td>
+    </tr>
+    <tr>
+      <th scope="row">5</th>
+      <td colspan="2">Datum</td>
+      <td>@twitter</td>
+    </tr>
+    <tr>
+      <th scope="row">6</th>
+      <td colspan="2">Muelleimer</td>
+      <td>@twitter</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>

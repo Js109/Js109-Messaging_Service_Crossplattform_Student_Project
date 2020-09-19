@@ -35,6 +35,18 @@ class MessageController(private val repository: MessageRepository, private val m
     }
 
     /**
+     * Returns the view for one message.
+     *
+     * @param id Id of the message
+     * @return Message with the specified id
+     */
+    @GetMapping
+    fun showMessage(): Iterable<Message> {
+
+        return repository.findAll().filter { it.starttime < it.endtime}
+    }
+
+    /**
      * Saves the given Message.
      *
      * @param message
