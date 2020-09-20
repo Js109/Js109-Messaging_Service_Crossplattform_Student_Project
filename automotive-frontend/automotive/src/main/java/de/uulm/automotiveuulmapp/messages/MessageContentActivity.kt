@@ -60,6 +60,7 @@ class MessageContentActivity : AppCompatActivity() {
                                 me.messageText,
                                 me.attachment,
                                 me.links,
+                                null,
                                 null
                             )
                         )

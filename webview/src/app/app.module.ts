@@ -9,20 +9,36 @@ import { AppRoutingModule } from './app-routing.module';
 import { PropertyComponent } from './property/property.component';
 import { TopicComponent } from './topic/topic.component';
 import {RouterModule} from '@angular/router';
+import { TemplateLoadComponent } from './message/template-load/template-load.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatListModule} from '@angular/material/list';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatDialogModule} from '@angular/material/dialog';
+import { SaveTemplateDialogComponent } from './message/template-load/save-template-dialog/save-template-dialog.component';
+import {MatButtonModule} from '@angular/material/button';
+import {MatToolbarModule} from '@angular/material/toolbar';
 
 @NgModule({
   declarations: [
     AppComponent,
     MessageComponent,
     PropertyComponent,
-    TopicComponent
+    TopicComponent,
+    TemplateLoadComponent,
+    SaveTemplateDialogComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     FormsModule,
     AppRoutingModule,
-    RouterModule
+    RouterModule,
+    BrowserAnimationsModule,
+    MatListModule,
+    MatSidenavModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatToolbarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,15 +1,8 @@
 package de.uulm.automotive.cds.controller
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.ninjasquad.springmockk.MockkBean
 import de.uulm.automotive.cds.entities.Topic
 import de.uulm.automotive.cds.models.dtos.TopicDTO
-import de.uulm.automotive.cds.repositories.MessageRepository
-import de.uulm.automotive.cds.repositories.PropertyRepository
-import de.uulm.automotive.cds.repositories.SignUpRepository
-import de.uulm.automotive.cds.repositories.TopicRepository
-import de.uulm.automotive.cds.services.AmqpChannelService
-import de.uulm.automotive.cds.services.MessageService
 import io.mockk.every
 import io.mockk.verify
 import org.junit.jupiter.api.Test
@@ -22,25 +15,7 @@ import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) {
-
-    @MockkBean
-    private lateinit var messageRepository: MessageRepository
-
-    @MockkBean
-    private lateinit var propertyRepository: PropertyRepository
-
-    @MockkBean
-    private lateinit var topicRepository: TopicRepository
-
-    @MockkBean
-    private lateinit var signUpRepository: SignUpRepository
-
-    @MockkBean
-    private lateinit var messageService: MessageService
-
-    @MockkBean
-    private lateinit var amqpChannelService: AmqpChannelService
+internal class TopicControllerTest(@Autowired val mockMvc: MockMvc): BaseControllerTest() {
 
     private val topic = TopicDTO()
     private val topic2 = TopicDTO()

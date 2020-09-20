@@ -29,25 +29,7 @@ import java.net.URL
 import java.util.*
 
 @WebMvcTest
-internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) {
-
-    @MockkBean
-    private lateinit var messageRepository: MessageRepository
-
-    @MockkBean
-    private lateinit var propertyRepository: PropertyRepository
-
-    @MockkBean
-    private lateinit var topicRepository: TopicRepository
-
-    @MockkBean
-    private lateinit var signUpRepository: SignUpRepository
-
-    @MockkBean
-    private lateinit var messageService: MessageService
-
-    @MockkBean
-    private lateinit var amqpChannelService: AmqpChannelService
+internal class MessageControllerTest(@Autowired val mockMvc: MockMvc): BaseControllerTest() {
 
     private val messageBasicAttributesOnly = Message(
             1,
