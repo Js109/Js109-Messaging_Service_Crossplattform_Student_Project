@@ -32,6 +32,10 @@ internal class SchedulingServiceTest {
             null,
             null,
             null,
+            null,
+            null,
+            null,
+            null,
             null
     )
 
@@ -46,8 +50,12 @@ internal class SchedulingServiceTest {
             false,
             mutableListOf("test property 1", "test property 2"),
             ByteArray(150),
+            ByteArray(150),
             mutableListOf(URL("https://www.google.com"), URL("https://www.example.com")),
-            LocationData(null, 48.3998807, 9.9878078, 10)
+            LocationData(null, 48.3998807, 9.9878078, 10),
+            null,
+            null,
+            null
     )
 
     private val messages = listOf<Message>(message, message2)

@@ -2,7 +2,7 @@ package de.uulm.automotive.cds.controller
 
 import de.uulm.automotive.cds.entities.Token
 import de.uulm.automotive.cds.models.SignUpInfo
-import de.uulm.automotive.cds.models.TokenDTO
+import de.uulm.automotive.cds.models.dtos.TokenDTO
 import de.uulm.automotive.cds.repositories.SignUpRepository
 import de.uulm.automotive.cds.services.AmqpChannelService
 import org.springframework.beans.factory.annotation.Autowired
@@ -47,12 +47,12 @@ class SignUpController @Autowired constructor(private val amqpService: AmqpChann
             val token = Token(info.signUpToken, id, LocalDateTime.now())
             tokenRepository.save(token)
 
-            return TokenDTO.getTokenDTO(token)
+            return TokenDTO.toDTO(token)
         } else {
             // update time of the last use of the token
             signUpToken.timeLastUsed = LocalDateTime.now()
             tokenRepository.save(signUpToken)
-            return TokenDTO.getTokenDTO(signUpToken)
+            return TokenDTO.toDTO(signUpToken)
         }
     }
 }

@@ -5,6 +5,5 @@ package de.uulm.automotive.cds.models
  *
  */
 interface DTO {
-    fun toEntity() : Entity
-    fun isValid() : Boolean
+    fun toEntity(): Entity
 }

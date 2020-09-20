@@ -3,6 +3,7 @@ package de.uulm.automotive.cds.controller
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import de.uulm.automotive.cds.entities.Property
+import de.uulm.automotive.cds.models.dtos.PropertyDTO
 import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.repositories.PropertyRepository
 import de.uulm.automotive.cds.repositories.SignUpRepository
@@ -44,8 +45,8 @@ internal class PropertyControllerTest(@Autowired val mockMvc: MockMvc) {
     @MockkBean
     private lateinit var amqpChannelService: AmqpChannelService
 
-    private val property = Property()
-    private val property2 = Property()
+    private val property = PropertyDTO()
+    private val property2 = PropertyDTO()
 
     init {
         property.name = "test property"
@@ -66,7 +67,7 @@ internal class PropertyControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @Test
     fun `get all properties`() {
-        every { propertyRepository.findAll() } returns listOf(property, property2)
+        every { propertyRepository.findAll() } returns listOf(property.toEntity(), property2.toEntity())
 
         mockMvc.get("/property") {
             accept(MediaType.APPLICATION_JSON)
@@ -82,7 +83,7 @@ internal class PropertyControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @Test
     fun `save Property`() {
-        every { propertyRepository.save(any<Property>()) } returns property
+        every { propertyRepository.save(any<Property>()) } returns property.toEntity()
 
         mockMvc.post("/property") {
             accept = MediaType.APPLICATION_JSON
@@ -94,5 +95,29 @@ internal class PropertyControllerTest(@Autowired val mockMvc: MockMvc) {
         }
 
         verify(exactly = 1) { propertyRepository.save(any<Property>()) }
+    }
+
+    @Test
+    fun `save invalid DTO returns Bad Request with BadRequestInfo object in body`() {
+        val invalidDto = PropertyDTO(
+                "",
+                "   "
+        )
+
+        mockMvc.post("/property") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(invalidDto)
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isBadRequest }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            content { jsonPath("nameError").exists() }
+            content { jsonPath("nameError").isNotEmpty }
+            content { jsonPath("bindingError").exists() }
+            content { jsonPath("bindingError").isNotEmpty }
+        }
+
+        verify(exactly = 0) { propertyRepository.save(any<Property>()) }
     }
 }

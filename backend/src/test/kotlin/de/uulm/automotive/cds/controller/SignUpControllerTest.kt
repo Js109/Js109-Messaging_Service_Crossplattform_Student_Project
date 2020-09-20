@@ -2,10 +2,9 @@ package de.uulm.automotive.cds.controller
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ninjasquad.springmockk.MockkBean
-import com.rabbitmq.client.AMQP
 import de.uulm.automotive.cds.entities.Token
 import de.uulm.automotive.cds.models.SignUpInfo
-import de.uulm.automotive.cds.models.TokenDTO
+import de.uulm.automotive.cds.models.dtos.TokenDTO
 import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.repositories.PropertyRepository
 import de.uulm.automotive.cds.repositories.SignUpRepository
@@ -56,10 +55,11 @@ internal class SignUpControllerTest(@Autowired val mockMvc: MockMvc) {
             LocalDateTime.now().minusMinutes(1),
             null
     )
-    private val tokenDTO = TokenDTO.getTokenDTO(token)
+    private val tokenDTO = TokenDTO.toDTO(token)
 
     @Test
     fun `new sign up`() {
+
         every { signUpRepository.save(any<Token>()) } returns token
         every { amqpChannelService.openChannel() } returns mockk()
         every { amqpChannelService.openChannel().queueDeclare(any(), any(), any(), any(), any()) } returns mockk()

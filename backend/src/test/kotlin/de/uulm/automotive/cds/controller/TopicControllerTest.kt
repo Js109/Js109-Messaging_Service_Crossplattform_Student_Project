@@ -3,6 +3,7 @@ package de.uulm.automotive.cds.controller
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import de.uulm.automotive.cds.entities.Topic
+import de.uulm.automotive.cds.models.dtos.TopicDTO
 import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.repositories.PropertyRepository
 import de.uulm.automotive.cds.repositories.SignUpRepository
@@ -41,8 +42,8 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) {
     @MockkBean
     private lateinit var amqpChannelService: AmqpChannelService
 
-    private val topic = Topic()
-    private val topic2 = Topic()
+    private val topic = TopicDTO()
+    private val topic2 = TopicDTO()
 
     init {
         topic.title = "test title"
@@ -58,7 +59,7 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @Test
     fun `get all Topics`() {
-        every { topicRepository.findAll() } returns listOf(topic, topic2)
+        every { topicRepository.findAll() } returns listOf(topic.toEntity(), topic2.toEntity())
 
         mockMvc.get("/topic") {
             accept(MediaType.APPLICATION_JSON)
@@ -78,7 +79,7 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @Test
     fun `save Topic`() {
-        every { topicRepository.save(any<Topic>()) } returns topic
+        every { topicRepository.save(any<Topic>()) } returns topic.toEntity()
 
         mockMvc.post("/topic") {
             accept = MediaType.APPLICATION_JSON
@@ -90,5 +91,34 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) {
         }
 
         verify(exactly = 1) { topicRepository.save(any<Topic>()) }
+    }
+
+    @Test
+    fun `save invalid DTO returns Bad Request with BadRequestInfo object in body`() {
+        val invalidDto = TopicDTO(
+                "",
+                "",
+                arrayListOf(),
+                "    "
+        )
+
+        mockMvc.post("/topic") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(invalidDto)
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isBadRequest }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            content { jsonPath("bindingError").exists() }
+            content { jsonPath("bindingError").isNotEmpty }
+            content { jsonPath("titleError").exists() }
+            content { jsonPath("titleError").isNotEmpty }
+            content { jsonPath("descriptionError").exists() }
+            content { jsonPath("descriptionError").isNotEmpty }
+
+        }
+
+        verify(exactly = 0) { topicRepository.save(any<Topic>()) }
     }
 }

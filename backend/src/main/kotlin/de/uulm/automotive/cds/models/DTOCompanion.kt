@@ -9,5 +9,5 @@ import org.modelmapper.ModelMapper
 interface DTOCompanion {
     val mapper: ModelMapper
 
-    fun<T: Entity> toDTO(entity: T) : DTO
+    fun <T : Entity> toDTO(entity: T): DTO
 }
