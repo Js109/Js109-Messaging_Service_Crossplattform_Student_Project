@@ -49,7 +49,7 @@ paths:
           description: "new topic to be stored"
           required: true
           schema:
-            $ref: "#/definitions/Topic"
+            $ref: "#/definitions/TopicDTO"
       responses:
         "200":
           description: "Successful Operation"
@@ -91,7 +91,7 @@ paths:
           description: "Message to be published"
           required: true
           schema:
-            $ref: "#/definitions/Message"
+            $ref: "#/definitions/MessageDTO"
       responses:
         "200":
           description: "Successful Operation"
@@ -146,7 +146,7 @@ paths:
           description: "Property to be stored"
           required: true
           schema:
-            $ref: "#/definitions/Property"
+            $ref: "#/definitions/PropertyDTO"
       responses:
         "200":
           description: "Successful Operation"
@@ -223,6 +223,26 @@ definitions:
       description:
         type: "string"
         example: "Hier werden alle kulturbezogenen Themen veröffentlicht."
+      isDeleted:
+        type: boolean
+        example: false
+
+  TopicDTO:
+    type: "object"
+    properties:
+      binding:
+        type: "string"
+        example: "landschaft/Kultur"
+      title:
+        type: "string"
+        example: "Kultur"
+      tags:
+        $ref: "#/definitions/Tag"
+      description:
+        type: "string"
+        example: "Hier werden alle kulturbezogenen Themen veröffentlicht."
+
+
   SignUpInfo:
     type: "object"
     properties:
@@ -233,6 +253,8 @@ definitions:
         type: string
         format: uuid
         example: "bd604ecb-b6d3-49f7-a0f7-eaff204019be"
+
+
   Property:
     type: "object"
     properties:
@@ -245,6 +267,21 @@ definitions:
       binding:
         type: "string"
         example: "device/audi/a3"
+      isDeleted:
+        type: boolean
+        example: false
+
+  PropertyDTO:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        example: "Audi A3"
+      binding:
+        type: "string"
+        example: "device/audi/a3"
+
+
   Message:
     type: "object"
     properties:
@@ -283,6 +320,10 @@ definitions:
         type: "string"
         format: "byte"
         example: "HTP40c5xijnt"
+      logoAttachment:
+        type: "string"
+        format: "byte"
+        example: "HTP40c5xijnt"
       links:
         type: "array"
         items:
@@ -290,7 +331,69 @@ definitions:
           example: "https://uulm.de"
       locationData:
         $ref: "#/definitions/LocationData"
-  
+      backgroundColor:
+        type: "string"
+        example: "#ffffff"
+      fontColor:
+        type: "string"
+        example: "#000000"
+      fontFamily:
+        $ref: "#/definitions/FontFamily"
+
+
+  MessageDTO:
+    type: "object"
+    properties:
+      topic:
+        type: "string"
+        example: "landschaft/kultur"
+      sender:
+        type: "string"
+        example: "Audi"
+      title:
+        type: "string"
+        example: "Nachrichtentitel"
+      content:
+        type: "string"
+        example: "Textinhalt der Nachricht"
+      starttime:
+        type: "string"
+        format: "date-time"
+        example: "2020-08-19T11:32"
+      endtime:
+        type: "string"
+        format: "date-time"
+        example: "2020-08-19T11:32"
+      properties:
+        type: array
+        items:
+          type: "string"
+          example: "device/audi/a3"
+      attachment:
+        type: "string"
+        format: "byte"
+        example: "HTP40c5xijnt"
+      logoAttachment:
+        type: "string"
+        format: "byte"
+        example: "HTP40c5xijnt"
+      links:
+        type: "array"
+        items:
+          type: "string"
+          example: "https://uulm.de"
+      locationData:
+        $ref: "#/definitions/LocationData"
+      backgroundColor:
+        type: "string"
+        example: "#ffffff"
+      fontColor:
+        type: "string"
+        example: "#000000"
+      fontFamily:
+        $ref: "#/definitions/FontFamily"
+
+
   TemplateMessage:
     allOf:
       - $ref: "#/definitions/Message"
@@ -323,6 +426,13 @@ definitions:
     example:
       - "Wandern"
       - "Natur"
+
+
+  FontFamily:
+    type: string
+    enum:
+      - "EXAMPLE_FONT1"
+      - "EXAMPLE_FONT2"
 
 
   ApiResponse:
