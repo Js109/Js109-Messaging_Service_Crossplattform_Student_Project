@@ -3,7 +3,7 @@ package de.uulm.automotive.cds.controller
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import de.uulm.automotive.cds.entities.Token
 import de.uulm.automotive.cds.models.SignUpInfo
-import de.uulm.automotive.cds.models.TokenDTO
+import de.uulm.automotive.cds.models.dtos.TokenDTO
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
