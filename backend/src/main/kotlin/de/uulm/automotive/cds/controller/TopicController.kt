@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/topic")
 /**
- * REST-Point for reading available topics and storing new topics.
+ * REST-Endpoint for reading available topics and storing new topics.
  */
 class TopicController @Autowired constructor(private val topicRepository: TopicRepository) {
     /**
-     * REST-point to get all available topics in the system.
+     * REST-Endpoint to get all available topics in the system.
      * See swagger definition of GET /topic for more details.
      *
      * @return List of Topic elements stored via jpa
@@ -28,17 +28,17 @@ class TopicController @Autowired constructor(private val topicRepository: TopicR
     }
 
     /**
-     * REST-point for storing a new topic.
+     * REST-Endpoint for storing a new topic.
      * See swagger definition of POST /topic for more details.
      *
-     * @param topicDto DTO object of the topic
+     * @param topicDto DTO of the topic
      * @return Response Entity Containing Error Object in case of an invalid DTO
      */
     @PostMapping
     fun postTopics(@RequestBody topicDto: TopicDTO): ResponseEntity<TopicBadRequestInfo> {
         val errors = topicDto.getErrors()
         if (errors != null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors)
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errors)
         }
 
         topicRepository.save(topicDto.toEntity())

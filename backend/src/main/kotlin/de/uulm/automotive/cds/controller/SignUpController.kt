@@ -12,7 +12,7 @@ import java.util.*
 import kotlin.collections.HashMap
 
 /**
- * Rest-Point for SignUp of new clients.
+ * Rest-Endpoint for SignUp of new clients.
  */
 @CrossOrigin("*")
 @RestController

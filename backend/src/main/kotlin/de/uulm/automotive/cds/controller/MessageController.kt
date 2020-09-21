@@ -15,12 +15,12 @@ import java.time.LocalDateTime
 @RestController
 @RequestMapping("/message")
 /**
- * REST-Point for Messages.
+ * REST-Endpoint for Messages.
  */
 class MessageController(private val repository: MessageRepository, private val messageService: MessageService) {
 
     /**
-     * REST-point to get the message with the specified id in the system.
+     * REST-Endpoint to get the message with the specified id in the system.
      * See swagger definition of GET /message/{id} for more details.
      *
      * @param id Id of the message
@@ -37,10 +37,10 @@ class MessageController(private val repository: MessageRepository, private val m
     }
 
     /**
-     * REST-point for storing a new message.
+     * REST-Endpoint for storing a new message.
      * See swagger definition of POST /message for more details.
      *
-     * @param messageDto DTO object of the message
+     * @param messageDto DTO of the message
      * @return Response Entity Containing Error Object in case of an invalid DTO
      */
     @PostMapping
@@ -48,7 +48,7 @@ class MessageController(private val repository: MessageRepository, private val m
 
         val errors = messageDto.getErrors()
         if (errors != null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors)
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errors)
         }
         val message = messageDto.toEntity()
 

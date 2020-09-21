@@ -83,7 +83,7 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc): BaseControl
             content = jacksonObjectMapper().writeValueAsString(invalidDto)
             characterEncoding = "UTF-8"
         }.andExpect {
-            status { isBadRequest }
+            status { isUnprocessableEntity }
             content { contentType(MediaType.APPLICATION_JSON) }
             content { jsonPath("bindingError").exists() }
             content { jsonPath("bindingError").isNotEmpty }

@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/property")
 /**
- * REST-Point for storing and reading properties.
+ * REST-Endpoint for storing and reading properties.
  */
 class PropertyController(val propertyRepository: PropertyRepository) {
 
     /**
-     * REST-point to get all available properties in the system.
+     * REST-Endpoint to get all available properties in the system.
      * See swagger definition of GET /property for more details.
      *
      * @return
@@ -28,17 +28,17 @@ class PropertyController(val propertyRepository: PropertyRepository) {
     }
 
     /**
-     * REST-point for storing a new property.
+     * REST-Endpoint for storing a new property.
      * See swagger definition of POST /property for more details.
      *
-     * @param propertyDto DTO object of the property
+     * @param propertyDto DTO of the property
      * @return Response Entity Containing Error Object in case of an invalid DTO
      */
     @PostMapping
     fun postProperty(@RequestBody propertyDto: PropertyDTO): ResponseEntity<PropertyBadRequestInfo> {
         val errors = propertyDto.getErrors()
         if (errors != null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors)
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errors)
         }
 
         propertyRepository.save(propertyDto.toEntity())

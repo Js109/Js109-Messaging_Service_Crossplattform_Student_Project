@@ -85,7 +85,7 @@ internal class PropertyControllerTest(@Autowired val mockMvc: MockMvc): BaseCont
             content = jacksonObjectMapper().writeValueAsString(invalidDto)
             characterEncoding = "UTF-8"
         }.andExpect {
-            status { isBadRequest }
+            status { isUnprocessableEntity }
             content { contentType(MediaType.APPLICATION_JSON) }
             content { jsonPath("nameError").exists() }
             content { jsonPath("nameError").isNotEmpty }

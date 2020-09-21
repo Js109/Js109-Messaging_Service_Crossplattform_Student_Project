@@ -103,8 +103,7 @@ data class MessageDTO(
     override fun getErrors(): MessageBadRequestInfo? {
         var errors: MessageBadRequestInfo? = null
 
-        //double negative is used for empty checks to also include null checks, as message.field.isEmpty() == true would not be true for null
-        if (sender?.isNotEmpty() != true) {
+        if (sender.isNullOrBlank()) {
             errors = errors ?: MessageBadRequestInfo()
             errors.senderError = "Sender field is required."
         }

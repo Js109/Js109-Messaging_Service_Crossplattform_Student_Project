@@ -55,8 +55,9 @@ paths:
           description: "Successful Operation"
         "400":
           description: "Bad Request"
-        "404":
-          description: "Not Found"
+        "422":
+          description: "Unprocessable Entity"
+
   /signup:
     post:
       tags:
@@ -79,6 +80,7 @@ paths:
           description: "Bad Request"
         "404":
           description: "Not Found"
+
   /message:
     post:
       tags:
@@ -97,6 +99,9 @@ paths:
           description: "Successful Operation"
         "400":
           description: "Bad Request"
+        "422":
+          description: "Unprocessable Entity"
+
   /message/{id}:
     parameters: 
       - name: id
@@ -152,6 +157,8 @@ paths:
           description: "Successful Operation"
         "400":
           description: "Bad Request"
+        "422":
+          description: "Unprocessable Entity"
 
   /template:
     post:
@@ -187,6 +194,7 @@ paths:
           description: "Bad Request"
         "404":
           description: "Not Found"
+
   /template/{id}:
     parameters: 
       - name: id
@@ -214,7 +222,7 @@ definitions:
         example: 42
       binding:
         type: "string"
-        example: "landschaft/Kultur"
+        example: "/Kultur"
       title:
         type: "string"
         example: "Kultur"
@@ -232,7 +240,7 @@ definitions:
     properties:
       binding:
         type: "string"
-        example: "landschaft/Kultur"
+        example: "/Kultur"
       title:
         type: "string"
         example: "Kultur"
@@ -241,7 +249,6 @@ definitions:
       description:
         type: "string"
         example: "Hier werden alle kulturbezogenen Themen veröffentlicht."
-
 
   SignUpInfo:
     type: "object"
@@ -253,7 +260,6 @@ definitions:
         type: string
         format: uuid
         example: "bd604ecb-b6d3-49f7-a0f7-eaff204019be"
-
 
   Property:
     type: "object"
@@ -281,7 +287,6 @@ definitions:
         type: "string"
         example: "device/audi/a3"
 
-
   Message:
     type: "object"
     properties:
@@ -290,7 +295,7 @@ definitions:
         example: 3
       topic: 
         type: "string"
-        example: "landschaft/kultur"
+        example: "/Kultur"
       sender:
         type: "string"
         example: "Audi"
@@ -340,13 +345,12 @@ definitions:
       fontFamily:
         $ref: "#/definitions/FontFamily"
 
-
   MessageDTO:
     type: "object"
     properties:
       topic:
         type: "string"
-        example: "landschaft/kultur"
+        example: "/Kultur"
       sender:
         type: "string"
         example: "Audi"
@@ -393,7 +397,6 @@ definitions:
       fontFamily:
         $ref: "#/definitions/FontFamily"
 
-
   TemplateMessage:
     allOf:
       - $ref: "#/definitions/Message"
@@ -402,7 +405,6 @@ definitions:
           templateName:
             type: "string"
             example: "Name des Templates"
-    
 
   LocationData:
     type: "object"
@@ -419,7 +421,6 @@ definitions:
       radius:
         type: number
 
-
   Tag:
     type: "string"
     format: "enum"
@@ -427,13 +428,11 @@ definitions:
       - "Wandern"
       - "Natur"
 
-
   FontFamily:
     type: string
     enum:
       - "EXAMPLE_FONT1"
       - "EXAMPLE_FONT2"
-
 
   ApiResponse:
     type: "object"
