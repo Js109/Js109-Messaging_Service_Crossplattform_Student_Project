@@ -12,7 +12,7 @@ public abstract class ApplicationConstants {
     public static final String DEVICE_TYPE = "Android Emulator";
 
     // REST Endpoints
-    private static final String APPLICATION_URL = "http://10.0.2.2:8080";
+    private static final String APPLICATION_URL = "http://elbitbackend.schuster.domains:8085";
     public static final String ENDPOINT_SIGNUP = APPLICATION_URL + "/signup/";
     public static final String ENDPOINT_TOPIC = APPLICATION_URL + "/topic";
 }

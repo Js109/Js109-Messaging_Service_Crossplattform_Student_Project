@@ -22,7 +22,8 @@
         android:usesCleartextTraffic="true">
         <service
             android:name=".messages.MessagePersistenceService"
-            android:exported="false"/>
+            android:exported="false" />
+
         <activity android:name=".TopicAdapterTestActivity" />
         <activity android:name=".MainActivity" />
         <activity
