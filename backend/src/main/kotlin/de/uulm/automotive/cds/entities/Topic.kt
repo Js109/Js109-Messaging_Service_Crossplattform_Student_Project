@@ -1,10 +1,6 @@
 package de.uulm.automotive.cds.entities
 
-import org.springframework.data.repository.CrudRepository
-import javax.persistence.ElementCollection
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
+import javax.persistence.*
 
 /**
  * Class that represents a topic that a client can subscribe to.
@@ -12,14 +8,18 @@ import javax.persistence.Id
  *
  */
 @Entity
-class Topic {
+class Topic : de.uulm.automotive.cds.models.Entity() {
     @Id
     @GeneratedValue
     var id: Long? = null
+
+    @Column(unique = true)
     var binding: String = ""
     var title: String = ""
 
     @ElementCollection
     var tags: MutableList<String> = ArrayList()
     var description: String = ""
+
+    var isDeleted: Boolean = false
 }
