@@ -45,5 +45,10 @@
     <string name="marker_icon_description">Marker icon</string>
     <string name="delete_location_button">Delete location button</string>
     <string name="add_location_button">Add new location button</string>
+    <string name="location_fav_name_missing">Please enter a name for this location favourite</string>
+    <string name="location_fav_location_missing">Please enter a correct location</string>
+
+    <string name="location_deletion_dialogue_title">Delete location favourite</string>
+    <string name="location_deletion_dialogue_question">Do you really want to delete this location?</string>
 
 </resources>
