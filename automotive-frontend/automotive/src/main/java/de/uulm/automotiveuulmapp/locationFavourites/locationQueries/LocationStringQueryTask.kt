@@ -18,12 +18,9 @@ class LocationStringQueryTask(val mContext: Context, val locationQueryFinished: 
      */
     override fun doInBackground(vararg address: String?): List<Address> {
         var result = emptyList<Address>()
-        if(address[0] != null && address[0]!!.isNotEmpty()){
+        if(!address[0].isNullOrEmpty()){
             try {
-                val locationSearchResult = geocoder.getFromLocationName(address[0],5)
-                if(locationSearchResult.isNotEmpty()){
-                    result = if(locationSearchResult.count() == 5) locationSearchResult.subList(0,4) else locationSearchResult.subList(0,locationSearchResult.size)
-                }
+                result = geocoder.getFromLocationName(address[0],5)
             } catch (e: IOException) {
                 Log.e("LocationHandler", "checkLocationString: ", e)
             }
