@@ -16,7 +16,7 @@ class TopicAdapterTestActivity() : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_topic_adapter_test)
+        setContentView(R.layout.activity_recycler_adapter_test)
 
         recyclerView = findViewById<RecyclerView>(R.id.topicAdapterTestRecyclerView)
         recyclerView?.layoutManager = LinearLayoutManager(applicationContext)

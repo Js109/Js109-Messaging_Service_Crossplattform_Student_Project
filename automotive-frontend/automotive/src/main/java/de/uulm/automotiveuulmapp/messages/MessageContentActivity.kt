@@ -1,7 +1,7 @@
 package de.uulm.automotiveuulmapp.messages
 
-import android.content.Intent
 import android.graphics.BitmapFactory
+import android.os.AsyncTask
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -15,57 +15,106 @@ import com.google.android.libraries.maps.model.MarkerOptions
 import de.uulm.automotive.cds.entities.MessageSerializable
 import de.uulm.automotiveuulmapp.R
 import de.uulm.automotiveuulmapp.MainActivity
+import de.uulm.automotiveuulmapp.messages.messagedb.MessageDatabase
 import java.net.URL
 
 class MessageContentActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_MESSAGE = "de.uulm.automotiveuulmapp.messages.extra.MESSAGE"
+        const val EXTRA_PERSISTED_MESSAGE_ID = "de.uulm.automotiveuulmapp.messages.extra.MESSAGE_ID"
         const val EXTRA_NOTIFICATION_ID = "de.uulm.automotiveuulmapp.messages.extra.NOTIFICATION_ID"
     }
-
-    lateinit var message: MessageSerializable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message_content)
 
         // close notification if Activity was started from one
-        if(intent.hasExtra(EXTRA_NOTIFICATION_ID)) {
+        if (intent.hasExtra(EXTRA_NOTIFICATION_ID)) {
             NotificationManagerCompat.from(this).cancel(
                 intent.getIntExtra(EXTRA_NOTIFICATION_ID, 0)
             )
         }
 
-        val message = intent.getSerializableExtra(EXTRA_MESSAGE) as MessageSerializable
+        when {
+            intent.hasExtra(EXTRA_MESSAGE) -> {
+                val message = intent.getSerializableExtra(EXTRA_MESSAGE) as MessageSerializable
+                setupView(message)
+            }
+            intent.hasExtra(EXTRA_PERSISTED_MESSAGE_ID) -> {
+                AsyncTask.execute {
+                    val dao = MessageDatabase.getDaoInstance(this)
+                    val me = dao.get(
+                        intent.getIntExtra(
+                            EXTRA_PERSISTED_MESSAGE_ID, 0
+                        )
+                    )
+                    if (!me.read) {
+                        dao.update(me.apply { read = true })
+                    }
+                    runOnUiThread {
+                        setupView(
+                            MessageSerializable(
+                                me.sender,
+                                me.title,
+                                me.messageText,
+                                me.attachment,
+                                me.links,
+                                null,
+                                null
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setupView(message: MessageSerializable) {
         val titleView = findViewById<TextView>(R.id.messageContentTitleText)
         val messageContentView = findViewById<TextView>(R.id.messageContentText)
 
         titleView.text = message.title
         messageContentView.text = message.messageText
-        // if attachment exists, decode base64-encoded byte array
-        val image = message.attachment
-        if(image != null && image.isNotEmpty()) {
+        createImageView(message.attachment)
+
+        initializeCloseButton()
+
+        // enable persistence button only if message does not come from database
+        initializePersistenceButton(intent.hasExtra(EXTRA_MESSAGE), message)
+
+        createMapView(message.links, message.title)
+    }
+
+    /**
+     * If image data is not empty decode base64-encoded byte array and set as content of the ImageView.
+     */
+    private fun createImageView(image: ByteArray?) {
+        if (image != null && image.isNotEmpty()) {
             val bmp =
-                BitmapFactory.decodeByteArray(message.attachment, 0, message.attachment.size)
+                BitmapFactory.decodeByteArray(image, 0, image!!.size)
 
             val imageView = findViewById<ImageView>(R.id.messageContentImageView)
             imageView.setImageBitmap(bmp)
         } else {
             findViewById<ImageView>(R.id.messageContentImageView).visibility = View.GONE
         }
+    }
 
-        initializeActionViews()
-
+    /**
+     * Creates a google maps view from the first maps url in the links array.
+     * If no maps url is found no map will be shown.
+     */
+    private fun createMapView(links: Array<URL>?, markerText: String) {
         val map =
             supportFragmentManager.findFragmentById(R.id.message_map) as SupportMapFragment
-
-        val mapsUrl = message.links?.firstOrNull { isGoogleMapsUrl(it) }
+        val mapsUrl = links?.firstOrNull { isGoogleMapsUrl(it) }
         mapsUrl?.let {
             getCoordinatesFromMapsUrl(it)
         }?.let { coords ->
             map.getMapAsync { map ->
                 val location = LatLng(coords.first, coords.second)
-                val marker = map.addMarker(MarkerOptions().position(location).title(message.title))
+                val marker = map.addMarker(MarkerOptions().position(location).title(markerText))
                 marker.showInfoWindow()
                 map.moveCamera(CameraUpdateFactory.newLatLng(location))
                 map.moveCamera(CameraUpdateFactory.zoomTo(17.0f))
@@ -97,25 +146,41 @@ class MessageContentActivity : AppCompatActivity() {
     }
 
     /**
-     * Sets up handler for close- and save-button of message
+     * Sets up handler for the close button of the activity
      *
      */
-    private fun initializeActionViews(){
+    private fun initializeCloseButton() {
         // button to return to topic selection activity (SubscribeActivity)
-        val closeButton: Button = findViewById<Button>(R.id.cose_message_button)
+        val closeButton = findViewById<Button>(R.id.cose_message_button)
         closeButton.setOnClickListener {
             finish()
         }
+    }
 
+    /**
+     * Sets up handler for the save button of the message
+     *
+     */
+    private fun initializePersistenceButton(
+        shouldBeEnabled: Boolean,
+        message: MessageSerializable
+    ) {
         val persistenceButton = findViewById<Button>(R.id.persist_message_button)
-        persistenceButton.setOnClickListener { v: View -> run {
-            if(v.isEnabled){
-                MessagePersistenceService.startActionPersist(this, message)
-                v.isEnabled = false
-                Toast.makeText(applicationContext,"Message saved", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(applicationContext,"Message has already been saved", Toast.LENGTH_SHORT).show()
+        persistenceButton.isEnabled = shouldBeEnabled
+        persistenceButton.setOnClickListener { v: View ->
+            run {
+                if (v.isEnabled) {
+                    MessagePersistenceService.startActionPersist(this, message)
+                    v.isEnabled = false
+                    Toast.makeText(applicationContext, "Message saved", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(
+                        applicationContext,
+                        "Message has already been saved",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
-        }}
+        }
     }
 }

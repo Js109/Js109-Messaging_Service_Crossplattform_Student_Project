@@ -10,9 +10,11 @@ data class MessageEntity(
     val uid: Int?,
     val sender: String,
     val title: String,
-    val messageText: String,
+    val messageText: String?,
     val attachment: ByteArray?,
-    val links: Array<URL>?
+    val links: Array<URL>?,
+    var favourite: Boolean = false,
+    var read: Boolean = false
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

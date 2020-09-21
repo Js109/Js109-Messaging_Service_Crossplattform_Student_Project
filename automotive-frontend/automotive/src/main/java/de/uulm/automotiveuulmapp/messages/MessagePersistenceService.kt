@@ -22,8 +22,7 @@ class MessagePersistenceService : IntentService("MessagePersistenceService") {
 
     override fun onCreate() {
         super.onCreate()
-        db = Room.databaseBuilder(applicationContext, MessageDatabase::class.java, "message-db")
-            .fallbackToDestructiveMigration().build()
+        db = MessageDatabase.getDatabaseInstance(this)
     }
 
     override fun onHandleIntent(intent: Intent?) {
@@ -74,7 +73,8 @@ class MessagePersistenceService : IntentService("MessagePersistenceService") {
             msg.title,
             msg.messageText,
             msg.attachment,
-            msg.links
+            msg.links,
+            read = true
         )
         db.messageDao().insert(msgEntity)
     }

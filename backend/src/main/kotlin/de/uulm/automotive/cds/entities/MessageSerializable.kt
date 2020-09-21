@@ -5,6 +5,7 @@ import java.io.IOException
 import java.io.ObjectOutputStream
 import java.io.Serializable
 import java.net.URL
+import java.time.LocalDateTime
 
 /**
  * This object is used to transfer necessary information to the client
@@ -19,10 +20,11 @@ import java.net.URL
 class MessageSerializable(
         val sender: String,
         val title: String,
-        val messageText: String,
+        val messageText: String?,
         val attachment: ByteArray?,
         val links: Array<URL>?,
-        val locationData: LocationDataSerializable?
+        val locationData: LocationDataSerializable?,
+        val endtime: LocalDateTime?
 ) : Serializable {
     /**
      * This converts a message object into a serialized byte array to be able to transfer it over amqp message

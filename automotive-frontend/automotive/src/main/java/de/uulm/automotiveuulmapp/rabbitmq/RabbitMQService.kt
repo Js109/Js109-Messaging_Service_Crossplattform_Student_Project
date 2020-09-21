@@ -18,10 +18,14 @@ import de.uulm.automotiveuulmapp.geofencing.CurrentLocationFetcher
 import de.uulm.automotiveuulmapp.geofencing.LocationDataFencer
 import de.uulm.automotiveuulmapp.locationFavourites.locationFavData.LocationDatabase
 import de.uulm.automotiveuulmapp.messages.MessagePersistenceService
+import de.uulm.automotiveuulmapp.messages.messagedb.MessageDatabase
+import de.uulm.automotiveuulmapp.messages.messagedb.MessageEntity
+import de.uulm.automotiveuulmapp.notifications.DismissNotificationService
 import de.uulm.automotiveuulmapp.topic.TopicChange
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.io.ObjectInputStream
+import java.time.ZoneId
 import kotlin.random.Random.Default.nextInt
 
 class RabbitMQService : Service() {
@@ -136,13 +140,20 @@ class RabbitMQService : Service() {
         val deliverCallback =
             DeliverCallback { _: String?, delivery: Delivery ->
                 val message = convertByteArrayToMessage(delivery.body)
-                //TODO Check if message location is one of the favorites,
-                //if (fav)
-                //  persist
-                //else
-                //  headsup
-                if (locationFencer?.shouldAllow(message.locationData) == true) {
+                // return if endtime in past
+                message.endtime?.let {
+                    it.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        .minus(System.currentTimeMillis())
+                        .takeIf { timeDiff -> timeDiff < 0 }
+                        ?.let { return@DeliverCallback }
+                }
+                // if no location data or if current location is in location data show as heads up notification else store message if a stored location is in range of the location data
+                if (message.locationData == null || locationFencer?.currentPositionFencing(message.locationData) == true) {
                     notify(message)
+                } else if (locationFencer?.storedLocationsFencing(message.locationData) == true) {
+                    MessageDatabase.getDaoInstance(this).insert(
+                        MessageEntity(null, message.sender, message.title, message.messageText, message.attachment, message.links, false, false)
+                    )
                 }
             }
 
@@ -206,6 +217,19 @@ class RabbitMQService : Service() {
             storeMessageIntent
         ).build()
 
+        val dismissMessageIntent = PendingIntent.getService(
+            this,
+            0,
+            DismissNotificationService.generateDismissNotificationIntent(this, notificationId),
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val dismissAction = NotificationCompat.Action.Builder(
+            android.R.drawable.ic_delete,
+            "Dismiss",
+            dismissMessageIntent
+        ).build()
+
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -214,6 +238,7 @@ class RabbitMQService : Service() {
             .setContentTitle(message.title)
             .setContentText(message.messageText)
             .addAction(storeAction)
+            .addAction(dismissAction)
 
 
         with(NotificationManagerCompat.from(this)) {

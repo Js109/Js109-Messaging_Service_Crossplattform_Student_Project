@@ -13,15 +13,45 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
-
+        buildConfigField "String", "BACKEND_URL", '"http://10.0.2.2:8080"'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-
     buildTypes {
         release {
+            applicationIdSuffix ".release"
+            versionNameSuffix "-release"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
+            debuggable true
+            minifyEnabled false
+            getIsDefault().set(true)
+        }
+    }
+    // Specifies one flavor dimension.
+    flavorDimensions "version"
+    productFlavors {
+        localBackend {
+            // Assigns this product flavor to the "version" flavor dimension.
+            // If you are using only one dimension, this property is optional,
+            // and the plugin automatically assigns all the module's flavors to
+            // that dimension.
+            dimension "version"
+            applicationIdSuffix ".localbackend"
+            versionNameSuffix "-localbackend"
+            getIsDefault().set(true)
+        }
+        globalBackend {
+            dimension "version"
+            applicationIdSuffix ".globalbackend"
+            versionNameSuffix "-globalbackend"
+            // set BACKEND_URL in
+            buildConfigField "String", "BACKEND_URL", '"https://elbitbackend.schuster.domains"'
         }
     }
 
@@ -37,7 +67,8 @@ android {
     }
     testOptions {
         unitTests.includeAndroidResources = true
-        unitTests.returnDefaultValues = true //required because of "Method ... not mocked" exception, see http://tools.android.com/tech-docs/unit-testing-support#TOC-Method-...-not-mocked.-
+        unitTests.returnDefaultValues = true
+        //required because of "Method ... not mocked" exception, see http://tools.android.com/tech-docs/unit-testing-support#TOC-Method-...-not-mocked.-
     }
 
 // To inline the bytecode built with JVM target 1.8 into

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 /**
  * A service class that takes care of sending messages via the amqp broker.
@@ -28,29 +29,50 @@ class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelS
      */
     fun sendMessage(message: Message) {
         val channel = amqpChannelService.openChannel()
-        val messageSerializable = MessageSerializable(message.sender!!, message.title!!, message.content, message.attachment, message.links?.toTypedArray(), message.locationData?.serialize())
+        val messageSerializable = MessageSerializable(message.sender!!, message.title!!, message.content, message.attachment, message.links?.toTypedArray(), message.locationData?.serialize(), message.endtime)
+
+        val properties = AMQP.BasicProperties.Builder()
+        message.endtime?.millisFromCurrentTime()
+                ?.also { if (it < 0) return }
+                ?.let { addExpirationToProps(properties, it) }
 
         if (message.properties == null || message.properties?.size == 0) {
-            channel.basicPublish("amq.topic", message.topic, null, messageSerializable.toByteArray())
+            channel.basicPublish("amq.topic", message.topic, properties.build(), messageSerializable.toByteArray())
         } else {
-            val properties = createHeaderProps(message.properties)
-            channel.basicPublish("amq.headers", "", properties, messageSerializable.toByteArray())
+            addHeaderProps(properties, message.properties)
+            channel.basicPublish("amq.headers", "", properties.build(), messageSerializable.toByteArray())
         }
 
         channel.close()
     }
 
     /**
-     * Creates the appropriate headers for message publishing on the header exchange from the properties of a message.
-     * @param properties List of properties from the message to be published
-     * @return BasicProperties for amqp publishing containing the headers
+     * Calculates the amount of milliseconds between the given LocalDateTime and the current time
      */
-    private fun createHeaderProps(properties: List<String>?): AMQP.BasicProperties {
+    private fun LocalDateTime.millisFromCurrentTime(): Long? {
+        return this.atZone(ZoneId.systemDefault())?.toInstant()?.toEpochMilli()?.minus(System.currentTimeMillis())
+    }
+
+    /**
+     * Adds an expiration date to the given AMQP property builder based on the current time and the given LocalDateTime if it is not noll null or in the past.
+     * @param properties AMQP.BasicProperties.Builder to which the expiration will be added
+     * @param expiration Duration in Long after which the message should not be send any more
+     */
+    private fun addExpirationToProps(properties: AMQP.BasicProperties.Builder, expiration: Long) {
+        properties.expiration(expiration.toString())
+    }
+
+    /**
+     * Adds the appropriate headers for message publishing on the header exchange based on the message properties to the given AMQP properties builder.
+     * @param amqpPropertiesBuilder AMQP.BasicProperties.Builder to which the headers will be added
+     * @param properties List of properties from the message to be published from which the headers are created
+     */
+    private fun addHeaderProps(amqpPropertiesBuilder: AMQP.BasicProperties.Builder, properties: List<String>?) {
         val bindingArgs = HashMap<String, Any>()
         properties?.forEach {
             bindingArgs[it] = ""
         }
-        return AMQP.BasicProperties().builder().headers(bindingArgs).build()
+        amqpPropertiesBuilder.headers(bindingArgs)
     }
 
     /**
