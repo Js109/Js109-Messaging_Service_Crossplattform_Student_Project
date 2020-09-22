@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-internal class TopicControllerTest(@Autowired val mockMvc: MockMvc): BaseControllerTest() {
+internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) : BaseControllerTest() {
 
     private val topic = TopicDTO()
     private val topic2 = TopicDTO()
@@ -55,6 +55,7 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc): BaseControl
     @Test
     fun `save Topic`() {
         every { topicRepository.save(any<Topic>()) } returns topic.toEntity()
+        every { topicRepository.findByBinding(any()) } returns null
 
         mockMvc.post("/topic") {
             accept = MediaType.APPLICATION_JSON
@@ -66,6 +67,28 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc): BaseControl
         }
 
         verify(exactly = 1) { topicRepository.save(any<Topic>()) }
+    }
+
+    @Test
+    fun `save Topic with already existing Binding returns Bad Request with BadRequestInfo object in body`() {
+        every { topicRepository.findByBinding(any()) } returns topic.toEntity()
+
+        mockMvc.post("/topic") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(topic)
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isUnprocessableEntity }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            content { jsonPath("bindingError").exists() }
+            content { jsonPath("bindingError").isNotEmpty }
+            content { jsonPath("titleError").doesNotExist() }
+            content { jsonPath("descriptionError").doesNotExist() }
+
+        }
+
+        verify(exactly = 0) { topicRepository.save(any<Topic>()) }
     }
 
     @Test
