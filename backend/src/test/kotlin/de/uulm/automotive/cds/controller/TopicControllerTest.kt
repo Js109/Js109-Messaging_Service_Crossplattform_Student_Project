@@ -55,6 +55,7 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc): BaseControl
     @Test
     fun `save Topic`() {
         every { topicRepository.save(any<Topic>()) } returns topic.toEntity()
+        every { topicRepository.findByBinding(any()) } returns null
 
         mockMvc.post("/topic") {
             accept = MediaType.APPLICATION_JSON

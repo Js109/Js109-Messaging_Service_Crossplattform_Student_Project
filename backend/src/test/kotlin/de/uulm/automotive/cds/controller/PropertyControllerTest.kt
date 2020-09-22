@@ -59,6 +59,7 @@ internal class PropertyControllerTest(@Autowired val mockMvc: MockMvc): BaseCont
     @Test
     fun `save Property`() {
         every { propertyRepository.save(any<Property>()) } returns property.toEntity()
+        every { propertyRepository.findByBinding(any()) } returns null
 
         mockMvc.post("/property") {
             accept = MediaType.APPLICATION_JSON
