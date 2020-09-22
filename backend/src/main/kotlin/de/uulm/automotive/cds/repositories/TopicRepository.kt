@@ -10,4 +10,5 @@ import org.springframework.data.repository.CrudRepository
  */
 interface TopicRepository : CrudRepository<Topic, Long> {
     fun findAllByOrderByTitleAsc(): Iterable<Topic>
+    fun findByBinding(binding: String): Topic?
 }

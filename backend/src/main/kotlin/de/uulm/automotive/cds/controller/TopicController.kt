@@ -40,6 +40,10 @@ class TopicController @Autowired constructor(private val topicRepository: TopicR
         if (errors != null) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errors)
         }
+        if (topicRepository.findByBinding(topicDto.binding) != null) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                    .body(TopicBadRequestInfo(bindingError = "Binding ist bereits vorhanden."))
+        }
 
         topicRepository.save(topicDto.toEntity())
         return ResponseEntity.status(HttpStatus.OK).build()

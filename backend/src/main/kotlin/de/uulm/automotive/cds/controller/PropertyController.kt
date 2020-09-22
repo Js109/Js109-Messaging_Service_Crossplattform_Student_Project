@@ -41,6 +41,11 @@ class PropertyController(val propertyRepository: PropertyRepository) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errors)
         }
 
+        if (propertyRepository.findByBinding(propertyDto.binding) != null) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                    .body(PropertyBadRequestInfo(bindingError = "Binding ist bereits vorhanden."))
+        }
+
         propertyRepository.save(propertyDto.toEntity())
         return ResponseEntity.status(HttpStatus.OK).build()
     }
