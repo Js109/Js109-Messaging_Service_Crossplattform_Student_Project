@@ -1,10 +1,13 @@
 package de.uulm.automotiveuulmapp.locationFavourites
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +16,7 @@ import de.uulm.automotiveuulmapp.R
 import de.uulm.automotiveuulmapp.locationFavourites.locationFavData.LocationData
 import de.uulm.automotiveuulmapp.locationFavourites.locationFavData.LocationDatabase
 import kotlinx.coroutines.launch
+
 
 /**
  * Displays a list of previously created location favourites
@@ -45,8 +49,16 @@ class LocationFavouritesFragment : BaseFragment() {
     }
 
     fun deleteLocation(location:LocationData){
-        launch {
-            locationDatabase.getLocationDao().delete(location)
-        }
+        AlertDialog.Builder(mContext)
+            .setTitle(R.string.location_deletion_dialogue_title)
+            .setMessage(R.string.location_deletion_dialogue_question)
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .setPositiveButton(android.R.string.yes
+            ) { _, _ ->
+                launch {
+                    locationDatabase.getLocationDao().delete(location)
+                }
+            }
+            .setNegativeButton(android.R.string.no, null).show()
     }
 }
