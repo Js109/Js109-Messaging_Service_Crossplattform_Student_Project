@@ -34,6 +34,7 @@ export class MessageHistoryComponent implements OnInit {
   topics: Topic[];
   properties: [Property, boolean][];
 
+  searchString = '';
   starttimePeriod = '';
   endtimePeriod = '';
   MessagesArray = [];
@@ -52,7 +53,7 @@ export class MessageHistoryComponent implements OnInit {
       ? new Date(new Date(this.messageHistory.starttime).getTime() - currentTime.getTimezoneOffset() * 60 * 1000)
       : new Date(currentTime.getTime() - currentTime.getTimezoneOffset() * 60 * 1000);
 
-    return startTime < currentTime ? true : false;
+    return startTime < currentTime;
   }
 
   showMessages(): void {
@@ -60,7 +61,8 @@ export class MessageHistoryComponent implements OnInit {
     console.log(this.endtimePeriod);
     // Add safe, URL encoded search parameter if there is a search term
     const options =
-      {params: new HttpParams().set('starttimePeriod', this.starttimePeriod).set('endtimePeriod', this.endtimePeriod)};
+      {params: new HttpParams().set('searchString', this.searchString).set('startTimePeriod', this.starttimePeriod)
+          .set('endTimePeriod', this.endtimePeriod).set('topic', this.messageHistory.topic)};
 
     this.http.get<Message[]>(environment.backendApiPath + '/message', options)
       .subscribe(

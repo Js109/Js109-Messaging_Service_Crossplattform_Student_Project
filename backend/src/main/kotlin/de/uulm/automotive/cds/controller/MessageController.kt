@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @CrossOrigin("*")
 @RestController
@@ -36,14 +38,20 @@ class MessageController(private val repository: MessageRepository, private val m
 
     /**
      * Returns the view for one message.
-     *
+     * TODO
      * @param id Id of the message
      * @return Message with the specified id
      */
     @GetMapping
-    fun showMessage(): Iterable<Message> {
+    fun showMessages(@RequestParam searchString: String, @RequestParam startTimePeriod: String,
+                     @RequestParam endTimePeriod: String, @RequestParam topic: String): Iterable<Message> {
 
-        return repository.findAll()
+        var tempSearchString = "%$searchString%"
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        val dateStartTimePeriod = LocalDate.parse(startTimePeriod, formatter).atTime(0,0 )
+        val dateEndTimePeriod = LocalDate.parse(endTimePeriod, formatter).atTime(23, 59)
+
+        return repository.findAllByTitleLikeAndStarttimeBetweenAndTopic(tempSearchString, dateStartTimePeriod, dateEndTimePeriod, topic);
     }
 
     /**
