@@ -54,8 +54,7 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc): BaseControl
 
     @Test
     fun `save Topic`() {
-        every { topicRepository.save(any<Topic>()) } returns topic.toEntity()
-        every { topicRepository.findByBinding(any()) } returns null
+        every { topicRepository.findByBinding(any()) } returns topic.toEntity()
 
         mockMvc.post("/topic") {
             accept = MediaType.APPLICATION_JSON
@@ -63,10 +62,16 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc): BaseControl
             content = jacksonObjectMapper().writeValueAsString(topic)
             characterEncoding = "UTF-8"
         }.andExpect {
-            status { isOk }
+            status { isUnprocessableEntity }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            content { jsonPath("bindingError").exists() }
+            content { jsonPath("bindingError").isNotEmpty }
+            content { jsonPath("titleError").doesNotExist() }
+            content { jsonPath("descriptionError").doesNotExist() }
+
         }
 
-        verify(exactly = 1) { topicRepository.save(any<Topic>()) }
+        verify(exactly = 0) { topicRepository.save(any<Topic>()) }
     }
 
     @Test

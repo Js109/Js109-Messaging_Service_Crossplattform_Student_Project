@@ -74,6 +74,26 @@ internal class PropertyControllerTest(@Autowired val mockMvc: MockMvc): BaseCont
     }
 
     @Test
+    fun `save Property with already existing Binding returns Bad Request with BadRequestInfo object in body`() {
+        every { propertyRepository.findByBinding(any()) } returns property.toEntity()
+
+        mockMvc.post("/property") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(property)
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isUnprocessableEntity }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            content { jsonPath("nameError").doesNotExist() }
+            content { jsonPath("bindingError").exists() }
+            content { jsonPath("bindingError").isNotEmpty }
+        }
+
+        verify(exactly = 0) { propertyRepository.save(any<Property>()) }
+    }
+
+    @Test
     fun `save invalid DTO returns Bad Request with BadRequestInfo object in body`() {
         val invalidDto = PropertyDTO(
                 "",
