@@ -3,7 +3,7 @@ services:
 
   backend:
     build: ./backend
-    restart: always
+    restart: unless-stopped
     depends_on: 
       - db
     ports:
@@ -16,7 +16,7 @@ services:
 
   db:
     image: postgres
-    restart: always
+    restart: unless-stopped
     environment:
       - POSTGRES_USER=${DB_USERNAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -27,6 +27,6 @@ services:
 
   webview:
     build: ./webview
-    restart: always
+    restart: unless-stopped
     ports:
       - 4200:4200
