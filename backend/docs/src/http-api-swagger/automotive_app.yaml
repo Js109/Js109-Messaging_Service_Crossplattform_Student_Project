@@ -122,6 +122,18 @@ paths:
           description: "Bad Request"
         "404":
           description: "Not Found"
+    delete:
+      tags:
+        - "Administration - OEM-Web Frontend"
+      summary: "Deletes Messages with the given id from the backend"
+      description: "Deletes unsent Messages with the given id. Returns Bad Request if the message was already sent. Return Not Found if no message with the given id exists."
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Not Found"
 
   /property:
     get:

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDateTime
+import java.util.*
 
 @CrossOrigin("*")
 @RestController
@@ -63,5 +64,16 @@ class MessageController(private val repository: MessageRepository, private val m
         return ResponseEntity.status(HttpStatus.OK).build()
     }
 
+    @DeleteMapping("/{id}")
+    fun deleteMessage(@PathVariable id: Long) {
+        val message: Optional<Message> = repository.findById(id)
 
+        if (message.isEmpty)
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find message with id $id.")
+
+        if (message.get().isSent!!)
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Already sent messages can't be deleted $id.")
+
+        repository.deleteById(id)
+    }
 }
