@@ -108,17 +108,17 @@ data class MessageDTO(
             errors.senderError = "Sender field is required."
         }
 
-        if (title?.isNotEmpty() != true) {
+        if (title.isNullOrBlank()) {
             errors = errors ?: MessageBadRequestInfo()
             errors.titleError = "Title field is required."
         }
 
-        if (topic?.isNotEmpty() != true && properties?.isNotEmpty() != true) {
+        if (!(topic.isNullOrBlank().xor(properties.isNullOrEmpty()))) {
             errors = errors ?: MessageBadRequestInfo()
             errors.topicError = "Either Topics or Properties are required."
         }
 
-        if (content?.isNotEmpty() != true && attachment?.isNotEmpty() != true) {
+        if (content.isNullOrEmpty() && (attachment == null || attachment!!.isEmpty())) {
             errors = errors ?: MessageBadRequestInfo()
             errors.contentError = "Either Content or Files are required."
         }

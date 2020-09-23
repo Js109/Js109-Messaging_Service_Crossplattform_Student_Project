@@ -52,7 +52,7 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc): BaseContr
 
     private val message = Message(
             1,
-            "test topic",
+            null,
             "test sender",
             "test title",
             "test content",
@@ -110,7 +110,7 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc): BaseContr
         }.andExpect {
             status { isOk }
             content { contentType(MediaType.APPLICATION_JSON) }
-            content { jsonPath("topic").value(messageBasicAttributesOnly.topic!!) }
+            content { jsonPath("topic").doesNotExist() }
             content { jsonPath("sender").value(messageBasicAttributesOnly.sender!!) }
             content { jsonPath("title").value(messageBasicAttributesOnly.title!!) }
             content { jsonPath("content").value(messageBasicAttributesOnly.content!!) }
