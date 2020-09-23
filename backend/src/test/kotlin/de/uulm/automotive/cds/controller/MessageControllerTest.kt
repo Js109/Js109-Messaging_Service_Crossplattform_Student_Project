@@ -54,7 +54,7 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) : BaseCont
 
     private fun getMessage(
             id: Long = 1,
-            topic: String = "test topic",
+            topic: String? = null,
             sender: String = "test sender",
             title: String = "test title",
             content: String = "test content",
