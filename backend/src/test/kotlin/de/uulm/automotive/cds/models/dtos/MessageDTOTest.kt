@@ -12,7 +12,7 @@ internal class MessageDTOTest {
 
     private val message: Message = Message(
             2,
-            "topic",
+            null,
             "sender",
             "title",
             "content",
@@ -26,7 +26,7 @@ internal class MessageDTOTest {
             LocationData(1, 10.0, 10.0, 10),
             "#f5f5f5",
             "#F5F5F5",
-            FontFamily.EXAMPLE_FONT1
+            FontFamily.ARIAL
     )
 
     private fun getMessageEntity(): Message {
@@ -224,7 +224,9 @@ internal class MessageDTOTest {
 
     @Test
     fun `only missing topic results in no Error`() {
-        val dto = getMessageDTO()
+        val dto = getMessageDTO(
+                updatedProperties = arrayListOf("Test Property 1", "Test Property 1")
+        )
         dto.topic = null
 
         val errors = dto.getErrors()
@@ -234,12 +236,37 @@ internal class MessageDTOTest {
 
     @Test
     fun `only missing properties results in no Error`() {
-        val dto = getMessageDTO()
+        val dto = getMessageDTO(
+                updatedTopic = "Test Topic"
+        )
         dto.properties = null
 
         val errors = dto.getErrors()
 
         assertNull(errors)
+    }
+
+    @Test
+    fun `topic and properties set result in Error`() {
+        val dto = getMessageDTO(
+                updatedTopic = "Test Topic",
+                updatedProperties = arrayListOf("Test Property 1", "Test Property 1")
+        )
+
+        val errors = dto.getErrors()
+
+        assertNotNull(errors)
+
+        assertNotNull(errors!!.topicError)
+        assertTrue(errors.topicError!!.isNotBlank())
+
+        assertNull(errors.senderError)
+        assertNull(errors.titleError)
+        assertNull(errors.contentError)
+        assertNull(errors.locationError)
+        assertNull(errors.linkError)
+        assertNull(errors.backgroundColorError)
+        assertNull(errors.fontColorError)
     }
 
     @Test

@@ -1,10 +1,17 @@
 package de.uulm.automotive.cds.controller
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.ninjasquad.springmockk.MockkBean
 import de.uulm.automotive.cds.entities.LocationData
 import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.models.FontFamily
 import de.uulm.automotive.cds.models.dtos.MessageDTO
+import de.uulm.automotive.cds.repositories.MessageRepository
+import de.uulm.automotive.cds.repositories.PropertyRepository
+import de.uulm.automotive.cds.repositories.SignUpRepository
+import de.uulm.automotive.cds.repositories.TopicRepository
+import de.uulm.automotive.cds.services.AmqpChannelService
+import de.uulm.automotive.cds.services.MessageService
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -61,7 +68,7 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) : BaseCont
             locationData: LocationData = LocationData(null, 48.3998807, 9.9878078, 10),
             backgroundColor: String = "#f5f5f5",
             fontColor: String = "#F5F5F5",
-            fontFamily: FontFamily = FontFamily.EXAMPLE_FONT1
+            fontFamily: FontFamily = FontFamily.ARIAL
     ): Message {
         return Message(id, topic, sender, title, content, starttime, endtime, isSent, properties,
                 attachment, logoAttachment, links, locationData, backgroundColor, fontColor, fontFamily)
@@ -108,7 +115,7 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) : BaseCont
         }.andExpect {
             status { isOk }
             content { contentType(MediaType.APPLICATION_JSON) }
-            content { jsonPath("topic").value(messageBasicAttributesOnly.topic!!) }
+            content { jsonPath("topic").doesNotExist() }
             content { jsonPath("sender").value(messageBasicAttributesOnly.sender!!) }
             content { jsonPath("title").value(messageBasicAttributesOnly.title!!) }
             content { jsonPath("content").value(messageBasicAttributesOnly.content!!) }
