@@ -15,7 +15,6 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import de.uulm.automotiveuulmapp.BaseFragment
-import de.uulm.automotiveuulmapp.MainActivity
 import de.uulm.automotiveuulmapp.R
 import de.uulm.automotiveuulmapp.httpHandling.RestCallHelper
 import de.uulm.automotiveuulmapp.rabbitmq.RabbitMQService
@@ -23,13 +22,41 @@ import de.uulm.automotiveuulmapp.topic.TopicChange
 
 class TopicFragment : BaseFragment() {
     lateinit var mContext: Context
+    private var mService: Messenger? = null
+    private var bound: Boolean = false
     private var topicAdapter: TopicAdapter? = null
+
+    private val mConnection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            // This is called when the connection with the service has been
+            // established, giving us the object we can use to
+            // interact with the service.  We are communicating with the
+            // service using a Messenger, so here we get a client-side
+            // representation of that from the raw IBinder object.
+            mService = Messenger(service)
+            topicAdapter?.messenger = mService
+            bound = true
+        }
+
+        override fun onServiceDisconnected(className: ComponentName) {
+            // This is called when the connection with the service has been
+            // unexpectedly disconnected -- that is, its process crashed.
+            mService = null
+            bound = false
+        }
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         this.mContext = context
-        if((activity as MainActivity).bound)
-        topicAdapter?.messenger = (activity as MainActivity).mService
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // binding service to be able to access the functions to change topic subscriptions
+        Intent(mContext, RabbitMQService::class.java).also { intent ->
+            (activity as Activity).bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
+        }
     }
 
     override fun onCreateView(
