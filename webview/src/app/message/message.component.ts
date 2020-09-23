@@ -5,6 +5,7 @@ import {Message} from '../models/Message';
 import {Property} from '../models/Property';
 import {LocationData} from '../models/LocationData';
 import {environment} from '../../environments/environment';
+import {fontFamilyToFontString} from '../models/FontFamily';
 
 enum OffsetType {
   Minute, Hour, Day, Week
@@ -34,7 +35,7 @@ export class MessageComponent implements OnInit {
     starttime: '',
     endtime: '',
     attachment: [],
-    locationData: null
+    locationData: null,
   };
 
   fileName = 'Choose file';
@@ -54,6 +55,7 @@ export class MessageComponent implements OnInit {
   urlErrors: boolean[] = [];
   hasUrlErrors;
 
+  fontFamilyToFontString = fontFamilyToFontString;
 
   sendMessage(): void {
     if (this.validateInputs()) {
@@ -160,7 +162,7 @@ export class MessageComponent implements OnInit {
       starttime: '',
       endtime: '',
       attachment: [],
-      locationData: null
+      locationData: null,
     };
   }
 

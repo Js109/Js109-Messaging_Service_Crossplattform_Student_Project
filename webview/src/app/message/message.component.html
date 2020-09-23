@@ -6,38 +6,79 @@
     <div class="container">
       <h2>Publish Message</h2>
 
-      <label for="topic">Topic:</label>
-      <select
-        class="browser-default custom-select"
-        name="topic" id="topic"
-        [(ngModel)]="message.topic"
-        [ngClass]="{'is-invalid' : hasTopicPropertiesError}">
-        <option selected></option>
-        <option *ngFor="let t of topics" [ngValue]="t.binding">{{t.title}}</option>
-      </select>
-      <div *ngIf="hasTopicPropertiesError" class="invalid-feedback">Either Topics or Properties are required.</div>
+      <mat-divider></mat-divider>
 
-      <label>Property:</label>
+      <h3 class="mt-3 mb-1">Message Content</h3>
+      <div class="row mb-3">
+        <div class="col-8">
+          <input class="form-control" placeholder="Title"
+                 [(ngModel)]="message.title"
+                 [ngClass]="{'is-invalid' : hasTitleError}">
+          <div *ngIf="hasTitleError" class="invalid-feedback">Title field is required.</div>
 
-      <ng-container *ngIf="properties != null">
-        <div *ngFor="let p of properties">
-          <div class="form-check">
-            <input
-              class="form-check-input"
-              name="properties" type="checkbox"
-              id="checkboxid"
-              [(ngModel)]="p[1]"
-              [ngClass]="{'is-invalid' : hasTopicPropertiesError}"
-              (change)="propertiesSelect()"/>
-            <label class="form-check-label" for="checkboxid">
-              {{p[0].name}}
-            </label>
-          </div>
+          <textarea class="form-control mt-2 message-content flex-grow-1" placeholder="Content"
+                    [(ngModel)]="message.content"
+                    [ngClass]="{'is-invalid' : hasContentError}"
+                    [style.background]="message.backgroundColor"
+                    [style.color]="message.fontColor"
+                    [style.fontFamily]="fontFamilyToFontString(message.fontFamily)"></textarea>
+          <div *ngIf="hasContentError" class="invalid-feedback">Either Content or Files are required.</div>
+
         </div>
-      </ng-container>
-      <ng-container *ngIf="properties == null">
-        <h4>No properties available at the moment!</h4>
-      </ng-container>
+        <div class="col-4">
+
+          <select
+            class="browser-default custom-select"
+            [(ngModel)]="message.fontFamily">
+            <option [ngValue]="undefined" selected hidden disabled>Font</option>
+            <option [ngValue]="0">{{fontFamilyToFontString(0)}}</option>
+            <option [ngValue]="1">{{fontFamilyToFontString(1)}}</option>
+            <option [ngValue]="2">{{fontFamilyToFontString(2)}}</option>
+            <option [ngValue]="3">{{fontFamilyToFontString(3)}}</option>
+          </select>
+          <input class="mt-2 mb-2 mr-2 rounded border color-select" [style.background]="message.fontColor" [(colorPicker)]="message.fontColor"
+                 [cpOKButton]="true" [cpSaveClickOutside]="false" [cpOKButtonClass]="'btn btn-primary btn-xs'"/>
+          <label>Text Color</label>
+          <mat-divider></mat-divider>
+          <input class="mt-2 mb-2 mr-2 rounded border color-select" [style.background]="message.backgroundColor"
+                 [(colorPicker)]="message.backgroundColor" [cpOKButton]="true" [cpSaveClickOutside]="false"
+                 [cpOKButtonClass]="'btn btn-primary btn-xs'"/>
+          <label>Background Color</label>
+          <mat-divider></mat-divider>
+          <div class="mt-2">Links:</div>
+          <div class="border rounded bg-white mb-2">
+            <ng-container *ngFor="let _ of message.links; let i = index;trackBy:trackById">
+              <div class="input-group">
+                <input name="url" type="text" placeholder="http://www.example.com" class="form-control border-0 message-url"
+                       [(ngModel)]="message.links[i]"
+                       [ngClass]="{'is-invalid' : urlErrors[i]}"/>
+                <button class="btn bg-white message-url-delete" (click)="removeLink(i)">❌</button>
+              </div>
+            </ng-container>
+            <button class="btn bg-primary top-height message-new-url" (click)="addLink()" type="button">
+              <span>➕</span>
+            </button>
+          </div>
+          <div *ngIf="hasUrlErrors" class="text-danger small">"Please insert URLs in the following Scheme:
+            http://www.example.com."
+          </div>
+
+          <mat-divider></mat-divider>
+
+          <label class="mt-2">Add File:</label>
+          <div class="custom-file">
+            <input type="file" id="fileSelection" name="attachmentFile" class="custom-file-input"
+                   [ngClass]="{'is-invalid' : hasContentError}" (change)="fileSelect($event)">
+            <label class="custom-file-label" for="fileSelection">{{fileName}}</label>
+          </div>
+          <div *ngIf="hasContentError" class="invalid-feedback">Either Content or Files are required.</div>
+
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <h3 class="mt-3 mb-1">Publish Settings</h3>
 
       <label for="sender">Sender:</label>
       <input class="form-control" name="sender"
@@ -45,20 +86,6 @@
              [(ngModel)]="message.sender"
              [ngClass]="{'is-invalid' : hasSenderError}">
       <div *ngIf="hasSenderError" class="invalid-feedback">Sender field is required.</div>
-
-
-      <label for="title">Title:</label>
-      <input class="form-control" name="title"
-             id="title" placeholder="Title"
-             [(ngModel)]="message.title"
-             [ngClass]="{'is-invalid' : hasTitleError}">
-      <div *ngIf="hasTitleError" class="invalid-feedback">Title field is required.</div>
-
-      <label for="content">Message content:</label>
-      <textarea class="form-control"
-                name="content" id="content" placeholder="Content" [(ngModel)]="message.content"
-                [ngClass]="{'is-invalid' : hasContentError}"></textarea>
-      <div *ngIf="hasContentError" class="invalid-feedback">Either Content or Files are required.</div>
 
       <label>Send message at:</label>
       <input name="starttime" class="browser-default custom-select" type="datetime-local"
@@ -79,29 +106,40 @@
                size="10" maxlength="10" [(ngModel)]="expirationOffset" [disabled]="expirationOffsetType == null">
       </div>
 
-      <label>Add File:</label>
-      <div class="custom-file">
-        <input type="file" id="fileSelection" name="attachmentFile" class="custom-file-input"
-               [ngClass]="{'is-invalid' : hasContentError}" (change)="fileSelect($event)">
-        <label class="custom-file-label" for="fileSelection">{{fileName}}</label>
-      </div>
-      <div *ngIf="hasContentError" class="invalid-feedback">Either Content or Files are required.</div>
-
-      <div>Links:</div>
-      <button class="btn btn-success top-height" (click)="addLink()" type="button">
-        <span>Add URL</span>
-      </button>
-      <ng-container *ngFor="let _ of message.links; let i = index;trackBy:trackById">
-        <div class="input-group">
-          <input name="url" type="text" placeholder="http://www.example.com" class="form-control"
-                 [(ngModel)]="message.links[i]"
-                 [ngClass]="{'is-invalid' : urlErrors[i]}"/>
-          <button class="btn btn-danger" (click)="removeLink(i)">Remove URL</button>
-        </div>
-      </ng-container>
-      <div *ngIf="hasUrlErrors" class="text-danger small">"Please insert URLs in the following Scheme:
-        http://www.example.com."
-      </div>
+      <mat-tab-group mat-stretch-tabs>
+        <mat-tab label="Topics">
+          <select
+            class="browser-default custom-select"
+            name="topic" id="topic"
+            [(ngModel)]="message.topic"
+            [ngClass]="{'is-invalid' : hasTopicPropertiesError}">
+            <option selected></option>
+            <option *ngFor="let t of topics" [ngValue]="t.binding">{{t.title}}</option>
+          </select>
+        </mat-tab>
+        <mat-tab label="Properties">
+          <ng-container *ngIf="properties != null">
+            <div *ngFor="let p of properties">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  name="properties" type="checkbox"
+                  id="checkboxid"
+                  [(ngModel)]="p[1]"
+                  [ngClass]="{'is-invalid' : hasTopicPropertiesError}"
+                  (change)="propertiesSelect()"/>
+                <label class="form-check-label" for="checkboxid">
+                  {{p[0].name}}
+                </label>
+              </div>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="properties == null">
+            <h4>No properties available at the moment!</h4>
+          </ng-container>
+        </mat-tab>
+      </mat-tab-group>
+      <div *ngIf="hasTopicPropertiesError" class="invalid-feedback">Either Topics or Properties are required.</div>
 
       <div class="location-boundaries">
         <a class="btn btn-primary collapse-button top-height" id="collapseButton"
@@ -131,7 +169,7 @@
           </div>
         </div>
       </div>
-      <button type="button" class="btn btn-primary top-height" (click)="sendMessage()">Submit</button>
+      <button type="button" class="btn btn-success top-height" (click)="sendMessage()">Submit</button>
       <button type="button" class="btn btn-danger top-height" style="margin-left: 10px" (click)="clearMessage()">Clear
       </button>
     </div>

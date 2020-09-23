@@ -5,5 +5,5 @@ package de.uulm.automotive.cds.models
  *
  */
 enum class FontFamily {
-    EXAMPLE_FONT1, EXAMPLE_FONT2
+    ARIAL, COURIER_NEW, TIMES_NEW_ROMAN, VERDANA
 }

@@ -17,6 +17,8 @@ import {MatDialogModule} from '@angular/material/dialog';
 import { SaveTemplateDialogComponent } from './message/template-load/save-template-dialog/save-template-dialog.component';
 import {MatButtonModule} from '@angular/material/button';
 import {MatToolbarModule} from '@angular/material/toolbar';
+import { ColorPickerModule} from 'ngx-color-picker';
+import {MatTabsModule} from '@angular/material/tabs';
 
 @NgModule({
   declarations: [
@@ -27,19 +29,21 @@ import {MatToolbarModule} from '@angular/material/toolbar';
     TemplateLoadComponent,
     SaveTemplateDialogComponent
   ],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    FormsModule,
-    AppRoutingModule,
-    RouterModule,
-    BrowserAnimationsModule,
-    MatListModule,
-    MatSidenavModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatToolbarModule
-  ],
+    imports: [
+        BrowserModule,
+        HttpClientModule,
+        FormsModule,
+        AppRoutingModule,
+        RouterModule,
+        BrowserAnimationsModule,
+        MatListModule,
+        MatSidenavModule,
+        MatDialogModule,
+        MatButtonModule,
+        MatToolbarModule,
+        ColorPickerModule,
+        MatTabsModule
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })

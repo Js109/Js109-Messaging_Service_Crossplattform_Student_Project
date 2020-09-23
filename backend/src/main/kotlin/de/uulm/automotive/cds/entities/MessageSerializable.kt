@@ -24,7 +24,9 @@ class MessageSerializable(
         val attachment: ByteArray?,
         val links: Array<URL>?,
         val locationData: LocationDataSerializable?,
-        val endtime: LocalDateTime?
+        val endtime: LocalDateTime?,
+        val fontColor: String?,
+        val backgroundColor: String?
 ) : Serializable {
     /**
      * This converts a message object into a serialized byte array to be able to transfer it over amqp message

@@ -26,7 +26,7 @@ internal class MessageDTOTest {
             LocationData(1, 10.0, 10.0, 10),
             "#f5f5f5",
             "#F5F5F5",
-            FontFamily.EXAMPLE_FONT1
+            FontFamily.ARIAL
     )
 
     private fun getMessageEntity(): Message {

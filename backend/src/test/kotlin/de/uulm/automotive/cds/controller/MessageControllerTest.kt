@@ -66,7 +66,7 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc): BaseContr
             LocationData(null, 48.3998807, 9.9878078, 10),
             "#f5f5f5",
             "#F5F5F5",
-            FontFamily.EXAMPLE_FONT1
+            FontFamily.ARIAL
     )
 
     @BeforeEach
