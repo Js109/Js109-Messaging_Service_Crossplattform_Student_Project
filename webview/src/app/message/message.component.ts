@@ -28,6 +28,7 @@ export class MessageComponent implements OnInit {
     title: '',
     links: [],
     starttime: '',
+    isSent: false,
     attachment: [],
     locationData: null
   };
@@ -149,6 +150,7 @@ export class MessageComponent implements OnInit {
       title: '',
       links: [],
       starttime: '',
+      isSent: false,
       attachment: [],
       locationData: null
     };

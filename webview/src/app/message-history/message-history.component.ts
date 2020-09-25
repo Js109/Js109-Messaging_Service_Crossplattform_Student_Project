@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {Message} from '../models/Message';
-import {MessageHistory} from '../models/MessageHistory';
 import {environment} from '../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {HttpParams} from '@angular/common/http';
 import {Topic} from '../models/Topic';
 import {Property} from '../models/Property';
+import {MessageHistory} from '../models/MessageHistory';
 
 @Component({
   selector: 'app-message-history',
@@ -25,6 +25,7 @@ export class MessageHistoryComponent implements OnInit {
     properties: [],
     sender: '',
     starttime: '',
+    isSent: false,
     title: '',
     topic: '',
     starttime_period: '',
@@ -38,6 +39,7 @@ export class MessageHistoryComponent implements OnInit {
   starttimePeriod = '';
   endtimePeriod = '';
   MessagesArray = [];
+  hasDateRangeError = false;
   hasTopicPropertiesError = false;
 
   ngOnInit(): void {
@@ -47,33 +49,35 @@ export class MessageHistoryComponent implements OnInit {
       .subscribe((properties: Property[]) => this.properties = properties.map(value => [value, false]));
   }
 
-  alreadySent(): boolean {
-    const currentTime = new Date();
-    const startTime = (this.messageHistory.starttime != null)
-      ? new Date(new Date(this.messageHistory.starttime).getTime() - currentTime.getTimezoneOffset() * 60 * 1000)
-      : new Date(currentTime.getTime() - currentTime.getTimezoneOffset() * 60 * 1000);
-
-    return startTime < currentTime;
+  validateInputs(): boolean {
+    this.hasDateRangeError = ((this.starttimePeriod === '' && this.endtimePeriod !== '') ||
+      (this.starttimePeriod !== '' && this.endtimePeriod === '') ||
+      new Date(this.starttimePeriod).getTime() > new Date(this.endtimePeriod).getTime());
+    return !(this.hasDateRangeError);
   }
 
   showMessages(): void {
-    console.log(this.starttimePeriod);
-    console.log(this.endtimePeriod);
-    // Add safe, URL encoded search parameter if there is a search term
-    const options =
-      {params: new HttpParams().set('searchString', this.searchString).set('startTimePeriod', this.starttimePeriod)
-          .set('endTimePeriod', this.endtimePeriod).set('topic', this.messageHistory.topic)};
+    if (this.validateInputs()) {
+      console.log(this.starttimePeriod);
+      console.log(this.endtimePeriod);
+      // Add safe, URL encoded search parameter if there is a search term
+      const options =
+        {
+          params: new HttpParams().set('searchString', this.searchString).set('startTimePeriod', this.starttimePeriod)
+            .set('endTimePeriod', this.endtimePeriod).set('topic', this.messageHistory.topic)
+        };
 
-    this.http.get<Message[]>(environment.backendApiPath + '/message', options)
-      .subscribe(
-        value => {
-          this.MessagesArray = value;
-          console.log(this.MessagesArray);
-        },
-        error => {
-          console.log(error);
-        }
-      );
+      this.http.get<Message[]>(environment.backendApiPath + '/message', options)
+        .subscribe(
+          value => {
+            this.MessagesArray = value;
+            console.log(this.MessagesArray);
+          },
+          error => {
+            console.log(error);
+          }
+        );
+    }
   }
 
 }

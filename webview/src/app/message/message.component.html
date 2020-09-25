@@ -54,7 +54,7 @@
                 [ngClass]="{'is-invalid' : hasContentError}"></textarea>
       <div *ngIf="hasContentError" class="invalid-feedback">Either Content or Files are required.</div>
 
-      <label for="starttime">Send message at:</label>
+      <label>Send message at:</label>
       <input name="starttime" class="browser-default custom-select" type="datetime-local"
              [(ngModel)]="message.starttime"/>
 

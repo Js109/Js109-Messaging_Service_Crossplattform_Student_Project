@@ -10,12 +10,12 @@ import java.time.LocalDateTime
  */
 interface MessageRepository : CrudRepository<Message, Long> {
     fun findAllByIsSentFalseOrderByStarttimeAsc(): Iterable<Message>
-    fun findAllByTitleLikeAndStarttimeBetweenAndTopic(searchString: String, dateStartTimePeriod: LocalDateTime, dateEndTimePeriod: LocalDateTime, topic: String) : Iterable<Message>
-    fun findAllByStarttimeBetweenAndTopic(dateStartTimePeriod: LocalDateTime, dateEndTimePeriod: LocalDateTime, topic: String) : Iterable<Message>
-    fun findAllByTitleLikeAndTopic(searchString: String, topic: String) : Iterable<Message>
-    fun findAllByTitleLikeAndStarttimeBetween(searchString: String, dateStartTimePeriod: LocalDateTime, dateEndTimePeriod: LocalDateTime) : Iterable<Message>
-    fun findAllByTitleLike(searchString: String) : Iterable<Message>
-    fun findAllByTopic(topic: String) : Iterable<Message>
-    fun findAllByStarttimeBetween(dateStartTimePeriod: LocalDateTime, dateEndTimePeriod: LocalDateTime) : Iterable<Message>
+    fun findAllByTitleLikeIgnoreCaseOrSenderLikeIgnoreCaseOrContentLikeIgnoreCaseAndStarttimeBetweenAndTopic(searchString: String, searchStringSender: String, searchStringContent: String, dateStartTimePeriod: LocalDateTime, dateEndTimePeriod: LocalDateTime, topic: String): Iterable<Message>
+    fun findAllByStarttimeBetweenAndTopic(dateStartTimePeriod: LocalDateTime, dateEndTimePeriod: LocalDateTime, topic: String): Iterable<Message>
+    fun findAllByTitleLikeIgnoreCaseOrSenderLikeIgnoreCaseOrContentLikeIgnoreCaseAndTopic(searchString: String, searchStringSender: String, searchStringContent: String, topic: String): Iterable<Message>
+    fun findAllByTitleLikeIgnoreCaseOrSenderLikeIgnoreCaseOrContentLikeIgnoreCaseAndStarttimeBetween(searchString: String, searchStringSender: String, searchStringContent: String, dateStartTimePeriod: LocalDateTime, dateEndTimePeriod: LocalDateTime): Iterable<Message>
+    fun findAllByTopic(topic: String): Iterable<Message>
+    fun findAllByStarttimeBetween(dateStartTimePeriod: LocalDateTime, dateEndTimePeriod: LocalDateTime): Iterable<Message>
     fun findAllByOrderByTopicAsc(): Iterable<Message>
+    fun findAllByTitleLikeIgnoreCaseOrSenderLikeIgnoreCaseOrContentLikeIgnoreCase(searchString: String, searchStringSender: String, searchStringContent: String): Iterable<Message>
 }
