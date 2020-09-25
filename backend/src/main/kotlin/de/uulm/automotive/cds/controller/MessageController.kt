@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import javax.transaction.Transactional
 
 @CrossOrigin("*")
 @RestController
@@ -37,21 +38,32 @@ class MessageController(private val repository: MessageRepository, private val m
     }
 
     /**
-     * Returns the view for one message.
-     * TODO
-     * @param id Id of the message
-     * @return Message with the specified id
+     * Returns the view for all messages in a period, a partial sequence search and for a specific topic.
+     *
+     * @param searchString A string the user is searching for as partial sequences
+     * @param startTimePeriod the date which is the start date for the period of the messages to be displayed
+     * @param endTimePeriod the date which is the end date for the period of the messages to be displayed
+     * @param topic A string which contains the topic name of the messages to be displayed
+     * @return all messages in a period, a partial sequence search and for a specific topic
      */
     @GetMapping
+    @Transactional
     fun showMessages(@RequestParam searchString: String, @RequestParam startTimePeriod: String,
                      @RequestParam endTimePeriod: String, @RequestParam topic: String): Iterable<Message> {
 
-        var tempSearchString = "%$searchString%"
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        val dateStartTimePeriod = LocalDate.parse(startTimePeriod, formatter).atTime(0,0 )
-        val dateEndTimePeriod = LocalDate.parse(endTimePeriod, formatter).atTime(23, 59)
+        val tempSearchString = if (searchString.isNotEmpty()) "%$searchString%" else ""
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dateStartTimePeriod = if (startTimePeriod.isNotEmpty()) LocalDate.parse(startTimePeriod, formatter).atTime(0, 0) else null
+        val dateEndTimePeriod = if (endTimePeriod.isNotEmpty()) LocalDate.parse(endTimePeriod, formatter).atTime(23, 59) else null
 
-        return repository.findAllByTitleLikeAndStarttimeBetweenAndTopic(tempSearchString, dateStartTimePeriod, dateEndTimePeriod, topic);
+        if (tempSearchString.isNotEmpty() && dateStartTimePeriod != null && dateEndTimePeriod != null && topic.isNullOrEmpty()) return repository.findAllByTitleLikeAndStarttimeBetween(tempSearchString, dateStartTimePeriod, dateEndTimePeriod)
+        if (tempSearchString.isNotEmpty() && topic.isNotEmpty() && dateStartTimePeriod == null && dateEndTimePeriod == null) return repository.findAllByTitleLikeAndTopic(tempSearchString, topic)
+        if (tempSearchString.isNullOrEmpty() && dateStartTimePeriod != null && dateEndTimePeriod != null && topic.isNotEmpty()) return repository.findAllByStarttimeBetweenAndTopic(dateStartTimePeriod, dateEndTimePeriod, topic)
+        if (tempSearchString.isNotEmpty() && dateStartTimePeriod != null && dateEndTimePeriod != null && topic.isNotEmpty()) return repository.findAllByTitleLikeAndStarttimeBetweenAndTopic(tempSearchString, dateStartTimePeriod, dateEndTimePeriod, topic)
+        if (tempSearchString.isNotEmpty() && dateStartTimePeriod == null && dateEndTimePeriod == null && topic.isNullOrEmpty()) return repository.findAllByTitleLike(tempSearchString)
+        if (tempSearchString.isNullOrEmpty() && dateStartTimePeriod == null && dateEndTimePeriod == null && topic.isNotEmpty()) return repository.findAllByTopic(topic)
+        if (tempSearchString.isNullOrEmpty() && dateStartTimePeriod != null && dateEndTimePeriod != null && topic.isEmpty()) return repository.findAllByStarttimeBetween(dateStartTimePeriod, dateEndTimePeriod)
+        if (tempSearchString.isNullOrEmpty() && dateEndTimePeriod == null && dateStartTimePeriod == null && topic.isNullOrEmpty()) return repository.findAll() else return emptyList()
     }
 
     /**
