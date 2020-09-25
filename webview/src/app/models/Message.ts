@@ -11,10 +11,10 @@ export interface Message {
   links: string[];
   starttime: string;
   endtime: string;
-  attachment: number[];
+  attachment: string;
   locationData: LocationData | null;
   fontFamily?: FontFamily;
   fontColor?: string;
-  logoAttachment: number[];
+  logoAttachment: string;
   backgroundColor?: string;
 }
