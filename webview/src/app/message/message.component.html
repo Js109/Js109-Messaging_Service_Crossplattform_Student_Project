@@ -55,7 +55,7 @@
                 <button class="btn bg-white message-url-delete" (click)="removeLink(i)">❌</button>
               </div>
             </ng-container>
-            <button class="btn bg-primary top-height message-new-url" (click)="addLink()" type="button">
+            <button class="btn btn-secondary top-height message-new-url" (click)="addLink()" type="button">
               <span>➕</span>
             </button>
           </div>
@@ -66,13 +66,14 @@
           <mat-divider></mat-divider>
 
           <label class="mt-2">Add File:</label>
-          <div class="custom-file">
-            <input type="file" id="fileSelection" name="attachmentFile" class="custom-file-input"
-                   [ngClass]="{'is-invalid' : hasContentError}" (change)="fileSelect($event)">
-            <label class="custom-file-label" for="fileSelection">{{fileName}}</label>
+          <label *ngIf="message.attachment == null || message.attachment.length === 0" class="btn btn-secondary col mb-0" [ngClass]="{'is-invalid' : hasContentError}">
+            Upload Image<input type="file" name="attachment" class="form-control" hidden
+                              (change)="fileSelect($event)">
+          </label>
+          <div style="display: flex">
+            <div *ngIf="message.attachment != null && message.attachment.length !== 0" [ngStyle]="{'background-image': 'url(' + getDataUrlFromImageByteArray(message.attachment) +')'}" class="form-control image-icon no-right-rounding"></div>
+            <div *ngIf="message.attachment != null && message.attachment.length !== 0" class="col btn btn-secondary no-left-rounding" (click)="removeAttachment()">Remove Image</div>
           </div>
-          <div *ngIf="hasContentError" class="invalid-feedback">Either Content or Files are required.</div>
-
         </div>
       </div>
 
@@ -81,10 +82,18 @@
       <h3 class="mt-3 mb-1">Publish Settings</h3>
 
       <label for="sender">Sender:</label>
-      <input class="form-control" name="sender"
-             id="sender" placeholder="Sender"
-             [(ngModel)]="message.sender"
-             [ngClass]="{'is-invalid' : hasSenderError}">
+      <div style="display: flex">
+        <input class="form-control col-10 no-right-rounding" name="sender"
+               id="sender" placeholder="Sender"
+               [(ngModel)]="message.sender"
+               [ngClass]="{'is-invalid' : hasSenderError}">
+        <label *ngIf="message.logoAttachment == null || message.logoAttachment.length === 0" class="btn btn-secondary col no-left-rounding mb-0">
+            Upload Icon<input type="file" name="attachmentIcon" class="form-control" hidden
+                   (change)="logoSelect($event)">
+        </label>
+        <div *ngIf="message.logoAttachment != null && message.logoAttachment.length !== 0" [ngStyle]="{'background-image': 'url(' + getDataUrlFromImageByteArray(message.logoAttachment) +')'}" class="form-control image-icon no-left-rounding no-right-rounding"></div>
+        <div *ngIf="message.logoAttachment != null && message.logoAttachment.length !== 0" class="btn btn-secondary col no-left-rounding" (click)="removeLogo()">Remove Icon</div>
+      </div>
       <div *ngIf="hasSenderError" class="invalid-feedback">Sender field is required.</div>
 
       <label>Send message at:</label>
@@ -93,7 +102,7 @@
 
       <label>Endtime:</label>
       <div style="display: flex">
-        <select class="browser-default custom-select col"
+        <select class="browser-default custom-select col no-right-rounding"
                 name="endtimeTypeSelection" id="endtimeTypeSelection"
                 [(ngModel)]="expirationOffsetType">
           <option [ngValue]="null" selected>no expiration</option>
@@ -102,7 +111,7 @@
           <option [ngValue]="2">Days</option>
           <option [ngValue]="3">Weeks</option>
         </select>
-        <input name="endtime" type="number" class="form-control col" name="endTime" id="endTime" placeholder=""
+        <input name="endtime" type="number" class="form-control col no-left-rounding border-left-0" id="endTime" placeholder=""
                size="10" maxlength="10" [(ngModel)]="expirationOffset" [disabled]="expirationOffsetType == null">
       </div>
 
@@ -142,7 +151,7 @@
       <div *ngIf="hasTopicPropertiesError" class="invalid-feedback">Either Topics or Properties are required.</div>
 
       <div class="location-boundaries">
-        <a class="btn btn-primary collapse-button top-height" id="collapseButton"
+        <a class="btn btn-secondary collapse-button top-height" id="collapseButton"
            role="button" aria-expanded="false" aria-controls="locationCollapse" (click)="locationDataHide()">Location
           boundaries</a>
         <div [ngClass]="{'collapse' : message.locationData == null}" id="locationCollapse">

@@ -15,5 +15,6 @@ export interface Message {
   locationData: LocationData | null;
   fontFamily?: FontFamily;
   fontColor?: string;
+  logoAttachment: number[];
   backgroundColor?: string;
 }

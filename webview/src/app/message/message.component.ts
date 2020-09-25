@@ -35,6 +35,7 @@ export class MessageComponent implements OnInit {
     starttime: '',
     endtime: '',
     attachment: [],
+    logoAttachment: [],
     locationData: null,
   };
 
@@ -120,6 +121,31 @@ export class MessageComponent implements OnInit {
     this.fileName = file.name;
   }
 
+  removeAttachment(): void {
+    this.message.attachment = [];
+  }
+
+  logoSelect(event: any): void {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const result = ev.target.result;
+      if (result instanceof ArrayBuffer) {
+        this.message.logoAttachment = [...(new Uint8Array(result))];
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  removeLogo(): void {
+    this.message.logoAttachment = [];
+  }
+
+  getDataUrlFromImageByteArray(imageData: number[]): string {
+    const imageDataToString = imageData.reduce((acc, val) => acc + String.fromCharCode(val), '');
+    return 'data:image/png;base64,' + window.btoa(imageDataToString);
+  }
+
   propertiesSelect(): void {
     this.message.properties = this.properties.filter(value => value[1]).map(value => value[0].binding);
   }
@@ -163,6 +189,7 @@ export class MessageComponent implements OnInit {
       endtime: '',
       attachment: [],
       locationData: null,
+      logoAttachment: []
     };
   }
 

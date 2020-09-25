@@ -34,3 +34,18 @@
   width: 100%;
   font-size: 9pt;
 }
+
+.no-right-rounding {
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.no-left-rounding {
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}
+
+.image-icon {
+  background-size: cover;
+  width: 35px;
+}
