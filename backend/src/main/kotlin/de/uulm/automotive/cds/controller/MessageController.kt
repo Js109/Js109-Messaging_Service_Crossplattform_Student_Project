@@ -52,7 +52,7 @@ class MessageController(private val repository: MessageRepository, private val m
      */
     @GetMapping
     @Transactional
-    fun showMessages(@RequestBody MessageFilterDto: MessageFilterDTO, @RequestParam searchString: String, @RequestParam startTimePeriod: String,
+    fun showMessages(@RequestParam searchString: String, @RequestParam startTimePeriod: String,
                      @RequestParam endTimePeriod: String, @RequestParam topic: String): Iterable<Message> {
 
         val tempSearchString = if (searchString.isNotEmpty()) "%$searchString%" else ""

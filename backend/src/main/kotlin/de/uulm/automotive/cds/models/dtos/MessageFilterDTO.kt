@@ -1,13 +1,8 @@
 package de.uulm.automotive.cds.models.dtos
 
-import de.uulm.automotive.cds.models.*
 import de.uulm.automotive.cds.models.errors.MessageFilterBadRequestInfo
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
-import de.uulm.automotive.cds.entities.Property
-import de.uulm.automotive.cds.models.errors.PropertyBadRequestInfo
-import org.modelmapper.ModelMapper
 
 /**
  * Data Transfer Object Representation of the Property entity that is used via the api

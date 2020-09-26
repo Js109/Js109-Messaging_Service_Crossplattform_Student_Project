@@ -41,6 +41,8 @@ export class MessageHistoryComponent implements OnInit {
 
   topics: Topic[];
   properties: [Property, boolean][];
+  starttimePeriod = '';
+  endtimePeriod = '';
   MessagesArray = [];
   hasDateRangeError = false;
   hasTopicPropertiesError = false;
@@ -61,8 +63,15 @@ export class MessageHistoryComponent implements OnInit {
 
   showMessages(): void {
     if (this.validateInputs()) {
+      // Add safe, URL encoded search parameter if there is a search term
+      const options =
+        {
+          params: new HttpParams().set('searchString', this.messageFilter.searchString)
+            .set('startTimePeriod', this.messageFilter.starttimePeriod)
+            .set('endTimePeriod', this.messageFilter.endtimePeriod).set('topic', this.messageFilter.topic)
+        };
 
-      this.http.get<Message[]>(environment.backendApiPath + '/message', this.messageFilter)
+      this.http.get<Message[]>(environment.backendApiPath + '/message', options)
         .subscribe(
           value => {
             this.MessagesArray = value;
