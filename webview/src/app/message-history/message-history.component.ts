@@ -25,6 +25,7 @@ export class MessageHistoryComponent implements OnInit {
     properties: [],
     sender: '',
     starttime: '',
+    endtime: '',
     isSent: false,
     title: '',
     topic: '',
