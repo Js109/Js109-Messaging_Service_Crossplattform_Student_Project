@@ -2,6 +2,7 @@ package de.uulm.automotive.cds.controller
 
 import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.models.dtos.MessageDTO
+import de.uulm.automotive.cds.models.dtos.MessageFilterDTO
 import de.uulm.automotive.cds.models.errors.MessageBadRequestInfo
 import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.services.MessageService
@@ -51,7 +52,7 @@ class MessageController(private val repository: MessageRepository, private val m
      */
     @GetMapping
     @Transactional
-    fun showMessages(@RequestParam searchString: String, @RequestParam startTimePeriod: String,
+    fun showMessages(@RequestBody MessageFilterDto: MessageFilterDTO, @RequestParam searchString: String, @RequestParam startTimePeriod: String,
                      @RequestParam endTimePeriod: String, @RequestParam topic: String): Iterable<Message> {
 
         val tempSearchString = if (searchString.isNotEmpty()) "%$searchString%" else ""

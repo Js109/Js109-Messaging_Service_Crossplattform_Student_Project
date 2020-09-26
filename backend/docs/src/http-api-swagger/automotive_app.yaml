@@ -82,6 +82,20 @@ paths:
           description: "Not Found"
 
   /message:
+    get:
+      tags:
+        - "Administration - OEM-Web Frontend"
+      summary: "Gets all messages with the specified criteria. These are a search string, which must be partially fulfilled, a date range and a topic. If you omit any of these criteria, the search string will be ignored and everything will be returned."
+      description: "If at least one message matches the given search criteria it will be sent back with all properties. If not 404 is returned."
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: "#/definitions/Message"
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Not Found"
     post:
       tags:
         - "Administration - OEM-Web Frontend"
@@ -103,7 +117,7 @@ paths:
           description: "Unprocessable Entity"
 
   /message/{id}:
-    parameters: 
+    parameters:
       - name: id
         in: path
         required: true
@@ -208,7 +222,7 @@ paths:
           description: "Not Found"
 
   /template/{id}:
-    parameters: 
+    parameters:
       - name: id
         in: path
         required: true
@@ -279,7 +293,7 @@ definitions:
       id:
         type: number
         example: 3
-      name: 
+      name:
         type: "string"
         example: "Audi A3"
       binding:
@@ -305,7 +319,7 @@ definitions:
       id:
         type: number
         example: 3
-      topic: 
+      topic:
         type: "string"
         example: "/Kultur"
       sender:
@@ -314,14 +328,14 @@ definitions:
       title:
         type: "string"
         example: "Nachrichtentitel"
-      content: 
+      content:
         type: "string"
         example: "Textinhalt der Nachricht"
-      starttime: 
+      starttime:
         type: "string"
         format: "date-time"
         example: "2020-08-19T11:32"
-      endtime: 
+      endtime:
         type: "string"
         format: "date-time"
         example: "2020-08-19T11:32"

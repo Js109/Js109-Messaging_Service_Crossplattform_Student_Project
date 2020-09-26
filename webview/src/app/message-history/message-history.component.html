@@ -9,7 +9,7 @@
     <div class="col-md-4">
       <div class="input-group">
         <input class="form-control py-2 border-right-0 border" type="search" value="Search" id="example-search-input"
-               [(ngModel)]="searchString">
+               [(ngModel)]="messageFilter.searchString">
         <span class="input-group-append">
                     <div class="input-group-text bg-transparent"><i class="fa fa-search"></i></div>
                 </span>
@@ -20,13 +20,13 @@
   <label>Period of time:</label>
   <div style="display: flex">
     <input name="starttime_period" class="browser-default custom-select" type="date" style="margin-right: 10px"
-           [(ngModel)]="starttimePeriod" [ngClass]="{'is-invalid' : hasDateRangeError}"/>
+           [(ngModel)]="messageFilter.starttimePeriod" [ngClass]="{'is-invalid' : hasDateRangeError}"/>
     <div *ngIf="hasDateRangeError" class="invalid-feedback" style="margin-left: 5px">If you select a start date you must
       also select an end date and vice versa. The start date must also be before the end date.
     </div>
 
     <input name="endtime_period" class="browser-default custom-select" type="date"
-           [(ngModel)]="endtimePeriod" [ngClass]="{'is-invalid' : hasDateRangeError}"/>
+           [(ngModel)]="messageFilter.endtimePeriod" [ngClass]="{'is-invalid' : hasDateRangeError}"/>
     <div *ngIf="hasDateRangeError" class="invalid-feedback" style="margin-left: 15px">If you select a start date you
       must also select an end date and vice versa. The start date must also be before the end date.
     </div>
@@ -36,7 +36,7 @@
   <select
     class="browser-default custom-select"
     name="topic" id="topic"
-    [(ngModel)]="messageHistory.topic"
+    [(ngModel)]="messageFilter.topic"
     [ngClass]="{'is-invalid' : hasTopicPropertiesError}">
     <option selected></option>
     <option *ngFor="let t of topics" [ngValue]="t.binding">{{t.title}}</option>

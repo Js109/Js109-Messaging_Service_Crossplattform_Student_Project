@@ -6,6 +6,7 @@ import {HttpParams} from '@angular/common/http';
 import {Topic} from '../models/Topic';
 import {Property} from '../models/Property';
 import {MessageHistory} from '../models/MessageHistory';
+import {MessageFilter} from '../models/MessageFilter';
 
 @Component({
   selector: 'app-message-history',
@@ -28,17 +29,18 @@ export class MessageHistoryComponent implements OnInit {
     endtime: '',
     isSent: false,
     title: '',
-    topic: '',
-    starttime_period: '',
-    endtime_period: ''
+    topic: ''
+  };
+
+  messageFilter: MessageFilter = {
+    searchString: '',
+    starttimePeriod: '',
+    endtimePeriod: '',
+    topic: ''
   };
 
   topics: Topic[];
   properties: [Property, boolean][];
-
-  searchString = '';
-  starttimePeriod = '';
-  endtimePeriod = '';
   MessagesArray = [];
   hasDateRangeError = false;
   hasTopicPropertiesError = false;
@@ -51,24 +53,16 @@ export class MessageHistoryComponent implements OnInit {
   }
 
   validateInputs(): boolean {
-    this.hasDateRangeError = ((this.starttimePeriod === '' && this.endtimePeriod !== '') ||
-      (this.starttimePeriod !== '' && this.endtimePeriod === '') ||
-      new Date(this.starttimePeriod).getTime() > new Date(this.endtimePeriod).getTime());
+    this.hasDateRangeError = ((this.messageFilter.starttimePeriod === '' && this.messageFilter.endtimePeriod !== '') ||
+      (this.messageFilter.starttimePeriod !== '' && this.messageFilter.endtimePeriod === '') ||
+      new Date(this.messageFilter.starttimePeriod).getTime() > new Date(this.messageFilter.endtimePeriod).getTime());
     return !(this.hasDateRangeError);
   }
 
   showMessages(): void {
     if (this.validateInputs()) {
-      console.log(this.starttimePeriod);
-      console.log(this.endtimePeriod);
-      // Add safe, URL encoded search parameter if there is a search term
-      const options =
-        {
-          params: new HttpParams().set('searchString', this.searchString).set('startTimePeriod', this.starttimePeriod)
-            .set('endTimePeriod', this.endtimePeriod).set('topic', this.messageHistory.topic)
-        };
 
-      this.http.get<Message[]>(environment.backendApiPath + '/message', options)
+      this.http.get<Message[]>(environment.backendApiPath + '/message', this.messageFilter)
         .subscribe(
           value => {
             this.MessagesArray = value;
