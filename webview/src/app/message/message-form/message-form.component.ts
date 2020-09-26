@@ -24,7 +24,19 @@ export class MessageFormComponent implements OnInit {
 
   properties: [Property, boolean][];
 
-  messageValue: Message;
+  messageValue: Message = {
+    topic: '',
+    properties: [],
+    content: '',
+    sender: '',
+    title: '',
+    links: [],
+    starttime: '',
+    endtime: '',
+    attachment: '',
+    logoAttachment: '',
+    locationData: null,
+  };
   get message(): Message {
     return this.messageValue;
   }
