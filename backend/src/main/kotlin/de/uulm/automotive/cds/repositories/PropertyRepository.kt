@@ -8,4 +8,5 @@ import org.springframework.data.repository.CrudRepository
  */
 interface PropertyRepository : CrudRepository<Property, Long> {
     fun findAllByOrderByNameAsc(): Iterable<Property>
+    fun findByBinding(binding: String): Property?
 }

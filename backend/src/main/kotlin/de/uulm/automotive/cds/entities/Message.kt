@@ -1,5 +1,6 @@
 package de.uulm.automotive.cds.entities
 
+import de.uulm.automotive.cds.models.FontFamily
 import java.net.URL
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -34,8 +35,15 @@ class Message(
         var properties: MutableList<String>?,
         @Lob
         var attachment: ByteArray?,
+        @Lob
+        var logoAttachment: ByteArray?,
         @ElementCollection(fetch = FetchType.LAZY)
         var links: MutableList<URL>?,
         @OneToOne(cascade = [CascadeType.ALL])
-        var locationData: LocationData?
-)
+        var locationData: LocationData?,
+        @Column(length = 7)
+        var backgroundColor: String?,
+        @Column(length = 7)
+        var fontColor: String?,
+        var fontFamily: FontFamily?
+) : de.uulm.automotive.cds.models.Entity()

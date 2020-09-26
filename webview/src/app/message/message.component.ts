@@ -5,6 +5,11 @@ import {Message} from '../models/Message';
 import {Property} from '../models/Property';
 import {LocationData} from '../models/LocationData';
 import {environment} from '../../environments/environment';
+import {fontFamilyToFontString} from '../models/FontFamily';
+
+enum OffsetType {
+  Minute, Hour, Day, Week
+}
 
 @Component({
   selector: 'app-message',
@@ -29,13 +34,16 @@ export class MessageComponent implements OnInit {
     links: [],
     starttime: '',
     isSent: false,
+    endtime: '',
     attachment: [],
-    locationData: null
+    locationData: null,
   };
 
   fileName = 'Choose file';
 
   locationData: LocationData = {radius: 50};
+  expirationOffset: number;
+  expirationOffsetType: OffsetType = null;
 
   showTemplateList = true;
 
@@ -48,8 +56,11 @@ export class MessageComponent implements OnInit {
   urlErrors: boolean[] = [];
   hasUrlErrors;
 
+  fontFamilyToFontString = fontFamilyToFontString;
+
   sendMessage(): void {
     if (this.validateInputs()) {
+      this.setEndtimeFromExpirationOffset();
       this.http.post(environment.backendApiPath + '/message', this.message, {}).subscribe(
         value => {
           console.log('send');
@@ -150,9 +161,46 @@ export class MessageComponent implements OnInit {
       title: '',
       links: [],
       starttime: '',
+      endtime: '',
       isSent: false,
       attachment: [],
-      locationData: null
+      locationData: null,
     };
+  }
+
+  setEndtimeFromExpirationOffset(): void {
+    if (this.expirationOffsetType != null && this.expirationOffset != null) {
+      const currentTime = new Date();
+      const referenceTime = (this.message.starttime != null && this.message.starttime.length !== 0)
+        ? new Date(new Date(this.message.starttime).getTime() - currentTime.getTimezoneOffset() * 60 * 1000)
+        : new Date(currentTime.getTime() - currentTime.getTimezoneOffset() * 60 * 1000);
+      const referenceTimeInMillis = referenceTime.getTime();
+      let endTimeInMillis = null;
+      switch (this.expirationOffsetType) {
+        case OffsetType.Minute: {
+         endTimeInMillis = referenceTimeInMillis + (this.expirationOffset * 60 * 1000);
+         break;
+        }
+        case OffsetType.Hour: {
+          endTimeInMillis = referenceTimeInMillis + (this.expirationOffset * 60 * 60 * 1000);
+          break;
+        }
+        case OffsetType.Day: {
+          endTimeInMillis = referenceTimeInMillis + (this.expirationOffset * 24 * 60 * 60 * 1000);
+          break;
+        }
+        case OffsetType.Week: {
+          endTimeInMillis = referenceTimeInMillis + (this.expirationOffset * 7 * 24 * 60 * 60 * 1000);
+          break;
+        }
+        default: {
+          // statements;
+          break;
+        }
+      }
+      this.message.endtime = new Date(endTimeInMillis).toISOString();
+    } else{
+      this.message.endtime = null;
+    }
   }
 }

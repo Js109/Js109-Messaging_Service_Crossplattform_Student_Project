@@ -1,7 +1,8 @@
 package de.uulm.automotive.cds.controller
 
 import de.uulm.automotive.cds.entities.Message
-import de.uulm.automotive.cds.models.MessageBadRequestInfo
+import de.uulm.automotive.cds.models.dtos.MessageDTO
+import de.uulm.automotive.cds.models.errors.MessageBadRequestInfo
 import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.services.MessageService
 import org.springframework.http.HttpStatus
@@ -17,12 +18,13 @@ import javax.transaction.Transactional
 @RestController
 @RequestMapping("/message")
 /**
- * Controller for Messages.
+ * REST-Endpoint for Messages.
  */
 class MessageController(private val repository: MessageRepository, private val messageService: MessageService) {
 
     /**
-     * Returns the view for one message.
+     * REST-Endpoint to get the message with the specified id in the system.
+     * See swagger definition of GET /message/{id} for more details.
      *
      * @param id Id of the message
      * @return Message with the specified id
@@ -67,17 +69,20 @@ class MessageController(private val repository: MessageRepository, private val m
     }
 
     /**
-     * Saves the given Message.
+     * REST-Endpoint for storing a new message.
+     * See swagger definition of POST /message for more details.
      *
-     * @param message
+     * @param messageDto DTO of the message
+     * @return Response Entity Containing Error Object in case of an invalid DTO
      */
     @PostMapping
-    fun saveMessage(@RequestBody message: Message): ResponseEntity<MessageBadRequestInfo> {
+    fun saveMessage(@RequestBody messageDto: MessageDTO): ResponseEntity<MessageBadRequestInfo> {
 
-        val (hasErrors, errors) = validateMessage(message)
-        if (hasErrors) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors)
+        val errors = messageDto.getErrors()
+        if (errors != null) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errors)
         }
+        val message = messageDto.toEntity()
 
         if (message.starttime == null) {
             message.starttime = LocalDateTime.now()
@@ -90,38 +95,5 @@ class MessageController(private val repository: MessageRepository, private val m
         return ResponseEntity.status(HttpStatus.OK).build()
     }
 
-    private fun validateMessage(message: Message): Pair<Boolean, MessageBadRequestInfo> {
-        var hasErrors = false
-        val errors = MessageBadRequestInfo()
 
-        //double negative is used for empty checks to also include null checks, as message.field.isEmpty() == true would not be true for null
-        if (message.sender?.isNotEmpty() != true) {
-            errors.senderError = "Sender field is required."
-            hasErrors = true
-        }
-
-        if (message.title?.isNotEmpty() != true) {
-            errors.titleError = "Title field is required."
-            hasErrors = true
-        }
-
-        if (message.topic?.isNotEmpty() != true && message.properties?.isNotEmpty() != true) {
-            errors.topicError = "Either Topics or Properties are required."
-            hasErrors = true
-        }
-
-        if (message.content?.isNotEmpty() != true && message.attachment?.isNotEmpty() != true) {
-            errors.contentError = "Either Content or Files are required."
-            hasErrors = true
-        }
-
-        message.locationData?.let {
-            if (it.lat < -90 || it.lat > 90 || it.lng > 180 || it.lng < -180) {
-                hasErrors = true
-                errors.locationError = "Please check your coordinate values!"
-            }
-        }
-
-        return Pair(hasErrors, errors)
-    }
 }

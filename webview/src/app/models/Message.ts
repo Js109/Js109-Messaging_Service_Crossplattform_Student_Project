@@ -1,4 +1,5 @@
 import {LocationData} from './LocationData';
+import {FontFamily} from './FontFamily';
 
 export interface Message {
   id?: number;
@@ -10,6 +11,10 @@ export interface Message {
   links: string[];
   starttime: string;
   isSent: boolean;
+  endtime: string;
   attachment: number[];
   locationData: LocationData | null;
+  fontFamily?: FontFamily;
+  fontColor?: string;
+  backgroundColor?: string;
 }

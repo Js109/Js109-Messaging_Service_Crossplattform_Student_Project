@@ -1,6 +1,7 @@
-package de.uulm.automotive.cds.models
+package de.uulm.automotive.cds.models.dtos
 
 import de.uulm.automotive.cds.entities.Token
+import org.modelmapper.ModelMapper
 import java.util.*
 
 /**
@@ -9,21 +10,21 @@ import java.util.*
  * @property signUpToken Client generated UUID at signup (collision detection)
  * @property queueID QueueID of the client
  */
-data class TokenDTO (
-    val signUpToken: UUID,
-    val queueID: UUID
-)
-{
+data class TokenDTO(
+        var signUpToken: UUID? = null,
+        var queueID: UUID? = null
+) {
     companion object {
+        private val mapper: ModelMapper = ModelMapper()
+
         /**
          * Maps the Entity Token to the corresponding Data Transfer Object (DTO)
-         * TODO replace with Object Mapper
          *
          * @param token Token Entity
          * @return Mapped DTO
          */
-        fun getTokenDTO(token: Token): TokenDTO {
-            return TokenDTO(token.signUpToken, token.queueId)
+        fun toDTO(token: Token): TokenDTO {
+            return mapper.map(token, TokenDTO::class.java)
         }
     }
 }

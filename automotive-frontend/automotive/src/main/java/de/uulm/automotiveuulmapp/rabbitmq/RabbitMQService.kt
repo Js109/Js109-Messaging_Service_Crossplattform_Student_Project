@@ -25,6 +25,7 @@ import de.uulm.automotiveuulmapp.topic.TopicChange
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.io.ObjectInputStream
+import java.time.ZoneId
 import kotlin.random.Random.Default.nextInt
 
 class RabbitMQService : Service() {
@@ -139,6 +140,14 @@ class RabbitMQService : Service() {
         val deliverCallback =
             DeliverCallback { _: String?, delivery: Delivery ->
                 val message = convertByteArrayToMessage(delivery.body)
+                // return if endtime in past
+                message.endtime?.let {
+                    it.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        .minus(System.currentTimeMillis())
+                        .takeIf { timeDiff -> timeDiff < 0 }
+                        ?.let { return@DeliverCallback }
+                }
+                // if no location data or if current location is in location data show as heads up notification else store message if a stored location is in range of the location data
                 if (message.locationData == null || locationFencer?.currentPositionFencing(message.locationData) == true) {
                     notify(message)
                 } else if (locationFencer?.storedLocationsFencing(message.locationData) == true) {

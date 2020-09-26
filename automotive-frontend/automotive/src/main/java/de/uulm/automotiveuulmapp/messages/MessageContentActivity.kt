@@ -1,6 +1,7 @@
 package de.uulm.automotiveuulmapp.messages
 
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.AsyncTask
 import android.os.Bundle
 import android.view.View
@@ -60,6 +61,9 @@ class MessageContentActivity : AppCompatActivity() {
                                 me.messageText,
                                 me.attachment,
                                 me.links,
+                                null,
+                                null,
+                                null,
                                 null
                             )
                         )
@@ -76,6 +80,14 @@ class MessageContentActivity : AppCompatActivity() {
         titleView.text = message.title
         messageContentView.text = message.messageText
         createImageView(message.attachment)
+
+        message.backgroundColor?.let {
+            titleView.rootView.setBackgroundColor(Color.parseColor(it))
+        }
+        message.fontColor?.let {
+            titleView.setTextColor(Color.parseColor(it))
+            messageContentView.setTextColor(Color.parseColor(it))
+        }
 
         initializeCloseButton()
 

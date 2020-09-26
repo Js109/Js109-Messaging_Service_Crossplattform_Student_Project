@@ -18,10 +18,46 @@ import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 
 @WebMvcTest
-internal class TemplateControllerTest (@Autowired val mockMvc: MockMvc): BaseControllerTest() {
+internal class TemplateControllerTest(@Autowired val mockMvc: MockMvc) : BaseControllerTest() {
 
-    val template = TemplateMessage(null, "Template 1", "test topic", null, "test title", null, null, null, null, null, null, null, null)
-    val template2 = TemplateMessage(null, "Template 2", null, "test sender", null, "test content", null, null, null, null, null, null, null)
+    val template = TemplateMessage(
+            null,
+            "Template 1",
+            "test topic",
+            null,
+            "test title",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+    )
+    val template2 = TemplateMessage(
+            null,
+            "Template 2",
+            null,
+            "test sender",
+            null,
+            "test content",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+    )
 
     @Test
     fun `get all templates`() {
@@ -42,7 +78,7 @@ internal class TemplateControllerTest (@Autowired val mockMvc: MockMvc): BaseCon
 
     @Test
     fun `save TemplateMessage`() {
-        every { templateRepository.save(any<TemplateMessage>())} returns template
+        every { templateRepository.save(any<TemplateMessage>()) } returns template
 
         mockMvc.post("/template") {
             accept = MediaType.APPLICATION_JSON
@@ -52,12 +88,12 @@ internal class TemplateControllerTest (@Autowired val mockMvc: MockMvc): BaseCon
         }.andExpect {
             status { isOk }
         }
-        verify(exactly = 1) { templateRepository.save(any<TemplateMessage>())}
+        verify(exactly = 1) { templateRepository.save(any<TemplateMessage>()) }
     }
 
     @Test
     fun `delete template`() {
-        every { templateRepository.deleteById(any())} returns Unit
+        every { templateRepository.deleteById(any()) } returns Unit
 
         mockMvc.delete("/template/11") {
             accept = MediaType.APPLICATION_JSON
@@ -65,7 +101,7 @@ internal class TemplateControllerTest (@Autowired val mockMvc: MockMvc): BaseCon
             status { isOk }
         }
         val captureSlot = slot<Long>()
-        verify(exactly = 1) { templateRepository.deleteById(capture(captureSlot))}
+        verify(exactly = 1) { templateRepository.deleteById(capture(captureSlot)) }
         assertThat(captureSlot.captured).isEqualTo(11)
     }
 
