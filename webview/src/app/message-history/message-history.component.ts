@@ -41,8 +41,6 @@ export class MessageHistoryComponent implements OnInit {
 
   topics: Topic[];
   properties: [Property, boolean][];
-  starttimePeriod = '';
-  endtimePeriod = '';
   MessagesArray = [];
   hasDateRangeError = false;
   hasTopicPropertiesError = false;
@@ -82,6 +80,17 @@ export class MessageHistoryComponent implements OnInit {
           }
         );
     }
+  }
+
+  deleteMessage(id: number): void {
+    this.http.delete(environment.backendApiPath + '/message/' + id, ).subscribe(
+      value => {
+        console.log(`send delete message with ${id}`);
+      },
+      error => {
+        console.log(error);
+      }
+    );
   }
 
 }
