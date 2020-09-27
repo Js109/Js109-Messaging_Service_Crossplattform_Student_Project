@@ -19,6 +19,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import { ColorPickerModule} from 'ngx-color-picker';
 import {MatTabsModule} from '@angular/material/tabs';
+import { MessageFormComponent } from './message/message-form/message-form.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import {MatTabsModule} from '@angular/material/tabs';
     PropertyComponent,
     TopicComponent,
     TemplateLoadComponent,
-    SaveTemplateDialogComponent
+    SaveTemplateDialogComponent,
+    MessageFormComponent
   ],
     imports: [
         BrowserModule,
