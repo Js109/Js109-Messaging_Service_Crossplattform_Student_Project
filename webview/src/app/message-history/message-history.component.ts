@@ -18,7 +18,8 @@ export class MessageHistoryComponent implements OnInit {
   }
 
   messageHistory: MessageHistory = {
-    attachment: [],
+    logoAttachment: '',
+    attachment: '',
     content: '',
     links: [],
     locationData: undefined,
