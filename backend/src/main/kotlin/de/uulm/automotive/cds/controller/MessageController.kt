@@ -2,6 +2,7 @@ package de.uulm.automotive.cds.controller
 
 import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.models.dtos.MessageDTO
+import de.uulm.automotive.cds.models.dtos.MessageFilterDTO
 import de.uulm.automotive.cds.models.errors.MessageBadRequestInfo
 import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.services.MessageService
