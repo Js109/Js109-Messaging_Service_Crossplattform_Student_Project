@@ -5,7 +5,6 @@ import {HttpClient} from '@angular/common/http';
 import {HttpParams} from '@angular/common/http';
 import {Topic} from '../models/Topic';
 import {Property} from '../models/Property';
-import {MessageHistory} from '../models/MessageHistory';
 import {MessageFilter} from '../models/MessageFilter';
 
 @Component({
@@ -18,21 +17,6 @@ export class MessageHistoryComponent implements OnInit {
   constructor(private http: HttpClient, private ngZone: NgZone) {
   }
 
-  messageHistory: MessageHistory = {
-    logoAttachment: '',
-    attachment: '',
-    content: '',
-    links: [],
-    locationData: undefined,
-    properties: [],
-    sender: '',
-    starttime: '',
-    endtime: '',
-    isSent: false,
-    title: '',
-    topic: ''
-  };
-
   messageFilter: MessageFilter = {
     searchString: '',
     starttimePeriod: '',
@@ -42,10 +26,9 @@ export class MessageHistoryComponent implements OnInit {
 
   topics: Topic[];
   properties: [Property, boolean][];
-  MessagesArray = [];
+  messagesArray = [];
   hasDateRangeError = false;
   hasTopicPropertiesError = false;
-  testVariable: string;
 
   ngOnInit(): void {
     this.http.get(environment.backendApiPath + '/topic', {responseType: 'json'})
@@ -74,8 +57,8 @@ export class MessageHistoryComponent implements OnInit {
       this.http.get<Message[]>(environment.backendApiPath + '/message', options)
         .subscribe(
           value => {
-            this.MessagesArray = value;
-            console.log(this.MessagesArray);
+            this.messagesArray = value;
+            console.log(this.messagesArray);
           },
           error => {
             console.log(error);
