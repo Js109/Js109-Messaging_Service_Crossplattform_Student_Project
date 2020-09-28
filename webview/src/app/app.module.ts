@@ -17,6 +17,7 @@ import {MatDialogModule} from '@angular/material/dialog';
 import { SaveTemplateDialogComponent } from './message/template-load/save-template-dialog/save-template-dialog.component';
 import {MatButtonModule} from '@angular/material/button';
 import {MatToolbarModule} from '@angular/material/toolbar';
+import { MessageHistoryComponent } from './message-history/message-history.component';
 import { ColorPickerModule} from 'ngx-color-picker';
 import {MatTabsModule} from '@angular/material/tabs';
 import { MessageFormComponent } from './message/message-form/message-form.component';
@@ -28,6 +29,8 @@ import { MessageFormComponent } from './message/message-form/message-form.compon
     PropertyComponent,
     TopicComponent,
     TemplateLoadComponent,
+    SaveTemplateDialogComponent,
+    MessageHistoryComponent,
     SaveTemplateDialogComponent,
     MessageFormComponent
   ],

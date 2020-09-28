@@ -3,6 +3,9 @@ import {HttpClient} from '@angular/common/http';
 import {Message} from '../models/Message';
 import {environment} from '../../environments/environment';
 
+enum OffsetType {
+  Minute, Hour, Day, Week
+}
 
 @Component({
   selector: 'app-message',
@@ -24,6 +27,7 @@ export class MessageComponent implements OnInit {
     title: '',
     links: [],
     starttime: '',
+    isSent: false,
     endtime: '',
     attachment: '',
     logoAttachment: '',
@@ -62,6 +66,7 @@ export class MessageComponent implements OnInit {
       links: [],
       starttime: '',
       endtime: '',
+      isSent: false,
       attachment: '',
       locationData: null,
       logoAttachment: ''

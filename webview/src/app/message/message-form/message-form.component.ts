@@ -25,6 +25,7 @@ export class MessageFormComponent implements OnInit {
   properties: [Property, boolean][];
 
   messageValue: Message = {
+    isSent: false,
     topic: '',
     properties: [],
     content: '',
@@ -35,7 +36,7 @@ export class MessageFormComponent implements OnInit {
     endtime: '',
     attachment: '',
     logoAttachment: '',
-    locationData: null,
+    locationData: null
   };
   get message(): Message {
     return this.messageValue;
