@@ -1,5 +1,4 @@
 package de.uulm.automotiveuulmapp.topicFragment
-/*
 import android.content.SharedPreferences
 import android.widget.SearchView
 import androidx.test.espresso.Espresso.onView
@@ -7,11 +6,12 @@ import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.rule.ActivityTestRule
-import com.nhaarman.mockitokotlin2.*
 import de.uulm.automotiveuulmapp.R
 import de.uulm.automotiveuulmapp.TopicAdapterTestActivity
 import de.uulm.automotiveuulmapp.httpHandling.RestCallHelper
 import de.uulm.automotiveuulmapp.topic.Callback
+import io.mockk.every
+import io.mockk.mockk
 import org.hamcrest.CoreMatchers.allOf
 import org.json.JSONObject
 import org.junit.Before
@@ -25,7 +25,7 @@ class TopicAdapterTest {
     @get:Rule
     val activityRule = ActivityTestRule(TopicAdapterTestActivity::class.java)
 
-    private val mockRestCallHelper = mock<RestCallHelper>()
+    private val mockRestCallHelper = mockk<RestCallHelper>()
 
     // stores the callback passed to the mockRestCallHelper to fire it at a later point to simulate asynchronicity
     private var callback: Callback? = null
@@ -33,9 +33,9 @@ class TopicAdapterTest {
     @Before
     fun setupMockRestCallHelper() {
         // whenever the restCallHelper gets called store the callback in the local variable
-        whenever(mockRestCallHelper.callRestEndpoint(any(), any(), any(), anyOrNull())).then {
-            callback = (it.arguments[2] as Callback)
-            return@then Unit
+        every { mockRestCallHelper.callRestEndpoint(any(), any(), any(), any()) } answers {
+            callback = (it.invocation.args[2] as Callback)
+            Unit
         }
     }
 
@@ -87,9 +87,9 @@ class TopicAdapterTest {
     @Test
     fun setsSubscribeButtonsCorrectly() {
         // mock preferences to create a subscription for topic 2
-        val preferences = mock<SharedPreferences>()
-        whenever(preferences.getBoolean(any(), any())).thenReturn(false)
-        whenever(preferences.getBoolean(eq("topic/2"), any())).thenReturn(true)
+        val preferences = mockk<SharedPreferences>()
+        every { preferences.getBoolean(any(), any()) } returns false
+        every { preferences.getBoolean(eq("topic/2"), any()) } returns true
         val topicAdapter = TopicAdapter(
             activityRule.activity.searchView
                 ?: SearchView(activityRule.activity.applicationContext),
@@ -135,4 +135,4 @@ class TopicAdapterTest {
     }
 
 
-}*/
+}

@@ -1,20 +1,20 @@
 package de.uulm.automotiveuulmapp.geofencing
-/*
+
 import android.location.Location
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import de.uulm.automotive.cds.entities.LocationDataSerializable
 import de.uulm.automotiveuulmapp.locationFavourites.locationFavData.LocationDataDAO
 import de.uulm.automotiveuulmapp.locationFavourites.locationFavData.LocationDatabase
+import io.mockk.every
+import io.mockk.mockk
 import org.assertj.core.api.Java6Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 
 class LocationDataFencerTest {
-    private val mockLocationFetcher = mock<CurrentLocationFetcher>()
-    private val mockLocationDatabase = mock<LocationDatabase>()
+    private val mockLocationFetcher = mockk<CurrentLocationFetcher>()
+    private val mockLocationDatabase = mockk<LocationDatabase>()
     private val fencer = LocationDataFencer(mockLocationFetcher, mockLocationDatabase)
 
     private val ulmLat = 48.355362
@@ -38,16 +38,16 @@ class LocationDataFencerTest {
 
     @Before
     fun setupMockDatabase() {
-        val mockDao = mock<LocationDataDAO>()
-        whenever(mockDao.getAllInstant()).thenReturn(emptyList())
-        whenever(mockLocationDatabase.getLocationDao()).thenReturn(mockDao)
+        val mockDao = mockk<LocationDataDAO>()
+        every { mockDao.getAllInstant() } returns emptyList()
+        every { mockLocationDatabase.getLocationDao()} returns mockDao
     }
 
     fun setCurrentLocationToUlm() {
-        val location = mock<Location>()
-        whenever(location.latitude).thenReturn(ulmLat)
-        whenever(location.longitude).thenReturn(ulmLng)
-        whenever(mockLocationFetcher.getCurrentLocation()).thenReturn(location)
+        val location = mockk<Location>()
+        every { location.latitude } returns ulmLat
+        every { location.longitude } returns ulmLng
+        every { mockLocationFetcher.getCurrentLocation() } returns location
     }
 
     @Test
@@ -57,7 +57,7 @@ class LocationDataFencerTest {
 
     @Test
     fun returnFalseWhenNoCurrentPositionAvailable() {
-        whenever(mockLocationFetcher.getCurrentLocation()).thenReturn(null)
+        every { mockLocationFetcher.getCurrentLocation() } returns null
         assertThat(fencer.shouldAllow(LocationDataSerializable(10.0, 10.0, 10))).isFalse()
     }
 
@@ -92,4 +92,4 @@ class LocationDataFencerTest {
         assertThat(fencer.shouldAllow(LocationDataSerializable(almostTenKilometersSouth.latitude, almostTenKilometersSouth.longitude, 10))).isTrue()
         assertThat(fencer.shouldAllow(LocationDataSerializable(almostTenKilometersWest.latitude, almostTenKilometersWest.longitude, 10))).isTrue()
     }
-}*/
+}

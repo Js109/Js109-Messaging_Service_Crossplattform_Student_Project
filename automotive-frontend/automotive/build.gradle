@@ -109,7 +109,8 @@ dependencies {
     implementation 'com.google.maps.android:maps-utils-ktx:1.7.0'
     androidTestImplementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
-    androidTestImplementation("io.mockk:mockk-android:1.10.2")
+    testImplementation 'io.mockk:mockk:1.10.2'
+    androidTestImplementation 'io.mockk:mockk-android:1.10.2'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     // Need for Android GUI tests
