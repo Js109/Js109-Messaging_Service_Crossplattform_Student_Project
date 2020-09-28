@@ -1,5 +1,5 @@
 package de.uulm.automotiveuulmapp.topicFragment
-
+/*
 import android.content.SharedPreferences
 import android.widget.SearchView
 import androidx.test.espresso.Espresso.onView
@@ -135,4 +135,4 @@ class TopicAdapterTest {
     }
 
 
-}
+}*/

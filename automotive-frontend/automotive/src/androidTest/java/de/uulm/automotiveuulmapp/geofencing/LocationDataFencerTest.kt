@@ -1,5 +1,5 @@
 package de.uulm.automotiveuulmapp.geofencing
-
+/*
 import android.location.Location
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
@@ -92,4 +92,4 @@ class LocationDataFencerTest {
         assertThat(fencer.shouldAllow(LocationDataSerializable(almostTenKilometersSouth.latitude, almostTenKilometersSouth.longitude, 10))).isTrue()
         assertThat(fencer.shouldAllow(LocationDataSerializable(almostTenKilometersWest.latitude, almostTenKilometersWest.longitude, 10))).isTrue()
     }
-}
+}*/
