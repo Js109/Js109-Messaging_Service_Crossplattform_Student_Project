@@ -22,7 +22,7 @@ export class MessageFormComponent implements OnInit {
 
   topics: Topic[];
 
-  properties: [Property, boolean][];
+  properties: [Property, boolean][] = [];
 
   messageValue: Message = {
     topic: '',
@@ -73,15 +73,16 @@ export class MessageFormComponent implements OnInit {
 
   /**
    * Fills the message with all elements from the form and then performs validation on it.
-   * If validation is passed the callback will be called with the message.
-   * Use this to process the message instead of using binding as this component does not set all values put into the form directly.
-   * @param callback Method that will be called with the message if validation does not fail
+   * If validation is passed the message will be returned otherwise null will be returned.
+   * Use this to retrieve the message instead of using binding as this component does not set all values put into the form directly.
+   * @return Message Message containing the information put into the form or null if validation fails.
    */
-  processMessage(callback: (message: Message) => void): void {
+  retrieveMessage(): Message {
     if (this.validateInputs()) {
       this.setEndtimeFromExpirationOffset();
-      callback(this.message);
+      return this.message;
     }
+    return null;
   }
 
   validateInputs(): boolean {

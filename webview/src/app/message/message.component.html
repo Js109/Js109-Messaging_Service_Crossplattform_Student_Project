@@ -10,7 +10,7 @@
 
       <app-message-form [message]="message" #messageFormComponent></app-message-form>
 
-      <button type="button" class="btn btn-success top-height" (click)="messageFormComponent.processMessage(sendMessage)">Submit</button>
+      <button type="button" class="btn btn-success top-height" (click)="sendMessage(messageFormComponent.retrieveMessage())">Submit</button>
       <button type="button" class="btn btn-danger top-height" style="margin-left: 10px" (click)="clearMessage()">Clear
       </button>
     </div>
