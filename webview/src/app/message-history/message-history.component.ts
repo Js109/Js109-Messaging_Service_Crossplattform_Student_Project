@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, NgZone, OnInit} from '@angular/core';
 import {Message} from '../models/Message';
 import {environment} from '../../environments/environment';
 import {HttpClient} from '@angular/common/http';
@@ -15,7 +15,7 @@ import {MessageFilter} from '../models/MessageFilter';
 })
 export class MessageHistoryComponent implements OnInit {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private ngZone: NgZone) {
   }
 
   messageHistory: MessageHistory = {
@@ -44,6 +44,7 @@ export class MessageHistoryComponent implements OnInit {
   MessagesArray = [];
   hasDateRangeError = false;
   hasTopicPropertiesError = false;
+  testVariable: string;
 
   ngOnInit(): void {
     this.http.get(environment.backendApiPath + '/topic', {responseType: 'json'})
@@ -89,6 +90,11 @@ export class MessageHistoryComponent implements OnInit {
       },
       error => {
         console.log(error);
+      },
+      () => {
+        this.ngZone.run( () => {
+          this.showMessages();
+        });
       }
     );
   }
