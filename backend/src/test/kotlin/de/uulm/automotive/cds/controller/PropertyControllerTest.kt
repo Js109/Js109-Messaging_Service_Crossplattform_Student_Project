@@ -40,7 +40,7 @@ internal class PropertyControllerTest(@Autowired val mockMvc: MockMvc): BaseCont
 
     @Test
     fun `get all properties`() {
-        every { propertyRepository.findAllByOrderByNameAscIdAsc() } returns listOf(property.toEntity(), property2.toEntity())
+        every { propertyRepository.findAllByDisabledOrderByNameAscIdAsc(any()) } returns listOf(property.toEntity(), property2.toEntity())
 
         mockMvc.get("/property") {
             accept(MediaType.APPLICATION_JSON)
@@ -81,9 +81,7 @@ internal class PropertyControllerTest(@Autowired val mockMvc: MockMvc): BaseCont
         }.andExpect {
             status { isUnprocessableEntity }
             content { contentType(MediaType.APPLICATION_JSON) }
-            content { jsonPath("nameError").doesNotExist() }
-            content { jsonPath("bindingError").exists() }
-            content { jsonPath("bindingError").isNotEmpty }
+            content { jsonPath("nameError").exists() }
         }
 
         verify(exactly = 0) { propertyRepository.save(any<Property>()) }
