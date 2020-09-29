@@ -3,6 +3,7 @@ package de.uulm.automotive.cds.controller
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import de.uulm.automotive.cds.entities.Topic
 import de.uulm.automotive.cds.models.dtos.TopicDTO
+import de.uulm.automotive.cds.models.dtos.TopicUpdateDTO
 import io.mockk.every
 import io.mockk.verify
 import org.junit.jupiter.api.Test
@@ -11,8 +12,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.patch
 import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import java.util.*
 
 @WebMvcTest
 internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) : BaseControllerTest() {
@@ -85,7 +89,6 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) : BaseContro
             content { jsonPath("bindingError").isNotEmpty }
             content { jsonPath("titleError").doesNotExist() }
             content { jsonPath("descriptionError").doesNotExist() }
-
         }
 
         verify(exactly = 0) { topicRepository.save(any<Topic>()) }
@@ -114,7 +117,73 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) : BaseContro
             content { jsonPath("titleError").isNotEmpty }
             content { jsonPath("descriptionError").exists() }
             content { jsonPath("descriptionError").isNotEmpty }
+        }
 
+        verify(exactly = 0) { topicRepository.save(any<Topic>()) }
+    }
+
+    @Test
+    fun `update Topic description`(){
+        val descriptionUpdateString = "New description"
+        val topicUpdateDTO = TopicUpdateDTO(descriptionUpdateString)
+        val updatedTopicEntity = topic.toEntity()
+        updatedTopicEntity.description = descriptionUpdateString
+
+        every { topicRepository.findById(1) } returns Optional.of(topic.toEntity())
+        every { topicRepository.save(any<Topic>()) } returns updatedTopicEntity
+
+        mockMvc.patch("/topic/1") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(topicUpdateDTO)
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isOk }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            content { jsonPath("title").value(topic.title) }
+            content { jsonPath("binding").value(topic.binding) }
+            content { jsonPath("tags").value(topic.tags) }
+            content { jsonPath("description").value(descriptionUpdateString) }
+        }
+
+        verify(exactly = 1) { topicRepository.save(any<Topic>()) }
+    }
+
+    @Test
+    fun `update description of not existing Topic`(){
+        val descriptionUpdateString = "New description"
+        val topicUpdateDTO = TopicUpdateDTO(descriptionUpdateString)
+
+        every { topicRepository.findById(1) } returns Optional.empty()
+
+        mockMvc.patch("/topic/1") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(topicUpdateDTO)
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isNotFound }
+        }
+
+        verify(exactly = 0) { topicRepository.save(any<Topic>()) }
+    }
+
+    @Test
+    fun `update description of deleted Topic`(){
+        val descriptionUpdateString = "New description"
+        val topicUpdateDTO = TopicUpdateDTO(descriptionUpdateString)
+        val deletedTopicEntity = topic.toEntity()
+        deletedTopicEntity.isDeleted = true
+
+        every { topicRepository.findById(1) } returns Optional.of(deletedTopicEntity)
+
+        mockMvc.patch("/topic/1") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(topicUpdateDTO)
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isLocked }
         }
 
         verify(exactly = 0) { topicRepository.save(any<Topic>()) }

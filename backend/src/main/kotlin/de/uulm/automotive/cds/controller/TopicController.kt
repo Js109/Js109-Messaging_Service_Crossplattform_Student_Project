@@ -2,12 +2,14 @@ package de.uulm.automotive.cds.controller
 
 import de.uulm.automotive.cds.entities.Topic
 import de.uulm.automotive.cds.models.dtos.TopicDTO
+import de.uulm.automotive.cds.models.dtos.TopicUpdateDTO
 import de.uulm.automotive.cds.models.errors.TopicBadRequestInfo
 import de.uulm.automotive.cds.repositories.TopicRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @CrossOrigin("*")
 @RestController
@@ -47,5 +49,29 @@ class TopicController @Autowired constructor(private val topicRepository: TopicR
 
         topicRepository.save(topicDto.toEntity())
         return ResponseEntity.status(HttpStatus.OK).build()
+    }
+
+    /**
+     * REST-Endpoint to update the description of a topic
+     *
+     * @param topicId
+     * @param topicUpdateDto
+     * @return
+     */
+    @PatchMapping("/{topicId}")
+    fun updateTopic(@PathVariable topicId: Long, @RequestBody topicUpdateDto: TopicUpdateDTO): ResponseEntity<Any>{
+        var resp = ResponseEntity<Any>(HttpStatus.NOT_FOUND)
+
+        val topic: Topic? = topicRepository.findById(topicId).orElse(null)
+        topic?.let {
+            if(topic.isDeleted){
+                resp = ResponseEntity(HttpStatus.LOCKED)
+            } else {
+                it.description = topicUpdateDto.description
+                resp = ResponseEntity.status(HttpStatus.OK).body(topicRepository.save(it))
+            }
+        }
+
+        return resp
     }
 }
