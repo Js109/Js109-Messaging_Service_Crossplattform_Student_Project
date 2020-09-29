@@ -12,5 +12,6 @@ import de.uulm.automotive.cds.models.BadRequestInfo
 class TopicBadRequestInfo(
         var bindingError: String? = null,
         var titleError: String? = null,
-        var descriptionError: String? = null
+        var descriptionError: String? = null,
+        var tagError: String? = null
 ) : BadRequestInfo()
