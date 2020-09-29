@@ -7,6 +7,7 @@ import org.springframework.data.repository.CrudRepository
  * Repository for Properties.
  */
 interface PropertyRepository : CrudRepository<Property, Long> {
-    fun findAllByOrderByNameAsc(): Iterable<Property>
-    fun findByBinding(binding: String): Property?
+    fun findAllByOrderByNameAscIdAsc(): Iterable<Property>
+    fun findByName(name: String): Property?
+    fun findAllByDisabledOrderByNameAscIdAsc(diabled: Boolean): Iterable<Property>
 }
