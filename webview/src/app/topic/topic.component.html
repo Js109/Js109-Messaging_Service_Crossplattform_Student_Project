@@ -1,37 +1,55 @@
 <mat-sidenav-container class="topic-panel">
   <mat-sidenav-content>
-    <div class="container">
+    <div class="container d-flex flex-column h-100">
       <h2>Topic</h2>
 
       <label for="title">Title:</label>
-      <input class="form-control" name="title"
-             id="title" placeholder="title"
-             [(ngModel)]="topic.title">
 
-      <label for="binding">Binding:</label>
-      <input class="form-control" name="binding"
-             id="binding" placeholder="binding"
-             [(ngModel)]="topic.binding">
 
-      <label for="description">Description:</label>
-      <textarea class="form-control"
+      <div style="display: flex" class="mb-2">
+        <input class="form-control col-9 no-right-rounding" name="title"
+               id="title" placeholder="title"
+               [(ngModel)]="topic.title">
+        <button type="button" class="btn btn-primary col no-left-rounding" (click)="createTopic()">Submit</button>
+      </div>
+
+      <textarea class="form-control mb-2"
                 name="description" id="description" placeholder="Description"
                 [(ngModel)]="topic.description"></textarea>
 
 
-      <label for="tag">Tags:</label>
-      <button class="btn btn-success" (click)="addTag()" type="button">
+      <button class="btn btn-secondary" (click)="addTag()" type="button">
         <span>Add Tag</span>
       </button>
-      <ng-container *ngFor="let _ of topic.tags; let i = index;trackBy:trackById">
-        <div class="row input-group">
-          <input name="tag" type="text" placeholder="tag" class="form-control"
-                 [(ngModel)]="topic.tags[i]"/>
-          <button class="btn btn-danger" (click)="removeTag(i)">Remove Tag</button>
-        </div>
-      </ng-container>
+      <div class="mb-4">
+        <ng-container *ngFor="let _ of topic.tags; let i = index;trackBy:trackById">
+          <div class="input-group" style="display: flex">
+            <input name="tag" type="text" placeholder="tag" class="form-control"
+                   [(ngModel)]="topic.tags[i]"/>
+            <button class="btn btn-secondary" (click)="removeTag(i)">Remove Tag</button>
+          </div>
+        </ng-container>
+      </div>
 
-      <button type="button" class="btn btn-primary" (click)="createTopic()">Submit</button>
+      <div class="overflow-auto form-control col flex-grow-1 mb-4">
+        <ng-container *ngFor="let t of topics;let i = index">
+          <div class="mb-2 mt-2 d-flex">
+            <div class="flex-grow-1" [style.color]="t.disabled ? 'lightgrey' : 'black'">{{t.title}}</div>
+            <div class="ml-auto">
+              Enabled:
+              <mat-slide-toggle color="primary" [checked]="!t.disabled" (change)="updateTopic(t)"></mat-slide-toggle>
+            </div>
+          </div>
+          <div style="display: flex" class="mb-2 mt-2 font-weight-light">
+            <div class="col-10">{{t.description}}</div>
+            <button class="btn btn-secondary col"
+                    (click)="editDescription(t)">Edit
+            </button>
+          </div>
+          <mat-divider *ngIf="i < topics.length - 1"></mat-divider>
+        </ng-container>
+      </div>
+
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

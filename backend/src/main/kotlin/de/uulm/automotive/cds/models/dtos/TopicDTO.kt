@@ -13,7 +13,6 @@ import org.modelmapper.ModelMapper
  *
  */
 data class TopicDTO(
-        var binding: String = "",
         var title: String = "",
         var tags: MutableList<String> = arrayListOf(),
         var description: String = ""
@@ -51,10 +50,6 @@ data class TopicDTO(
     override fun getErrors(): TopicBadRequestInfo? {
         var errors: TopicBadRequestInfo? = null
 
-        if (binding.isBlank()) {
-            errors = errors ?: TopicBadRequestInfo()
-            errors.bindingError = "Binding can not be blank."
-        }
 
         if (title.isBlank()) {
             errors = errors ?: TopicBadRequestInfo()

@@ -2,6 +2,7 @@ package de.uulm.automotive.cds.controller
 
 import de.uulm.automotive.cds.entities.Topic
 import de.uulm.automotive.cds.models.dtos.TopicDTO
+import de.uulm.automotive.cds.models.dtos.TopicDisableDTO
 import de.uulm.automotive.cds.models.dtos.TopicUpdateDTO
 import de.uulm.automotive.cds.models.errors.TopicBadRequestInfo
 import de.uulm.automotive.cds.repositories.TopicRepository
@@ -9,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.util.*
+import org.springframework.web.server.ResponseStatusException
 
 @CrossOrigin("*")
 @RestController
@@ -25,8 +26,10 @@ class TopicController @Autowired constructor(private val topicRepository: TopicR
      * @return List of Topic elements stored via jpa
      */
     @GetMapping
-    fun getTopics(): Iterable<Topic> {
-        return topicRepository.findAll()
+    fun getTopics(@RequestParam showDisabledTopics: Boolean = false): Iterable<Topic> {
+        if (showDisabledTopics)
+            return topicRepository.findAllByOrderByTitleAscIdAsc()
+        return topicRepository.findAllByDisabledOrderByTitleAscIdAsc(false)
     }
 
     /**
@@ -42,12 +45,12 @@ class TopicController @Autowired constructor(private val topicRepository: TopicR
         if (errors != null) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errors)
         }
-        if (topicRepository.findByBinding(topicDto.binding) != null) {
+        if (topicRepository.findByTitle(topicDto.title) != null) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
-                    .body(TopicBadRequestInfo(bindingError = "Binding ist bereits vorhanden."))
+                    .body(TopicBadRequestInfo(titleError = "Topic title has to be unique."))
         }
 
-        topicRepository.save(topicDto.toEntity())
+        topicRepository.save(topicDto.toEntity().apply { binding = "binding/${title}"})
         return ResponseEntity.status(HttpStatus.OK).build()
     }
 
@@ -64,7 +67,7 @@ class TopicController @Autowired constructor(private val topicRepository: TopicR
 
         val topic: Topic? = topicRepository.findById(topicId).orElse(null)
         topic?.let {
-            if(topic.isDeleted){
+            if(topic.disabled){
                 resp = ResponseEntity(HttpStatus.LOCKED)
             } else {
                 it.description = topicUpdateDto.description
@@ -73,5 +76,18 @@ class TopicController @Autowired constructor(private val topicRepository: TopicR
         }
 
         return resp
+    }
+
+    @PutMapping("/{id}")
+    fun putPropertyEnable(@PathVariable id: Long, @RequestBody topicDisableDto: TopicDisableDTO) {
+        val topic = topicRepository.findById(id)
+
+        if (topic.isEmpty)
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find property with id $id.")
+
+        topic.ifPresent {
+            it.disabled = topicDisableDto.disabled
+            topicRepository.save(it)
+        }
     }
 }

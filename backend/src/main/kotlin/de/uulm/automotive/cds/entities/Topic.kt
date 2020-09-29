@@ -15,11 +15,12 @@ class Topic : de.uulm.automotive.cds.models.Entity() {
 
     @Column(unique = true)
     var binding: String = ""
+    @Column(unique = true)
     var title: String = ""
 
     @ElementCollection
     var tags: MutableList<String> = ArrayList()
     var description: String = ""
 
-    var isDeleted: Boolean = false
+    var disabled: Boolean = false
 }
