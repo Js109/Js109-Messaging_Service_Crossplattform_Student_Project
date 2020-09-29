@@ -1,5 +1,6 @@
 package de.uulm.automotiveuulmapp.messageFragment
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.test.espresso.Espresso.onView
@@ -32,7 +33,7 @@ class MessageFragmentTest {
         @BeforeClass
         @JvmStatic
         fun setupMessageDao(){
-            var mockMessageDao = mockk<MessageDao>()
+            val mockMessageDao = mockk<MessageDao>()
 
             mockkObject(MessageDatabase)
             every { MessageDatabase.getDaoInstance(any()) } returns mockMessageDao
@@ -92,6 +93,8 @@ class MessageFragmentTest {
         onView(withText("Title 2")).check(matches(hasSibling(withId(R.id.message_content_text))))
     }
 
+    // might require to disable Window animation scale, Transition animation scale, Animation duration scale in
+    // Android developer options to be disabled
     @Test
     fun dialogDisplayed(){
         onView(withText("Do you really want to delete this message?")).check(doesNotExist())
@@ -114,10 +117,5 @@ class MessageFragmentTest {
         onView((withText("Testtitle"))).check(doesNotExist())
         onView((withText("Title 2"))).check(matches(isDisplayed()))
         onView(withText("Do you really want to delete this message?")).check(doesNotExist())
-    }
-
-    @Test
-    fun hintDisplayedOnFirstRun(){
-
     }
 }

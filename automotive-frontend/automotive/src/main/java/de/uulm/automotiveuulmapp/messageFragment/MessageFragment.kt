@@ -64,12 +64,15 @@ class MessageFragment : BaseFragment() {
         )
         // binding "swipe handler" to recyclerview
         itemTouchHelper.attachToRecyclerView(recyclerView)
+        return view
+    }
 
+    override fun onStart() {
         // check if the hint overlay should be displayed
         if(checkHintRequirement()){
             this.startActivity(Intent(context, MessageDeletionHelper::class.java))
         }
-        return view
+        super.onStart()
     }
 
     /**
@@ -80,10 +83,10 @@ class MessageFragment : BaseFragment() {
      * @return If hint is required
      */
     private fun checkHintRequirement(): Boolean{
-        var hintRequired: Boolean = false
-        val showMessageDeletionHint = sharedPreferences!!.getBoolean("showMessageDeletionHint", false)
+        var hintRequired = false
+        val showMessageDeletionHint = sharedPreferences.getBoolean("showMessageDeletionHint", false)
         if(sharedPreferences != null && showMessageDeletionHint){
-            with(sharedPreferences!!.edit()){
+            with(sharedPreferences.edit()){
                 putBoolean("showMessageDeletionHint", false)
                 hintRequired = true
                 commit()
