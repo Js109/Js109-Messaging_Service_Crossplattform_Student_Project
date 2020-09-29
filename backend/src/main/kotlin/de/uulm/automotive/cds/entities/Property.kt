@@ -14,10 +14,12 @@ class Property : de.uulm.automotive.cds.models.Entity() {
     @Id
     @GeneratedValue
     var id: Long? = null
+
+    @Column(unique = true)
     var name: String = ""
 
     @Column(unique = true)
     var binding: String = ""
 
-    var isDeleted: Boolean = false
+    var disabled: Boolean = false
 }

@@ -11,8 +11,8 @@ internal class PropertyDTOTest {
     init {
         property.id = 1
         property.name = "test name"
-        property.binding = "test binding"
-        property.isDeleted = false
+        property.binding = ""
+        property.disabled = false
     }
 
     private fun getPropertyEntity(): Property {
@@ -20,12 +20,10 @@ internal class PropertyDTOTest {
     }
 
     private fun getPropertyDTO(
-            updatedName: String? = null,
-            updatedBinding: String? = null
+            updatedName: String? = null
     ): PropertyDTO {
         return PropertyDTO(
-                updatedName ?: property.name,
-                updatedBinding ?: property.binding
+                updatedName ?: property.name
         )
     }
 
@@ -37,7 +35,7 @@ internal class PropertyDTOTest {
         assertEquals(result.name, expected.name)
         assertEquals(result.binding, expected.binding)
 
-        assertFalse(result.isDeleted)
+        assertFalse(result.disabled)
         assertNull(result.id)
     }
 
@@ -47,7 +45,6 @@ internal class PropertyDTOTest {
         val result = PropertyDTO.toDTO(getPropertyEntity())
 
         assertEquals(result.name, expected.name)
-        assertEquals(result.binding, expected.binding)
     }
 
     @Test
@@ -66,25 +63,6 @@ internal class PropertyDTOTest {
             assertTrue(errors.nameError!!.isNotBlank())
 
             assertNull(errors.bindingError)
-        }
-    }
-
-    @Test
-    fun `empty or blank binding results in Error`() {
-        val dtos = listOf(
-                getPropertyDTO(updatedBinding = ""),
-                getPropertyDTO(updatedBinding = "     ")
-        )
-
-        dtos.forEach {
-            val errors = it.getErrors()
-
-            assertNotNull(errors)
-
-            assertNotNull(errors!!.bindingError)
-            assertTrue(errors.bindingError!!.isNotBlank())
-
-            assertNull(errors.nameError)
         }
     }
 

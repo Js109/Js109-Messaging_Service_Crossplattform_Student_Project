@@ -186,6 +186,26 @@ paths:
         "422":
           description: "Unprocessable Entity"
 
+  /property/{id}:
+    parameters: 
+      - name: id
+        in: path
+        required: true
+        type: number
+    put:
+      tags:
+        - "Administration - OEM-Web Frontend"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Property to be stored"
+        required: true
+        schema:
+          $ref: "#/definitions/PropertyEnableDTO"
+      responses:
+        "200":
+          description: "Successful Operation"
+
   /template:
     post:
       tags:
@@ -312,6 +332,12 @@ definitions:
       binding:
         type: "string"
         example: "device/audi/a3"
+  
+  PropertyEnableDTO:
+    type: "object"
+    properties:
+      isEnabled:
+        type: "boolean"
 
   Message:
     type: "object"

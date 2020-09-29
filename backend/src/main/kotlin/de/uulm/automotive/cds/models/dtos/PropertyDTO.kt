@@ -13,8 +13,7 @@ import org.modelmapper.ModelMapper
  *
  */
 data class PropertyDTO(
-        var name: String = "",
-        var binding: String = ""
+        var name: String = ""
 ) : DTO, ValidateDTO {
     companion object : DTOCompanion {
         override val mapper: ModelMapper = ModelMapper()
@@ -50,13 +49,8 @@ data class PropertyDTO(
         var errors: PropertyBadRequestInfo? = null
 
         if (name.isBlank()) {
-            errors = errors ?: PropertyBadRequestInfo()
+            errors = PropertyBadRequestInfo()
             errors.nameError = "Name can not be blank."
-        }
-
-        if (binding.isBlank()) {
-            errors = errors ?: PropertyBadRequestInfo()
-            errors.bindingError = "Binding can not be blank."
         }
 
         return errors

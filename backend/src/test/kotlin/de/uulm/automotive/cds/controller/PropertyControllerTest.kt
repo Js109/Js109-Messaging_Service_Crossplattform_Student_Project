@@ -25,10 +25,8 @@ internal class PropertyControllerTest(@Autowired val mockMvc: MockMvc): BaseCont
 
     init {
         property.name = "test property"
-        property.binding = "test binding"
 
         property2.name = "test property 2"
-        property2.binding = "test binding 2"
 
     }
 
@@ -42,7 +40,7 @@ internal class PropertyControllerTest(@Autowired val mockMvc: MockMvc): BaseCont
 
     @Test
     fun `get all properties`() {
-        every { propertyRepository.findAll() } returns listOf(property.toEntity(), property2.toEntity())
+        every { propertyRepository.findAllByOrderByNameAscIdAsc() } returns listOf(property.toEntity(), property2.toEntity())
 
         mockMvc.get("/property") {
             accept(MediaType.APPLICATION_JSON)
@@ -50,16 +48,14 @@ internal class PropertyControllerTest(@Autowired val mockMvc: MockMvc): BaseCont
             status { isOk }
             content { contentType(MediaType.APPLICATION_JSON) }
             content { jsonPath("\$.[0].name").value(property.name) }
-            content { jsonPath("\$.[0].binding").value(property.binding) }
             content { jsonPath("\$.[1].name").value(property2.name) }
-            content { jsonPath("\$.[1].binding").value(property2.binding) }
         }
     }
 
     @Test
     fun `save Property`() {
         every { propertyRepository.save(any<Property>()) } returns property.toEntity()
-        every { propertyRepository.findByBinding(any()) } returns null
+        every { propertyRepository.findByName(any()) } returns null
 
         mockMvc.post("/property") {
             accept = MediaType.APPLICATION_JSON
@@ -74,8 +70,8 @@ internal class PropertyControllerTest(@Autowired val mockMvc: MockMvc): BaseCont
     }
 
     @Test
-    fun `save Property with already existing Binding returns Bad Request with BadRequestInfo object in body`() {
-        every { propertyRepository.findByBinding(any()) } returns property.toEntity()
+    fun `save Property with already existing name returns Bad Request with BadRequestInfo object in body`() {
+        every { propertyRepository.findByName(any()) } returns property.toEntity()
 
         mockMvc.post("/property") {
             accept = MediaType.APPLICATION_JSON
@@ -96,8 +92,7 @@ internal class PropertyControllerTest(@Autowired val mockMvc: MockMvc): BaseCont
     @Test
     fun `save invalid DTO returns Bad Request with BadRequestInfo object in body`() {
         val invalidDto = PropertyDTO(
-                "",
-                "   "
+                ""
         )
 
         mockMvc.post("/property") {
@@ -110,8 +105,6 @@ internal class PropertyControllerTest(@Autowired val mockMvc: MockMvc): BaseCont
             content { contentType(MediaType.APPLICATION_JSON) }
             content { jsonPath("nameError").exists() }
             content { jsonPath("nameError").isNotEmpty }
-            content { jsonPath("bindingError").exists() }
-            content { jsonPath("bindingError").isNotEmpty }
         }
 
         verify(exactly = 0) { propertyRepository.save(any<Property>()) }
