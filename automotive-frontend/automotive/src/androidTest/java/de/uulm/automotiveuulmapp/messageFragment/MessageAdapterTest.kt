@@ -1,11 +1,16 @@
 package de.uulm.automotiveuulmapp.messageFragment
 
 import android.widget.SearchView
+import androidx.lifecycle.LiveData
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.rule.ActivityTestRule
+import android.util.Log
+import androidx.lifecycle.Observer
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import de.uulm.automotiveuulmapp.MessageAdapterTestActivity
@@ -26,12 +31,17 @@ class MessageAdapterTest {
 
     @Before
     fun setupRecyclerView() {
-        whenever(mockMessageDao.getAll()).thenReturn(
-            listOf(
-                MessageEntity(1, "Test", "Testtitle", "Message text", null, null, false),
-                MessageEntity(2, "Sender", "Title 2", "Content text", null, null, true)
+        val mockLiveData =  mock<LiveData<List<MessageEntity>>>()
+        whenever(mockLiveData.observeForever(any())).doAnswer { invocation ->
+            Log.d("Test", invocation.arguments.toString())
+            (invocation.arguments[0] as Observer<in List<MessageEntity>>).onChanged(
+                listOf(
+                    MessageEntity(1, "Test", "Testtitle", "Message text", null, null, false),
+                    MessageEntity(2, "Sender", "Title 2", "Content text", null, null, true)
+                )
             )
-        )
+        }
+        whenever(mockMessageDao.getLiveData()).thenReturn(mockLiveData)
         messageAdapter = MessageAdapter(
             activityRule.activity?.searchView
                 ?: SearchView(activityRule.activity.applicationContext),
@@ -40,6 +50,7 @@ class MessageAdapterTest {
         )
         activityRule.runOnUiThread {
             activityRule.activity.recyclerView?.adapter = messageAdapter
+            messageAdapter?.notifyQueryChanged()
         }
         // needs to wait for RecyclerView to build layout
         Thread.sleep(100L)
