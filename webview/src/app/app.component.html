@@ -1,19 +1,17 @@
-<head>
-</head>
-<div class="elektrobit-grey-background text-right" style="display:flex; padding-left:10px; padding-top:10px; margin-bottom: 0px;">
+<div class="elektrobit-grey-background text-right" style="display:flex; padding-left:10px; padding-top:10px; margin-bottom: 0;">
   <img src="../assets/images/EB_Logo_ohneSchrift.PNG" style="margin-right:10px" height="30" width="30" alt="Responsive image"/>
   <h1 class="white xxfont">Elektrobit OEM Messaging Service</h1>
 </div>
 
 <mat-toolbar class="elektrobit-grey-background" style="height:32px; padding-bottom: 10px">
-  <span style="color: white">Elektrobit</span>
+  <span style="color: white; cursor: pointer">Elektrobit</span>
   <div class="spacer"></div>
-  <a routerLink="/message">Message</a>
+  <mat-list-item class="eb-followed-hyperlink" style="cursor: pointer" routerLink="/message" [routerLinkActive]="['is-active']">Message</mat-list-item>
   <div class="spacer"></div>
-  <a routerLink="/message_history">Message History</a>
+  <mat-list-item class="eb-followed-hyperlink" style="cursor: pointer" routerLink="/message_history" [routerLinkActive]="['is-active']">Message History</mat-list-item>
   <div class="spacer"></div>
-  <a routerLink="/property">Property</a>
+  <mat-list-item class="eb-followed-hyperlink" style="cursor: pointer" routerLink="/property" [routerLinkActive]="['is-active']">Property</mat-list-item>
   <div class="spacer"></div>
-  <a routerLink="/topic">Topic</a>
+  <mat-list-item class="eb-followed-hyperlink" style="cursor: pointer" routerLink="/topic" [routerLinkActive]="['is-active']">Topic</mat-list-item>
 </mat-toolbar>
 <router-outlet></router-outlet>

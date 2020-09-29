@@ -16,3 +16,51 @@
 .xxfont {
   font-size: xx-large;
 }
+
+.eb-hyperlink-blue {
+  color: #003366
+}
+
+.eb-followed-hyperlink{
+  color: #3399ff
+}
+
+.eb-grey {
+  color: #3F3F3F
+}
+
+.eb-white {
+  color: white
+}
+
+.eb-black {
+  color: #000000;
+}
+
+.eb-mid-grey {
+  color: #646464
+}
+
+.eb-green {
+  color: #00eb00
+}
+
+.eb-light-grey {
+  color: #c8c8c8
+}
+
+.eb-mid-green {
+  color: #00c400
+}
+
+.eb-grey-grey {
+  color: #808080
+}
+
+.eb-dark-green {
+  color: #339933
+}
+
+.is-active {
+  background-color: #646464;
+}
