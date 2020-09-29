@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { TopicComponent } from './topic.component';
 import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {MatDialogModule} from '@angular/material/dialog';
 
 describe('TopicComponent', () => {
   let component: TopicComponent;
@@ -9,7 +10,7 @@ describe('TopicComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ TopicComponent ],
-      imports: [HttpClientTestingModule]
+      imports: [HttpClientTestingModule, MatDialogModule]
     })
     .compileComponents();
   }));
