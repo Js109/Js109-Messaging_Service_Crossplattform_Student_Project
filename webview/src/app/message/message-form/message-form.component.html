@@ -105,7 +105,7 @@
          size="10" maxlength="10" [(ngModel)]="expirationOffset" [disabled]="expirationOffsetType == null">
 </div>
 
-<mat-tab-group mat-stretch-tabs>
+<mat-tab-group mat-stretch-tabs (selectedTabChange)="topicPropertySwitch($event)">
   <mat-tab label="Topics">
     <select
       class="browser-default custom-select"

@@ -6,6 +6,7 @@ import {HttpClient} from '@angular/common/http';
 import {Message} from '../../models/Message';
 import {LocationData} from '../../models/LocationData';
 import {fontFamilyToFontString} from '../../models/FontFamily';
+import {MatTabChangeEvent} from '@angular/material/tabs';
 
 enum OffsetType {
   Minute, Hour, Day, Week
@@ -23,6 +24,8 @@ export class MessageFormComponent implements OnInit {
   topics: Topic[];
 
   properties: [Property, boolean][] = [];
+
+  removedTopic: string;
 
   messageValue: Message = {
     isSent: false,
@@ -211,6 +214,18 @@ export class MessageFormComponent implements OnInit {
       this.message.endtime = new Date(endTimeInMillis).toISOString();
     } else{
       this.message.endtime = null;
+    }
+  }
+
+  topicPropertySwitch($event: MatTabChangeEvent): void {
+    if ($event.index === 0) {
+      this.message.properties = [];
+      this.message.topic = this.removedTopic;
+    }
+    if ($event.index === 1) {
+      this.removedTopic = this.message.topic;
+      this.message.topic = null;
+      this.propertiesSelect();
     }
   }
 }
