@@ -21,6 +21,7 @@ import { MessageHistoryComponent } from './message-history/message-history.compo
 import { ColorPickerModule} from 'ngx-color-picker';
 import {MatTabsModule} from '@angular/material/tabs';
 import { MessageFormComponent } from './message/message-form/message-form.component';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [
@@ -34,21 +35,22 @@ import { MessageFormComponent } from './message/message-form/message-form.compon
     SaveTemplateDialogComponent,
     MessageFormComponent
   ],
-    imports: [
-        BrowserModule,
-        HttpClientModule,
-        FormsModule,
-        AppRoutingModule,
-        RouterModule,
-        BrowserAnimationsModule,
-        MatListModule,
-        MatSidenavModule,
-        MatDialogModule,
-        MatButtonModule,
-        MatToolbarModule,
-        ColorPickerModule,
-        MatTabsModule
-    ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    FormsModule,
+    AppRoutingModule,
+    RouterModule,
+    BrowserAnimationsModule,
+    MatListModule,
+    MatSidenavModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatToolbarModule,
+    ColorPickerModule,
+    MatTabsModule,
+    MatSlideToggleModule
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })
