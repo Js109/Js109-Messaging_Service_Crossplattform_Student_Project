@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, HostBinding, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Topic} from '../models/Topic';
 import {environment} from '../../environments/environment';
@@ -9,12 +9,10 @@ import {TopicDescriptionDialogComponent} from './topic-description-dialog/topic-
   selector: 'app-topic',
   templateUrl: './topic.component.html',
   styleUrls: ['./topic.component.css'],
-  // tslint:disable-next-line:no-host-metadata-property
-  host: {
-    class: 'flex-grow-1'
-  }
 })
 export class TopicComponent implements OnInit {
+
+  @HostBinding('class') class = 'flex-grow-1';
 
   constructor(private http: HttpClient, private dialog: MatDialog) { }
 
