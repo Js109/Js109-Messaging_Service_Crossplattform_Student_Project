@@ -7,6 +7,16 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+.no-right-rounding {
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.no-left-rounding {
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}
+
 .elektrobit-green-background {
   background-color: #00EB00;
 }

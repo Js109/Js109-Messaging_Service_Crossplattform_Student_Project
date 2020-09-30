@@ -2,11 +2,13 @@ package de.uulm.automotive.cds.controller
 
 import de.uulm.automotive.cds.entities.Property
 import de.uulm.automotive.cds.models.dtos.PropertyDTO
+import de.uulm.automotive.cds.models.dtos.PropertyDisableDTO
 import de.uulm.automotive.cds.models.errors.PropertyBadRequestInfo
 import de.uulm.automotive.cds.repositories.PropertyRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 
 @CrossOrigin("*")
 @RestController
@@ -23,8 +25,10 @@ class PropertyController(val propertyRepository: PropertyRepository) {
      * @return
      */
     @GetMapping
-    fun getProperties(): Iterable<Property> {
-        return propertyRepository.findAll()
+    fun getProperties(@RequestParam showDisabledProperties: Boolean = false): Iterable<Property> {
+        if (showDisabledProperties)
+            return propertyRepository.findAllByOrderByNameAscIdAsc()
+        return propertyRepository.findAllByDisabledOrderByNameAscIdAsc(false)
     }
 
     /**
@@ -41,12 +45,28 @@ class PropertyController(val propertyRepository: PropertyRepository) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errors)
         }
 
-        if (propertyRepository.findByBinding(propertyDto.binding) != null) {
+        if (propertyRepository.findByName(propertyDto.name) != null) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
-                    .body(PropertyBadRequestInfo(bindingError = "Binding ist bereits vorhanden."))
+                    .body(PropertyBadRequestInfo(nameError = "Property name must be unique."))
         }
 
-        propertyRepository.save(propertyDto.toEntity())
+        val propertyEntity = propertyDto.toEntity()
+        propertyEntity.binding = "binding/${propertyEntity.name}"
+
+        propertyRepository.save(propertyEntity)
         return ResponseEntity.status(HttpStatus.OK).build()
+    }
+
+    @PutMapping("/{id}")
+    fun putPropertyEnable(@PathVariable id: Long, @RequestBody propertyDisableDto: PropertyDisableDTO) {
+        val property = propertyRepository.findById(id)
+
+        if (property.isEmpty)
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find property with id $id.")
+
+        property.ifPresent {
+            it.disabled = propertyDisableDto.disabled
+            propertyRepository.save(it)
+        }
     }
 }
