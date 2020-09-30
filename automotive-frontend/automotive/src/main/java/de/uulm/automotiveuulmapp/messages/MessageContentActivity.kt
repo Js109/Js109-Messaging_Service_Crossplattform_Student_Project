@@ -102,17 +102,27 @@ class MessageContentActivity : AppCompatActivity() {
                 null
             }
 
+        // Only change the font and background colors if both are set.
+        // This check is necessary in case the user only sets one color, and the combination of the
+        // set color of (font or background) with the default color of (font or background) result
+        // in unreadable or badly readable text.
         if (backgroundColor != null && fontColor != null) {
             titleView?.let {
                 it.rootView?.setBackgroundColor(backgroundColor)
-                it.typeface = ResourcesCompat.getFont(this.applicationContext, getFont(message.fontFamily))
                 it.setTextColor(fontColor)
             }
 
             messageContentView?.let {
                 it.setTextColor(fontColor)
-                it.typeface = ResourcesCompat.getFont(this.applicationContext, getFont(message.fontFamily))
             }
+        }
+
+        titleView?.let {
+            it.typeface = ResourcesCompat.getFont(this.applicationContext, getFont(message.fontFamily))
+        }
+
+        messageContentView?.let {
+            it.typeface = ResourcesCompat.getFont(this.applicationContext, getFont(message.fontFamily))
         }
 
         initializeCloseButton()
