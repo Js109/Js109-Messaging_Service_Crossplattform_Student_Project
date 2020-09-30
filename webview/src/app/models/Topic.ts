@@ -4,4 +4,5 @@ export interface Topic {
   title: string;
   tags: string[];
   description: string;
+  disabled?: boolean;
 }

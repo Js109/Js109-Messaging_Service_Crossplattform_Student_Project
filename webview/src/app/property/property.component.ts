@@ -7,12 +7,10 @@ import {Property} from '../models/Property';
   selector: 'app-property',
   templateUrl: './property.component.html',
   styleUrls: ['./property.component.css'],
-  // tslint:disable-next-line:no-host-metadata-property
-  host: {
-    class: 'flex-grow-1'
-  }
 })
 export class PropertyComponent implements OnInit {
+
+  @HostBinding('class') class = 'flex-grow-1';
 
   constructor(private http: HttpClient) { }
 

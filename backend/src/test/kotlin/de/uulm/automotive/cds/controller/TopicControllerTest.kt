@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.patch
 import org.springframework.test.web.servlet.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import java.util.*
 
@@ -26,19 +25,17 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) : BaseContro
 
     init {
         topic.title = "test title"
-        topic.binding = "test binding"
         topic.description = "test description"
         topic.tags = arrayListOf("test tag 1", "test tag 2")
 
         topic2.title = "test title 2"
-        topic2.binding = "test binding 2"
         topic2.description = "test description 2"
         topic2.tags = arrayListOf("test tag 3", "test tag 2")
     }
 
     @Test
     fun `get all Topics`() {
-        every { topicRepository.findAll() } returns listOf(topic.toEntity(), topic2.toEntity())
+        every { topicRepository.findAllByDisabledOrderByTitleAscIdAsc(false) } returns listOf(topic.toEntity(), topic2.toEntity())
 
         mockMvc.get("/topic") {
             accept(MediaType.APPLICATION_JSON)
@@ -46,11 +43,11 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) : BaseContro
             status { isOk }
             content { contentType(MediaType.APPLICATION_JSON) }
             content { jsonPath("\$.[0].title").value(topic.title) }
-            content { jsonPath("\$.[0].binding").value(topic.binding) }
+            content { jsonPath("\$.[0].binding").value("") }
             content { jsonPath("\$.[0].description").value(topic.description) }
             content { jsonPath("\$.[0].tags").value(topic.tags) }
             content { jsonPath("\$.[1].title").value(topic2.title) }
-            content { jsonPath("\$.[1].binding").value(topic2.binding) }
+            content { jsonPath("\$.[1].binding").value("") }
             content { jsonPath("\$.[1].description").value(topic2.description) }
             content { jsonPath("\$.[1].tags").value(topic2.tags) }
         }
@@ -59,7 +56,7 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) : BaseContro
     @Test
     fun `save Topic`() {
         every { topicRepository.save(any<Topic>()) } returns topic.toEntity()
-        every { topicRepository.findByBinding(any()) } returns null
+        every { topicRepository.findByTitle(any()) } returns null
 
         mockMvc.post("/topic") {
             accept = MediaType.APPLICATION_JSON
@@ -74,8 +71,8 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) : BaseContro
     }
 
     @Test
-    fun `save Topic with already existing Binding returns Bad Request with BadRequestInfo object in body`() {
-        every { topicRepository.findByBinding(any()) } returns topic.toEntity()
+    fun `save Topic with already existing name returns Bad Request with BadRequestInfo object in body`() {
+        every { topicRepository.findByTitle(any()) } returns topic.toEntity()
 
         mockMvc.post("/topic") {
             accept = MediaType.APPLICATION_JSON
@@ -85,9 +82,9 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) : BaseContro
         }.andExpect {
             status { isUnprocessableEntity }
             content { contentType(MediaType.APPLICATION_JSON) }
-            content { jsonPath("bindingError").exists() }
-            content { jsonPath("bindingError").isNotEmpty }
-            content { jsonPath("titleError").doesNotExist() }
+            content { jsonPath("titleError").exists() }
+            content { jsonPath("titleError").isNotEmpty }
+            content { jsonPath("tagError").doesNotExist() }
             content { jsonPath("descriptionError").doesNotExist() }
         }
 
@@ -97,7 +94,6 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) : BaseContro
     @Test
     fun `save invalid DTO returns Bad Request with BadRequestInfo object in body`() {
         val invalidDto = TopicDTO(
-                "",
                 "",
                 arrayListOf(),
                 "    "
@@ -111,8 +107,6 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) : BaseContro
         }.andExpect {
             status { isUnprocessableEntity }
             content { contentType(MediaType.APPLICATION_JSON) }
-            content { jsonPath("bindingError").exists() }
-            content { jsonPath("bindingError").isNotEmpty }
             content { jsonPath("titleError").exists() }
             content { jsonPath("titleError").isNotEmpty }
             content { jsonPath("descriptionError").exists() }
@@ -141,7 +135,7 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) : BaseContro
             status { isOk }
             content { contentType(MediaType.APPLICATION_JSON) }
             content { jsonPath("title").value(topic.title) }
-            content { jsonPath("binding").value(topic.binding) }
+            content { jsonPath("binding").value("") }
             content { jsonPath("tags").value(topic.tags) }
             content { jsonPath("description").value(descriptionUpdateString) }
         }
@@ -173,7 +167,7 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) : BaseContro
         val descriptionUpdateString = "New description"
         val topicUpdateDTO = TopicUpdateDTO(descriptionUpdateString)
         val deletedTopicEntity = topic.toEntity()
-        deletedTopicEntity.isDeleted = true
+        deletedTopicEntity.disabled = true
 
         every { topicRepository.findById(1) } returns Optional.of(deletedTopicEntity)
 

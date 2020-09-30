@@ -1,0 +1,10 @@
+<div class="h-100 d-flex flex-column">
+  <h2 mat-dialog-title>Edit Topic {{topicName}}</h2>
+  <mat-dialog-content class="flex-grow-1 d-flex flex-column">
+    <textarea class="form-control mt-2 message-content flex-grow-1" style="resize:none" placeholder="Content"
+              [(ngModel)]="topicDescription"></textarea>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button [mat-dialog-close]="topicDescription">Ok</button>
+  </mat-dialog-actions>
+</div>

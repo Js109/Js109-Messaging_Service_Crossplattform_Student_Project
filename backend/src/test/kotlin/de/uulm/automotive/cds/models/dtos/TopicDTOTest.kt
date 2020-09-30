@@ -11,7 +11,7 @@ internal class TopicDTOTest {
     init {
         topic.id = 1
         topic.title = "test title"
-        topic.binding = "test binding"
+        topic.binding = ""
         topic.tags = arrayListOf<String>("test tag 1", "test tag 2")
         topic.description = "test description"
     }
@@ -21,13 +21,11 @@ internal class TopicDTOTest {
     }
 
     private fun getTopicDTO(
-            updatedBinding: String? = null,
             updatedTitle: String? = null,
             updatedTags: MutableList<String>? = null,
             updatedDescription: String? = null
     ): TopicDTO {
         return TopicDTO(
-                updatedBinding ?: topic.binding,
                 updatedTitle ?: topic.title,
                 updatedTags ?: topic.tags,
                 updatedDescription ?: topic.description
@@ -44,7 +42,7 @@ internal class TopicDTOTest {
         assertEquals(result.tags, expected.tags)
         assertEquals(result.description, expected.description)
 
-        assertFalse(result.isDeleted)
+        assertFalse(result.disabled)
         assertNull(result.id)
     }
 
@@ -53,29 +51,9 @@ internal class TopicDTOTest {
         val expected = getTopicDTO()
         val result = TopicDTO.toDTO(getTopicEntity())
 
-        assertEquals(result.binding, expected.binding)
         assertEquals(result.title, expected.title)
         assertEquals(result.tags, expected.tags)
         assertEquals(result.description, expected.description)
-    }
-
-    @Test
-    fun `empty or blank binding results in Error`() {
-        val dtos = listOf(
-                getTopicDTO(updatedBinding = ""),
-                getTopicDTO(updatedBinding = "      ")
-        )
-        dtos.forEach {
-            val errors = it.getErrors()
-
-            assertNotNull(errors)
-
-            assertNotNull(errors!!.bindingError)
-            assertTrue(errors.bindingError!!.isNotBlank())
-
-            assertNull(errors.descriptionError)
-            assertNull(errors.titleError)
-        }
     }
 
     @Test
@@ -93,7 +71,6 @@ internal class TopicDTOTest {
             assertTrue(errors.titleError!!.isNotBlank())
 
             assertNull(errors.descriptionError)
-            assertNull(errors.bindingError)
         }
     }
 
@@ -111,7 +88,6 @@ internal class TopicDTOTest {
             assertNotNull(errors!!.descriptionError)
             assertTrue(errors.descriptionError!!.isNotBlank())
 
-            assertNull(errors.bindingError)
             assertNull(errors.titleError)
         }
     }

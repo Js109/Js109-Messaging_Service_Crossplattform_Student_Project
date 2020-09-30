@@ -22,6 +22,7 @@ import { ColorPickerModule} from 'ngx-color-picker';
 import {MatTabsModule} from '@angular/material/tabs';
 import { MessageFormComponent } from './message/message-form/message-form.component';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { TopicDescriptionDialogComponent } from './topic/topic-description-dialog/topic-description-dialog.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
     SaveTemplateDialogComponent,
     MessageHistoryComponent,
     SaveTemplateDialogComponent,
-    MessageFormComponent
+    MessageFormComponent,
+    TopicDescriptionDialogComponent
   ],
   imports: [
     BrowserModule,
