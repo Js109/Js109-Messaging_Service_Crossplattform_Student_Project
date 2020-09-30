@@ -57,4 +57,12 @@
     -->
     <string name="hello_world">Hello Square World!</string>
 
+    <!-- Topic/S view strings -->
+    <string name="search_bar_hint">Filter</string>
+
+    <!-- Main activity strings -->
+    <string name="header_bar_message_view_title">Saved Messages</string>
+    <string name="header_bar_location_favourites_title">Location Favourites</string>
+    <string name="header_bar_subscription_title">Topic Subscriptions</string>
+
 </resources>

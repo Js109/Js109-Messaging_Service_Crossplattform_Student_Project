@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
@@ -26,23 +27,29 @@ class MainActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
         val navBar = findViewById<BottomNavigationView>(R.id.bottomNavigationBar)
+        setHeadBar(R.string.header_bar_subscription_title)
         loadFragment(TopicFragment())
 
         navBar.setOnNavigationItemSelectedListener{item ->
+            var titleResourceId: Int? = null
             val fragment = when(item.itemId) {
                 R.id.nav_item_messages -> {
+                    titleResourceId = R.string.header_bar_message_view_title
                     MessageFragment()
                 }
                 R.id.nav_item_locations -> {
+                    titleResourceId = R.string.header_bar_location_favourites_title
                     LocationFavouritesFragment()
                 }
                 R.id.nav_item_subscriptions -> {
+                    titleResourceId = R.string.header_bar_subscription_title
                     TopicFragment()
                 }
                 else -> {
                     null
                 }
             }
+            setHeadBar(titleResourceId!!)
             loadFragment(fragment)
         }
 
@@ -68,6 +75,10 @@ class MainActivity : AppCompatActivity(){
                 REQUEST_LOCATION_PERMISSIONS_CODE
             )
         }
+    }
+
+    private fun setHeadBar(title: Int) {
+        findViewById<Toolbar>(R.id.header_bar).setTitle(title)
     }
 
     private fun loadFragment(fragment: Fragment?): Boolean {
