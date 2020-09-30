@@ -9,14 +9,17 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.res.ResourcesCompat
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
 import de.uulm.automotive.cds.entities.MessageSerializable
+import de.uulm.automotive.cds.models.getFont
 import de.uulm.automotiveuulmapp.R
-import de.uulm.automotiveuulmapp.MainActivity
 import de.uulm.automotiveuulmapp.messages.messagedb.MessageDatabase
+import java.lang.IllegalArgumentException
+import java.lang.NullPointerException
 import java.net.URL
 
 class MessageContentActivity : AppCompatActivity() {
@@ -63,8 +66,9 @@ class MessageContentActivity : AppCompatActivity() {
                                 me.links,
                                 null,
                                 null,
-                                null,
-                                null
+                                me.fontColor,
+                                me.backgroundColor,
+                                me.fontFamily
                             )
                         )
                     }
@@ -81,12 +85,44 @@ class MessageContentActivity : AppCompatActivity() {
         messageContentView.text = message.messageText
         createImageView(message.attachment)
 
-        message.backgroundColor?.let {
-            titleView.rootView.setBackgroundColor(Color.parseColor(it))
+        val fontColor: Int? =
+            try {
+                Color.parseColor(message.fontColor)
+            } catch (e: IllegalArgumentException) {
+                null
+            } catch (e: NullPointerException) {
+                null
+            }
+        val backgroundColor: Int? =
+            try {
+                Color.parseColor(message.backgroundColor)
+            } catch (e: IllegalArgumentException) {
+                null
+            } catch (e: NullPointerException) {
+                null
+            }
+
+        // Only change the font and background colors if both are set.
+        // This check is necessary in case the user only sets one color, and the combination of the
+        // set color of (font or background) with the default color of (font or background) result
+        // in unreadable or badly readable text.
+        if (backgroundColor != null && fontColor != null) {
+            titleView?.let {
+                it.rootView?.setBackgroundColor(backgroundColor)
+                it.setTextColor(fontColor)
+            }
+
+            messageContentView?.let {
+                it.setTextColor(fontColor)
+            }
         }
-        message.fontColor?.let {
-            titleView.setTextColor(Color.parseColor(it))
-            messageContentView.setTextColor(Color.parseColor(it))
+
+        titleView?.let {
+            it.typeface = ResourcesCompat.getFont(this.applicationContext, getFont(message.fontFamily))
+        }
+
+        messageContentView?.let {
+            it.typeface = ResourcesCompat.getFont(this.applicationContext, getFont(message.fontFamily))
         }
 
         initializeCloseButton()

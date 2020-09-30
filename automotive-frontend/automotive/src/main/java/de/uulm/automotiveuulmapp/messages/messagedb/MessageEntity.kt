@@ -2,11 +2,12 @@ package de.uulm.automotiveuulmapp.messages.messagedb
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import de.uulm.automotive.cds.models.FontFamily
 import java.net.URL
 
 @Entity
 data class MessageEntity(
-    @PrimaryKey (autoGenerate = true)
+    @PrimaryKey(autoGenerate = true)
     val uid: Int?,
     val sender: String,
     val title: String,
@@ -14,7 +15,10 @@ data class MessageEntity(
     val attachment: ByteArray?,
     val links: Array<URL>?,
     var favourite: Boolean = false,
-    var read: Boolean = false
+    var read: Boolean = false,
+    val fontColor: String?,
+    val backgroundColor: String?,
+    val fontFamily: FontFamily?
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -34,7 +38,9 @@ data class MessageEntity(
             if (other.links == null) return false
             if (!links.contentEquals(other.links)) return false
         } else if (other.links != null) return false
-
+        if (fontColor != other.fontColor) return false
+        if (backgroundColor != other.backgroundColor) return false
+        if (fontFamily != other.fontFamily) return false
         return true
     }
 
@@ -45,6 +51,9 @@ data class MessageEntity(
         result = 31 * result + messageText.hashCode()
         result = 31 * result + (attachment?.contentHashCode() ?: 0)
         result = 31 * result + (links?.contentHashCode() ?: 0)
+        result = 31 * result + fontColor.hashCode()
+        result = 31 * result + backgroundColor.hashCode()
+        result = 31 * result + fontFamily.hashCode()
         return result
     }
 

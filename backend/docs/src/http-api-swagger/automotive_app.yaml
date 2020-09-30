@@ -58,6 +58,33 @@ paths:
         "422":
           description: "Unprocessable Entity"
 
+  /topic/{topicId}:
+    patch:
+      tags:
+        - "Administration - OEM-Web Frontend"
+      summary: "Allows update of topic description"
+      description: "Updates a topic description, if the topic exists and it is not disabled"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "topicId"
+          type: number
+          description: "Id of the topic to get updated"
+          required: true
+        - in: "body"
+          name: "TopicUpdateDTO"
+          description: "Object with the updated description String"
+          required: true
+          schema:
+            $ref: "#/definitions/TopicUpdateDTO"
+      responses:
+        200:
+          description: "Topic successfully updated"
+        404:
+          description: "Topic not found"
+        423:
+          description: "The topic has been deactivated and cannot be changed anymore".
   /signup:
     post:
       tags:
@@ -276,11 +303,18 @@ definitions:
         type: "string"
         example: "Hier werden alle kulturbezogenen Themen veröffentlicht."
 
+  TopicUpdateDTO:
+    type: "object"
+    properties:
+      description:
+        type: "string"
+        example: "Hier werden alle kulturbezogenen Themen veröffentlicht."
+
   SignUpInfo:
     type: "object"
     properties:
       deviceType:
-        type: string
+        type: "string"
         example: "Audi A3"
       signUpToken:
         type: string
