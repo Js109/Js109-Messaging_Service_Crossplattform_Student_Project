@@ -53,22 +53,6 @@ import { TopicDescriptionDialogComponent } from './topic/topic-description-dialo
     MatTabsModule,
     MatSlideToggleModule
   ],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    FormsModule,
-    AppRoutingModule,
-    RouterModule,
-    BrowserAnimationsModule,
-    MatListModule,
-    MatSidenavModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatToolbarModule,
-    ColorPickerModule,
-    MatTabsModule,
-    MatSlideToggleModule
-  ],
   providers: [],
   bootstrap: [AppComponent]
 })

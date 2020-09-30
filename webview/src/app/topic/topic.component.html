@@ -23,7 +23,7 @@
       </button>
       <div class="mb-4">
         <ng-container *ngFor="let _ of topic.tags; let i = index;trackBy:trackById">
-          <div class="input-group" style="display: flex">
+          <div class="input-group" style="display: flex; margin-top: 3px">
             <input name="tag" type="text" placeholder="tag" class="form-control"
                    [(ngModel)]="topic.tags[i]"/>
             <button class="btn btn-secondary" (click)="removeTag(i)">Remove Tag</button>
