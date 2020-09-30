@@ -6,15 +6,21 @@ import {HttpParams} from '@angular/common/http';
 import {Topic} from '../models/Topic';
 import {Property} from '../models/Property';
 import {MessageFilter} from '../models/MessageFilter';
+import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-message-history',
   templateUrl: './message-history.component.html',
+  // add NgbModalConfig and NgbModal to the component providers
+  providers: [NgbModalConfig, NgbModal],
   styleUrls: ['./message-history.component.css']
 })
 export class MessageHistoryComponent implements OnInit {
 
-  constructor(private http: HttpClient, private ngZone: NgZone) {
+  constructor(private http: HttpClient, private ngZone: NgZone, config: NgbModalConfig, private modalService: NgbModal) {
+    // customize default values of modals used by this component tree
+    config.backdrop = 'static';
+    config.keyboard = false;
   }
 
   messageFilter: MessageFilter = {
@@ -29,6 +35,7 @@ export class MessageHistoryComponent implements OnInit {
   messagesArray = [];
   hasDateRangeError = false;
   hasTopicPropertiesError = false;
+  chosenMessage;
 
   ngOnInit(): void {
     this.http.get(environment.backendApiPath + '/topic', {responseType: 'json'})
@@ -81,6 +88,11 @@ export class MessageHistoryComponent implements OnInit {
         });
       }
     );
+  }
+
+  open(content, message): void {
+    this.chosenMessage = message;
+    this.modalService.open(content);
   }
 
 }
