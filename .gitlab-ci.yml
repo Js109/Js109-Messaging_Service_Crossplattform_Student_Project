@@ -48,7 +48,7 @@ test-android:
   script:
     - ./gradlew -Pci --console=plain :automotive:testLocalbackendRelease
 
-test-android:lint:
+.test-android:lint:
   <<: *automotive-setup
   stage: test
   script:
@@ -94,21 +94,21 @@ build-webview:
   script:
     - ng build --prod
 
-test-webview:karma:
+.test-webview:karma:
   <<: *webview-setup
   stage: test
   allow_failure: false
   script:
     - ng test --progress false --watch false
 
-test-webview:e2e:
+.test-webview:e2e:
   <<: *webview-setup
   stage: test
   allow_failure: false
   script:
     - ng e2e
 
-test-webview:ngLint:
+.test-webview:ngLint:
   <<: *webview-setup
   stage: test
   script:
