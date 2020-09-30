@@ -1,10 +1,11 @@
 package de.uulm.automotiveuulmapp.topicFragment
 
 import android.content.SharedPreferences
-import com.nhaarman.mockitokotlin2.*
 import de.uulm.automotiveuulmapp.httpHandling.RestCallHelper
 import de.uulm.automotiveuulmapp.topic.Callback
 import de.uulm.automotiveuulmapp.topic.TopicModel
+import io.mockk.every
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
 import org.junit.Before
@@ -12,7 +13,7 @@ import org.junit.Test
 
 class TopicFetcherTest {
 
-    var mockRestCallHelper = mock<RestCallHelper>()
+    var mockRestCallHelper = mockk<RestCallHelper>()
 
     // json string that is returned for every call of callRestEndpoint of mockRestCallHelper
     val topicJsonResultString =
@@ -35,8 +36,8 @@ class TopicFetcherTest {
      */
     @Before
     fun setRestCallResult() {
-        whenever(mockRestCallHelper.callRestEndpoint(any(), any(), any(), anyOrNull())).then {
-            (it.arguments[2] as Callback).onSuccess(JSONObject(topicJsonResultString))
+        every { mockRestCallHelper.callRestEndpoint(any(), any(), any(), any()) } answers {
+            (it.invocation.args[2] as Callback).onSuccess(JSONObject(topicJsonResultString))
         }
     }
 
@@ -90,9 +91,9 @@ class TopicFetcherTest {
             )
         )
         // creates mock preferences to return true for the boolean of topic with id 2 and false for every other string
-        val preferences = mock<SharedPreferences>()
-        whenever(preferences.getBoolean(any(), any())).thenReturn(false)
-        whenever(preferences.getBoolean(eq("topic/2"), any())).thenReturn(true)
+        val preferences = mockk<SharedPreferences>()
+        every { preferences.getBoolean(any(), any()) } returns false
+        every { preferences.getBoolean(eq("topic/2"), any()) } returns true
         // creates a TopicFetcher with the mocked SharedPreferences so topic 2 should have subscribed true
         val loader = TopicFetcher(mockRestCallHelper, preferences)
         val loadedTopics = loader.getTopics()

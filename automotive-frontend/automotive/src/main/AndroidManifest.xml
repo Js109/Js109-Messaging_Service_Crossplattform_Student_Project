@@ -20,6 +20,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".MessageFragmentTestActivity"></activity>
+        <activity
+            android:name=".messageFragment.MessageDeletionHelper"
+            android:theme="@style/Transparent" />
         <activity android:name=".MainActivity" />
         <activity
             android:name=".welcome.WelcomeAppIntro"
