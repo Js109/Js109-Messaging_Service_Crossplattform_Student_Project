@@ -1,5 +1,6 @@
 package de.uulm.automotiveuulmapp.messages
 
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.AsyncTask
@@ -32,7 +33,18 @@ class MessageContentActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message_content)
+        init(this.intent)
+    }
 
+    /**
+     * Called when activity is already open
+     */
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        intent?.let { init(intent) }
+    }
+
+    private fun init(intent: Intent){
         // close notification if Activity was started from one
         if (intent.hasExtra(EXTRA_NOTIFICATION_ID)) {
             NotificationManagerCompat.from(this).cancel(
