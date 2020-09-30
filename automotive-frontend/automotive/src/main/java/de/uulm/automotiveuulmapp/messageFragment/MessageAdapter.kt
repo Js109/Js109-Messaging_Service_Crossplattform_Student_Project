@@ -90,7 +90,6 @@ class MessageAdapter(
                 messageDao.delete(message.uid!!)
             }
         }
-        notifyQueryChanged()
     }
 
     fun notifyQueryChanged() {
