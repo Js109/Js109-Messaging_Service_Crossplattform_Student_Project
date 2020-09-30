@@ -89,9 +89,7 @@ data class MessageDTO(
      * @return Mapped Message entity
      */
     override fun toEntity(): Message {
-        val entity = mapper.map(this, Message::class.java)
-
-        return entity
+        return mapper.map(this, Message::class.java)
     }
 
     /**
