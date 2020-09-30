@@ -2,16 +2,20 @@ package de.uulm.automotiveuulmapp.messageFragment
 
 import android.app.Activity
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.AsyncTask
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.ImageButton
 import android.widget.SearchView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.LiveData
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback
 import androidx.recyclerview.widget.RecyclerView
 import de.uulm.automotiveuulmapp.R
 import de.uulm.automotiveuulmapp.messages.MessageContentActivity
@@ -79,6 +83,15 @@ class MessageAdapter(
         }
     }
 
+    fun removeMessage(position: Int){
+        val message = messages[position]
+        if(message != null) {
+            AsyncTask.execute{
+                messageDao.delete(message.uid!!)
+            }
+        }
+    }
+
     fun notifyQueryChanged() {
         currentMessages = MessageFilter.filter(messages, searchView.query.toString())
         notifyDataSetChanged()
@@ -89,4 +102,5 @@ class MessageAdapter(
     }
 
     class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
 }

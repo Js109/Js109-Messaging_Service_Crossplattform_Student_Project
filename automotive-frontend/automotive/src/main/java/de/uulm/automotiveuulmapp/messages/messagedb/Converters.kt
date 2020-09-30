@@ -3,6 +3,7 @@ package de.uulm.automotiveuulmapp.messages.messagedb
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import de.uulm.automotive.cds.models.FontFamily
 import java.lang.reflect.Type
 import java.net.URL
 
@@ -24,7 +25,6 @@ class Converters {
     }
 
 
-
     /**
      * Serializes ArrayList of URLs as JSON to be able to store it in the db
      *
@@ -36,4 +36,18 @@ class Converters {
         val gson = Gson()
         return gson.toJson(list)
     }
+
+    @TypeConverter
+    fun toFontFamily(value: String?) =
+        when (value) {
+            null -> null
+            else -> enumValueOf<FontFamily>(value)
+        }
+
+    @TypeConverter
+    fun fromFontFamily(value: FontFamily?) =
+        when (value) {
+            null -> null
+            else -> value.name
+        }
 }

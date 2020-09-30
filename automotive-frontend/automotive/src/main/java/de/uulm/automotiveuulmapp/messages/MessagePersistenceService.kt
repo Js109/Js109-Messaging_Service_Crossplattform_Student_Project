@@ -4,6 +4,7 @@ import android.app.IntentService
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.room.Room
@@ -19,10 +20,12 @@ import de.uulm.automotiveuulmapp.messages.messagedb.MessageEntity
 class MessagePersistenceService : IntentService("MessagePersistenceService") {
 
     lateinit var db: MessageDatabase
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate() {
         super.onCreate()
         db = MessageDatabase.getDatabaseInstance(this)
+        sharedPreferences = applicationContext.getSharedPreferences("firstMessage",Context.MODE_PRIVATE)
     }
 
     override fun onHandleIntent(intent: Intent?) {
@@ -36,6 +39,7 @@ class MessagePersistenceService : IntentService("MessagePersistenceService") {
                         intent.getIntExtra(EXTRA_NOTIFICATION_ID, 0)
                     )
                 }
+                setMessageDeleteHintFlag()
             }
             ACTION_READ -> {
                 val messages = handleActionRead()
@@ -74,9 +78,24 @@ class MessagePersistenceService : IntentService("MessagePersistenceService") {
             msg.messageText,
             msg.attachment,
             msg.links,
-            read = true
+            read = true,
+            fontColor = msg.fontColor,
+            backgroundColor = msg.backgroundColor,
+            fontFamily = msg.fontFamily
         )
         db.messageDao().insert(msgEntity)
+    }
+
+    /**
+     * Sets a value in the shared preferences to check if a hint should be displayed
+     */
+    private fun setMessageDeleteHintFlag(){
+        if(sharedPreferences != null && sharedPreferences!!.getBoolean("showMessageDeletionHint", true)){
+            with(sharedPreferences!!.edit()){
+                putBoolean("showMessageDeletionHint", true)
+                commit()
+            }
+        }
     }
 
     /**
@@ -89,7 +108,6 @@ class MessagePersistenceService : IntentService("MessagePersistenceService") {
     private fun handleActionDelete(messageId: Int) {
         db.messageDao().delete(messageId)
     }
-
 
     companion object {
         // Action names that describe tasks that this IntentService can perform

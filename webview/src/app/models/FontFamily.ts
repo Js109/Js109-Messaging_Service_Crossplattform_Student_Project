@@ -1,21 +1,21 @@
 export enum FontFamily {
-  Arial,
-  CourierNew,
-  TimesNewRoman,
-  Verdana
+  Roboto,
+  OpenSans,
+  Montserrat,
+  PlayfairDisplay
 
 }
 
 export function fontFamilyToFontString(font: FontFamily): string {
     switch (font) {
-      case FontFamily.Arial:
-        return 'Arial';
-      case FontFamily.CourierNew:
-        return 'Courier New';
-      case FontFamily.TimesNewRoman:
-        return 'Times New Roman';
-      case FontFamily.Verdana:
-        return 'Verdana';
+      case FontFamily.Roboto:
+        return 'Roboto';
+      case FontFamily.OpenSans:
+        return 'Open Sans';
+      case FontFamily.Montserrat:
+        return 'Montserrat';
+      case FontFamily.PlayfairDisplay:
+        return 'Playfair Display';
       default:
         return null;
     }

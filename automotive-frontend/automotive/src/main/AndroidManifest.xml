@@ -20,6 +20,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".MessageFragmentTestActivity"></activity>
+        <activity
+            android:name=".messageFragment.MessageDeletionHelper"
+            android:theme="@style/Transparent" />
         <activity android:name=".MainActivity" />
         <activity
             android:name=".welcome.WelcomeAppIntro"
@@ -48,6 +52,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCdP9Z5FYGgS10fS_aV_vzt5uuXDzc5vS4" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
         <!--        Test Activities -->
         <activity android:name=".TopicAdapterTestActivity" />

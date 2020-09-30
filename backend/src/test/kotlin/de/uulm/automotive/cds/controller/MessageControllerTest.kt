@@ -68,7 +68,7 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) : BaseCont
             locationData: LocationData = LocationData(null, 48.3998807, 9.9878078, 10),
             backgroundColor: String = "#f5f5f5",
             fontColor: String = "#F5F5F5",
-            fontFamily: FontFamily = FontFamily.ARIAL
+            fontFamily: FontFamily = FontFamily.ROBOTO
     ): Message {
         return Message(id, topic, sender, title, content, starttime, endtime, isSent, properties,
                 attachment, logoAttachment, links, locationData, backgroundColor, fontColor, fontFamily)

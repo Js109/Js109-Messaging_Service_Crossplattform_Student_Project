@@ -152,7 +152,7 @@ class RabbitMQService : Service() {
                     notify(message)
                 } else if (locationFencer?.storedLocationsFencing(message.locationData) == true) {
                     MessageDatabase.getDaoInstance(this).insert(
-                        MessageEntity(null, message.sender, message.title, message.messageText, message.attachment, message.links, false, false)
+                        MessageEntity(null, message.sender, message.title, message.messageText, message.attachment, message.links, false, false, message.fontColor, message.backgroundColor, message.fontFamily)
                     )
                 }
             }
