@@ -19,10 +19,10 @@ import de.uulm.automotiveuulmapp.messages.messagedb.MessageDatabase
 class MessageFragment : BaseFragment() {
 
     private lateinit var messageAdapter: MessageAdapter
-    private lateinit var sharedPreferences: SharedPreferences
+    private var sharedPreferences: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        sharedPreferences = context!!.getSharedPreferences("firstMessage",Context.MODE_PRIVATE)
+        sharedPreferences = context?.getSharedPreferences("firstMessage",Context.MODE_PRIVATE)
         super.onCreate(savedInstanceState)
     }
 
@@ -84,12 +84,14 @@ class MessageFragment : BaseFragment() {
      */
     private fun checkHintRequirement(): Boolean{
         var hintRequired = false
-        val showMessageDeletionHint = sharedPreferences.getBoolean("showMessageDeletionHint", false)
-        if(sharedPreferences != null && showMessageDeletionHint){
-            with(sharedPreferences.edit()){
-                putBoolean("showMessageDeletionHint", false)
-                hintRequired = true
-                commit()
+        sharedPreferences?.let {
+            val showMessageDeletionHint = it.getBoolean("showMessageDeletionHint", false)
+            if(showMessageDeletionHint){
+                with(it.edit()){
+                    putBoolean("showMessageDeletionHint", false)
+                    commit()
+                    hintRequired = true
+                }
             }
         }
         return hintRequired
