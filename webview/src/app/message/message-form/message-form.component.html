@@ -18,7 +18,7 @@
   <div class="col-4">
 
     <select
-      class="browser-default custom-select"
+      class="browser-default custom-select mb-2"
       [(ngModel)]="message.fontFamily">
       <option [ngValue]="undefined" selected hidden disabled>Font</option>
       <option [ngValue]="0">{{fontFamilyToFontString(0)}}</option>
@@ -26,14 +26,37 @@
       <option [ngValue]="2">{{fontFamilyToFontString(2)}}</option>
       <option [ngValue]="3">{{fontFamilyToFontString(3)}}</option>
     </select>
-    <input class="mt-2 mb-2 mr-2 rounded border color-select" [style.background]="message.fontColor" [(colorPicker)]="message.fontColor"
-           [cpOKButton]="true" [cpSaveClickOutside]="false" [cpOKButtonClass]="'btn btn-primary btn-xs'"/>
-    <label>Text Color</label>
     <mat-divider></mat-divider>
-    <input class="mt-2 mb-2 mr-2 rounded border color-select" [style.background]="message.backgroundColor"
-           [(colorPicker)]="message.backgroundColor" [cpOKButton]="true" [cpSaveClickOutside]="false"
-           [cpOKButtonClass]="'btn btn-primary btn-xs'"/>
-    <label>Background Color</label>
+    <div class="d-flex mt-2">
+      <div>Custom Colors:</div>
+      <mat-slide-toggle class="ml-auto" color="primary" [(ngModel)]="hasCustomColor"
+                        (change)="enableCustomColor($event)"></mat-slide-toggle>
+    </div>
+    <div class="d-flex mb-2">
+      <input class="mr-2 rounded border color-select"
+             [disabled]="!hasCustomColor"
+             [cpDisabled]="!hasCustomColor"
+             [style.background]="message.fontColor"
+             [cpOutputFormat]="'hex'"
+             [(colorPicker)]="message.fontColor"
+             [cpAlphaChannel]="'disabled'"
+             (colorPickerSelect)="setFontColor($event)"
+      />
+      <div [style.color]="hasCustomColor ? 'black' : 'lightgrey'">Text Color</div>
+    </div>
+    <div class="d-flex mb-2">
+      <input class="mr-2 rounded border color-select"
+             [disabled]="!hasCustomColor"
+             [cpDisabled]="!hasCustomColor"
+             [style.background]="message.backgroundColor"
+             [cpOutputFormat]="'hex'"
+             [(colorPicker)]="message.backgroundColor"
+             [cpAlphaChannel]="'disabled'"
+             (colorPickerSelect)="setBackgroundColor($event)"
+      />
+      <div [style.color]="hasCustomColor ? 'black' : 'lightgrey'">Background Color</div>
+    </div>
+    <div *ngIf="hasColorError" class="text-danger small">Text color and background color are the same!</div>
     <mat-divider></mat-divider>
     <div class="mt-2">Links:</div>
     <div class="border rounded bg-white mb-2">
@@ -56,13 +79,18 @@
     <mat-divider></mat-divider>
 
     <label class="mt-2">Add File:</label>
-    <label *ngIf="message.attachment == null || message.attachment.length === 0" class="btn btn-secondary col mb-0" [ngClass]="{'is-invalid' : hasContentError}">
+    <label *ngIf="message.attachment == null || message.attachment.length === 0" class="btn btn-secondary col mb-0"
+           [ngClass]="{'is-invalid' : hasContentError}">
       Upload Image<input type="file" name="attachment" class="form-control" hidden
                          (change)="fileSelect($event)">
     </label>
     <div style="display: flex">
-      <div *ngIf="message.attachment != null && message.attachment.length !== 0" [ngStyle]="{'background-image': 'url(' + getDataUrlFromImageByteArray(message.attachment) +')'}" class="form-control image-icon no-right-rounding"></div>
-      <div *ngIf="message.attachment != null && message.attachment.length !== 0" class="col btn btn-secondary no-left-rounding" (click)="removeAttachment()">Remove Image</div>
+      <div *ngIf="message.attachment != null && message.attachment.length !== 0"
+           [ngStyle]="{'background-image': 'url(' + getDataUrlFromImageByteArray(message.attachment) +')'}"
+           class="form-control image-icon no-right-rounding"></div>
+      <div *ngIf="message.attachment != null && message.attachment.length !== 0"
+           class="col btn btn-secondary no-left-rounding" (click)="removeAttachment()">Remove Image
+      </div>
     </div>
   </div>
 </div>
@@ -77,12 +105,17 @@
          id="sender" placeholder="Sender"
          [(ngModel)]="message.sender"
          [ngClass]="{'is-invalid' : hasSenderError}">
-  <label *ngIf="message.logoAttachment == null || message.logoAttachment.length === 0" class="btn btn-secondary col no-left-rounding mb-0">
+  <label *ngIf="message.logoAttachment == null || message.logoAttachment.length === 0"
+         class="btn btn-secondary col no-left-rounding mb-0">
     Upload Icon<input type="file" name="attachmentIcon" class="form-control" hidden
                       (change)="logoSelect($event)">
   </label>
-  <div *ngIf="message.logoAttachment != null && message.logoAttachment.length !== 0" [ngStyle]="{'background-image': 'url(' + getDataUrlFromImageByteArray(message.logoAttachment) +')'}" class="form-control image-icon no-left-rounding no-right-rounding"></div>
-  <div *ngIf="message.logoAttachment != null && message.logoAttachment.length !== 0" class="btn btn-secondary col no-left-rounding" (click)="removeLogo()">Remove Icon</div>
+  <div *ngIf="message.logoAttachment != null && message.logoAttachment.length !== 0"
+       [ngStyle]="{'background-image': 'url(' + getDataUrlFromImageByteArray(message.logoAttachment) +')'}"
+       class="form-control image-icon no-left-rounding no-right-rounding"></div>
+  <div *ngIf="message.logoAttachment != null && message.logoAttachment.length !== 0"
+       class="btn btn-secondary col no-left-rounding" (click)="removeLogo()">Remove Icon
+  </div>
 </div>
 <div *ngIf="hasSenderError" class="invalid-feedback">Sender field is required.</div>
 
@@ -101,7 +134,8 @@
     <option [ngValue]="2">Days</option>
     <option [ngValue]="3">Weeks</option>
   </select>
-  <input name="endtime" type="number" class="form-control col no-left-rounding border-left-0" id="endTime" placeholder=""
+  <input name="endtime" type="number" class="form-control col no-left-rounding border-left-0" id="endTime"
+         placeholder=""
          size="10" maxlength="10" [(ngModel)]="expirationOffset" [disabled]="expirationOffsetType == null">
 </div>
 

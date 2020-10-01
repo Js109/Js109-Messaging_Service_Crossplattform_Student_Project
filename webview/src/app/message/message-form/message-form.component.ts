@@ -7,6 +7,7 @@ import {Message} from '../../models/Message';
 import {LocationData} from '../../models/LocationData';
 import {fontFamilyToFontString} from '../../models/FontFamily';
 import {MatTabChangeEvent} from '@angular/material/tabs';
+import {MatSlideToggleChange} from '@angular/material/slide-toggle';
 
 enum OffsetType {
   Minute, Hour, Day, Week
@@ -65,8 +66,12 @@ export class MessageFormComponent implements OnInit {
   onlyOneCoordError = false;
   urlErrors: boolean[] = [];
   hasUrlErrors;
+  hasColorError = false;
 
   fontFamilyToFontString = fontFamilyToFontString;
+  hasCustomColor: false;
+  selectedFontColor = '#000000';
+  selectedBackgroundColor = '#ffffff';
 
   ngOnInit(): void {
     this.http.get(environment.backendApiPath + '/topic', {responseType: 'json'})
@@ -104,13 +109,38 @@ export class MessageFormComponent implements OnInit {
       '((http|https)\\/\\/)?(www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)');
     this.urlErrors = this.message.links.map((url) => !urlRegex.test(url));
     this.hasUrlErrors = this.urlErrors.some((element) => element);
+    this.hasColorError = !(
+      (this.message.backgroundColor == null && this.message.fontColor == null)
+      || this.message.backgroundColor !== this.message.fontColor
+    );
     return !(this.hasTopicPropertiesError
       || this.hasSenderError
       || this.hasTitleError
       || this.hasContentError
       || this.coordValueRangeError
       || this.onlyOneCoordError
-      || this.hasUrlErrors);
+      || this.hasUrlErrors
+      || this.hasColorError);
+  }
+
+  setBackgroundColor($event: string): void {
+    this.message.backgroundColor = $event;
+  }
+
+  setFontColor($event: string): void {
+    this.message.fontColor = $event;
+  }
+
+  enableCustomColor($event: MatSlideToggleChange): void {
+    if ($event.checked) {
+      this.message.fontColor = this.selectedFontColor;
+      this.message.backgroundColor = this.selectedBackgroundColor;
+    } else {
+      this.selectedFontColor = this.message.fontColor;
+      this.selectedBackgroundColor = this.message.backgroundColor;
+      this.message.fontColor = null;
+      this.message.backgroundColor = null;
+    }
   }
 
   addLink(): void {
@@ -169,10 +199,6 @@ export class MessageFormComponent implements OnInit {
     return 'data:image/png;base64,' + imageData;
   }
 
-  propertiesSelect(): void {
-    this.message.properties = this.properties.filter(value => value[1]).map(value => value[0].binding);
-  }
-
   locationDataHide(): void {
     if (this.message.locationData == null) {
       this.message.locationData = this.locationData;
@@ -227,5 +253,9 @@ export class MessageFormComponent implements OnInit {
       this.message.topic = null;
       this.propertiesSelect();
     }
+  }
+
+  propertiesSelect(): void {
+    this.message.properties = this.properties.filter(value => value[1]).map(value => value[0].binding);
   }
 }
