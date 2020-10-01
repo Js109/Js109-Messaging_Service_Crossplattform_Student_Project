@@ -1,7 +1,8 @@
 import {Component, HostBinding, OnInit} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {Property} from '../models/Property';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-property',
@@ -12,7 +13,7 @@ export class PropertyComponent implements OnInit {
 
   @HostBinding('class') class = 'flex-grow-1';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private snackBar: MatSnackBar) { }
 
   properties: Property[];
 
@@ -25,10 +26,17 @@ export class PropertyComponent implements OnInit {
   createProperty(): void {
     this.http.post(environment.backendApiPath + '/property', this.property, {}).subscribe(
       value => {
-        console.log('property was sent');
         this.loadProperties();
       },
       error => {
+        if (error.error.nameError) {
+          this.snackBar.open(error.error.nameError, '',  {
+            duration: 1000,
+            panelClass: ['alert', 'alert-danger', 'text-center', 'text-danger']
+          });
+        }  else {
+          this.snackBar.open('Could not store new property!', '',  {duration: 1000, panelClass: ['alert', 'alert-danger', 'text-center', 'text-danger']});
+        }
         console.log(error);
       }
     );
