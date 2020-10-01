@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>Edit Message</h2>
+<mat-dialog-content>
+  <app-message-form [message]="message"></app-message-form>
+</mat-dialog-content>
+<mat-dialog-actions class="d-flex">
+  <button style="width: 50%" [mat-dialog-close]="{action: 'copy', message: message}">Copy to new message</button>
+  <button style="width: 50%" [mat-dialog-close]="{action: 'save', message: message}">Save</button>
+</mat-dialog-actions>

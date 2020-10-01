@@ -7,6 +7,10 @@ import {Topic} from '../models/Topic';
 import {Property} from '../models/Property';
 import {MessageFilter} from '../models/MessageFilter';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {MatDialog} from '@angular/material/dialog';
+import {SaveTemplateDialogComponent} from '../message/template-load/save-template-dialog/save-template-dialog.component';
+import {TemplateMessage} from '../models/TemplateMessage';
+import {EditMessageDialogComponent} from './edit-message-dialog/edit-message-dialog.component';
 
 @Component({
   selector: 'app-message-history',
@@ -17,7 +21,7 @@ import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class MessageHistoryComponent implements OnInit {
 
-  constructor(private http: HttpClient, private ngZone: NgZone, config: NgbModalConfig, private modalService: NgbModal) {
+  constructor(private http: HttpClient, private ngZone: NgZone, config: NgbModalConfig, private modalService: NgbModal, private dialog: MatDialog) {
     // customize default values of modals used by this component tree
     config.backdrop = 'static';
     config.keyboard = false;
@@ -93,6 +97,19 @@ export class MessageHistoryComponent implements OnInit {
   open(content, message): void {
     this.chosenMessage = message;
     this.modalService.open(content);
+  }
+
+  editMessage(message: Message): void {
+    const dialogRef = this.dialog.open(EditMessageDialogComponent, {height: '80%', width: '60%'});
+
+    dialogRef.componentInstance.message = message;
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult.action === 'save'){
+        console.log('save' + dialogResult.message.title);
+      } else if (dialogResult.action === 'copy'){
+        console.log('copy' + dialogResult.message.title);
+      }
+    });
   }
 
 }

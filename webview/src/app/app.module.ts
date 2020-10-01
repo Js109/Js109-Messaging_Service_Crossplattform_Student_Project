@@ -23,6 +23,7 @@ import {MatTabsModule} from '@angular/material/tabs';
 import { MessageFormComponent } from './message/message-form/message-form.component';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { TopicDescriptionDialogComponent } from './topic/topic-description-dialog/topic-description-dialog.component';
+import {EditMessageDialogComponent} from './message-history/edit-message-dialog/edit-message-dialog.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { TopicDescriptionDialogComponent } from './topic/topic-description-dialo
     MessageHistoryComponent,
     SaveTemplateDialogComponent,
     MessageFormComponent,
-    TopicDescriptionDialogComponent
+    TopicDescriptionDialogComponent,
+    EditMessageDialogComponent
   ],
   imports: [
     BrowserModule,
