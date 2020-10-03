@@ -23,6 +23,7 @@ import {MatTabsModule} from '@angular/material/tabs';
 import { MessageFormComponent } from './message/message-form/message-form.component';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { TopicDescriptionDialogComponent } from './topic/topic-description-dialog/topic-description-dialog.component';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { TopicDescriptionDialogComponent } from './topic/topic-description-dialo
     MatToolbarModule,
     ColorPickerModule,
     MatTabsModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatSnackBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]
