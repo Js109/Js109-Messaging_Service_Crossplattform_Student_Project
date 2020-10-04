@@ -7,6 +7,7 @@ import de.uulm.automotive.cds.models.Entity
 import de.uulm.automotive.cds.models.ValidateDTO
 import de.uulm.automotive.cds.models.errors.PropertyBadRequestInfo
 import org.modelmapper.ModelMapper
+import de.uulm.automotive.cds.models.errors.addError
 
 /**
  * Data Transfer Object Representation of the Property entity that is used via the api
@@ -49,8 +50,7 @@ data class PropertyDTO(
         var errors: PropertyBadRequestInfo? = null
 
         if (name.isBlank()) {
-            errors = PropertyBadRequestInfo()
-            errors.nameError = "Name can not be blank."
+            errors = errors.addError { it.nameError = "Name can not be blank." }
         }
 
         return errors

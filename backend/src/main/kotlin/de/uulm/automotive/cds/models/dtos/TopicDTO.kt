@@ -7,6 +7,7 @@ import de.uulm.automotive.cds.models.Entity
 import de.uulm.automotive.cds.models.ValidateDTO
 import de.uulm.automotive.cds.models.errors.TopicBadRequestInfo
 import org.modelmapper.ModelMapper
+import de.uulm.automotive.cds.models.errors.addError
 
 /**
  * Data Transfer Object Representation of the Topic entity that is used via the api
@@ -52,13 +53,11 @@ data class TopicDTO(
 
 
         if (title.isBlank()) {
-            errors = errors ?: TopicBadRequestInfo()
-            errors.titleError = "Title can not be blank"
+            errors = errors.addError { it.titleError = "Title can not be blank" }
         }
 
         if (description.isBlank()) {
-            errors = errors ?: TopicBadRequestInfo()
-            errors.descriptionError = "Description can not be blank."
+            errors = errors.addError { it.descriptionError =  "Description can not be blank." }
         }
 
         return errors

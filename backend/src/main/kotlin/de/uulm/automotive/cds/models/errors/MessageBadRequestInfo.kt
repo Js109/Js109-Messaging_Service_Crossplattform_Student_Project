@@ -1,6 +1,7 @@
 package de.uulm.automotive.cds.models.errors
 
 import de.uulm.automotive.cds.models.BadRequestInfo
+import de.uulm.automotive.cds.models.addErrorGeneric
 
 /**
  * Contains the Error Information for the MessageDTO.
@@ -24,3 +25,6 @@ class MessageBadRequestInfo(
         var backgroundColorError: String? = null,
         var fontColorError: String? = null
 ) : BadRequestInfo()
+
+fun MessageBadRequestInfo?.addError(addError: (err: MessageBadRequestInfo) -> Unit): MessageBadRequestInfo =
+        addErrorGeneric(addError, MessageBadRequestInfo())
