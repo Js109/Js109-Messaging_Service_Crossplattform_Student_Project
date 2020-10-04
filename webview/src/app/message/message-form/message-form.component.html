@@ -19,7 +19,7 @@
 
     <select
       class="browser-default custom-select mb-2"
-      [(ngModel)]="message.fontFamily">
+      [(ngModel)]="message.messageDisplayProperties.fontFamily">
       <option [ngValue]="undefined" selected hidden disabled>Font</option>
       <option [ngValue]="0">{{fontFamilyToFontString(0)}}</option>
       <option [ngValue]="1">{{fontFamilyToFontString(1)}}</option>
@@ -141,8 +141,7 @@
     <option [ngValue]="2">Days</option>
     <option [ngValue]="3">Weeks</option>
   </select>
-  <input name="endtime" type="number" class="form-control col no-left-rounding border-left-0" id="endTime"
-         placeholder=""
+  <input name="endtime" type="number" class="form-control col no-left-rounding border-left-0" id="endTime" placeholder=""
          size="10" maxlength="10" [(ngModel)]="expirationOffset" [disabled]="expirationOffsetType == null">
 </div>
 
