@@ -2,6 +2,8 @@ package de.uulm.automotive.cds.models.dtos
 
 import de.uulm.automotive.cds.entities.LocationData
 import de.uulm.automotive.cds.entities.Message
+import de.uulm.automotive.cds.entities.MessageDisplayProperties
+import de.uulm.automotive.cds.models.Alignment
 import de.uulm.automotive.cds.models.FontFamily
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -26,7 +28,8 @@ internal class MessageCompactDTOTest {
             locationData: LocationData? = null,
             backgroundColor: String? = null,
             fontColor: String? = null,
-            fontFamily: FontFamily? = null
+            fontFamily: FontFamily? = null,
+            alignment: Alignment? = null
     ): Message = Message(
             id,
             topic,
@@ -41,9 +44,13 @@ internal class MessageCompactDTOTest {
             logoAttachment,
             links,
             locationData,
-            backgroundColor,
-            fontColor,
-            fontFamily
+            MessageDisplayProperties(
+                    null,
+                    backgroundColor,
+                    fontColor,
+                    fontFamily,
+                    alignment
+            )
     )
 
     private fun createMessageCompactDTO(
@@ -103,7 +110,7 @@ internal class MessageCompactDTOTest {
     @Test
     fun `message compact DTO to message entity` () {
         val expected = defaultEntity
-        val result = defaultDTO.toEntity()
+        val result = MessageCompactDTO.toEntity(defaultDTO)
 
         assertNotNull(result.id)
         assertNotNull(result.sender)
@@ -118,9 +125,7 @@ internal class MessageCompactDTOTest {
         assertNull(result.logoAttachment)
         assertNull(result.links)
         assertNull(result.locationData)
-        assertNull(result.backgroundColor)
-        assertNull(result.fontColor)
-        assertNull(result.fontFamily)
+        assertNull(result.messageDisplayProperties)
 
         assertEquals(result.id, expected.id)
         assertEquals(result.sender, expected.sender)

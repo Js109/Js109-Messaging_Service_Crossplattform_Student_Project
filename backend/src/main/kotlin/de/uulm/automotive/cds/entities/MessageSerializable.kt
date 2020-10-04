@@ -1,6 +1,5 @@
 package de.uulm.automotive.cds.entities
 
-import de.uulm.automotive.cds.models.FontFamily
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.ObjectOutputStream
@@ -23,12 +22,11 @@ class MessageSerializable(
         val title: String,
         val messageText: String?,
         val attachment: ByteArray?,
+        val logoAttachment: ByteArray?,
         val links: Array<URL>?,
         val locationData: LocationDataSerializable?,
         val endtime: LocalDateTime?,
-        val fontColor: String?,
-        val backgroundColor: String?,
-        val fontFamily: FontFamily?
+        val messageDisplayProperties: MessageDisplayPropertiesSerializable?
 ) : Serializable {
     /**
      * This converts a message object into a serialized byte array to be able to transfer it over amqp message

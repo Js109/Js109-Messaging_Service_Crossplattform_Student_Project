@@ -37,6 +37,7 @@ internal class TemplateControllerTest(@Autowired val mockMvc: MockMvc) : BaseCon
             null,
             null,
             null,
+            null,
             null
     )
     val template2 = TemplateMessage(
@@ -46,6 +47,7 @@ internal class TemplateControllerTest(@Autowired val mockMvc: MockMvc) : BaseCon
             "test sender",
             null,
             "test content",
+            null,
             null,
             null,
             null,

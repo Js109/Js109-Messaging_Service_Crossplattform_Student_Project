@@ -6,8 +6,7 @@ import de.uulm.automotive.cds.models.DTO
 import de.uulm.automotive.cds.models.EntityConverter
 import de.uulm.automotive.cds.models.ValidateDTO
 import de.uulm.automotive.cds.models.errors.MessageBadRequestInfo
-import org.modelmapper.ModelMapper
-import java.net.URL
+import de.uulm.automotive.cds.models.errors.addError
 import java.time.LocalDateTime
 
 /**
@@ -25,7 +24,8 @@ data class MessageDTO(
         var attachment: ByteArray? = null,
         var logoAttachment: ByteArray? = null,
         var links: MutableList<String>? = null,
-        var locationData: LocationData? = null
+        var locationData: LocationData? = null,
+        var messageDisplayProperties: MessageDisplayPropertiesDTO? = null
 ) : DTO<Message>(), ValidateDTO {
     companion object : EntityConverter<Message, MessageDTO>(
             Message::class.java,
@@ -60,44 +60,37 @@ data class MessageDTO(
         var errors: MessageBadRequestInfo? = null
 
         if (sender.isNullOrBlank()) {
-            errors = errors ?: MessageBadRequestInfo()
-            errors.senderError = "Sender field is required."
+            errors = errors.addError { it.senderError = "Sender field is required" }
         }
 
         if (title.isNullOrBlank()) {
-            errors = errors ?: MessageBadRequestInfo()
-            errors.titleError = "Title field is required."
+            errors = errors.addError { it.titleError = "Title field is required." }
         }
 
         if (!(topic.isNullOrBlank().xor(properties.isNullOrEmpty()))) {
-            errors = errors ?: MessageBadRequestInfo()
-            errors.topicError = "Either Topics or Properties are required."
+            errors = errors.addError { it.topicError = "Either Topics or Properties are required." }
         }
 
         if (content.isNullOrEmpty() && (attachment == null || attachment!!.isEmpty())) {
-            errors = errors ?: MessageBadRequestInfo()
-            errors.contentError = "Either Content or Files are required."
+            errors = errors.addError { it.contentError = "Either Content or Files are required." }
         }
 
         if (!hasValidURLs()) {
-            errors = errors ?: MessageBadRequestInfo()
-            errors.linkError = "Please check your link values."
+            errors = errors.addError { it.linkError = "Please check your link values." }
         }
 
-        if (backgroundColor != null && !isValidHexColorString(backgroundColor!!)) {
-            errors = errors ?: MessageBadRequestInfo()
-            errors.backgroundColorError = "Please enter a valid HexColor."
-        }
-
-        if (fontColor != null && !isValidHexColorString(fontColor!!)) {
-            errors = errors ?: MessageBadRequestInfo()
-            errors.fontColorError = "Please enter a valid HexColor."
+        messageDisplayProperties?.let { dto ->
+            dto.getErrors()?.let { displayError ->
+                errors = errors.addError {
+                    it.colorError = displayError.colorError
+                    it.colorFormatError = displayError.colorFormatError
+                }
+            }
         }
 
         locationData?.let {
             if (it.lat < -90 || it.lat > 90 || it.lng > 180 || it.lng < -180) {
-                errors = errors ?: MessageBadRequestInfo()
-                errors!!.locationError = "Please check your coordinate values!"
+                errors = errors.addError { err -> err.locationError = "Please check your coordinate values!" }
             }
         }
 

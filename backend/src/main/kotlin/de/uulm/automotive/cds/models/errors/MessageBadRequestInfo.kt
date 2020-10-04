@@ -22,8 +22,8 @@ class MessageBadRequestInfo(
         var contentError: String? = null,
         var locationError: String? = null,
         var linkError: String? = null,
-        var backgroundColorError: String? = null,
-        var fontColorError: String? = null
+        var colorError: String? = null,
+        var colorFormatError: String? = null
 ) : BadRequestInfo()
 
 fun MessageBadRequestInfo?.addError(addError: (err: MessageBadRequestInfo) -> Unit): MessageBadRequestInfo =

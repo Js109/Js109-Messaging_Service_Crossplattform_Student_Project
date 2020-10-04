@@ -35,7 +35,7 @@ internal class TopicDTOTest {
     @Test
     fun `topicDTO to topicEntity`() {
         val expected = getTopicEntity()
-        val result = getTopicDTO().toEntity()
+        val result = TopicDTO.toEntity(getTopicDTO())
 
         assertEquals(result.binding, expected.binding)
         assertEquals(result.title, expected.title)
