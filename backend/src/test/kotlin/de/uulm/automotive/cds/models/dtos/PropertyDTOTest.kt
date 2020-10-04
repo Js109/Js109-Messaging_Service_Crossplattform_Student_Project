@@ -61,8 +61,6 @@ internal class PropertyDTOTest {
 
             assertNotNull(errors!!.nameError)
             assertTrue(errors.nameError!!.isNotBlank())
-
-            assertNull(errors.bindingError)
         }
     }
 
