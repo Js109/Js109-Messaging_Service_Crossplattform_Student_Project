@@ -40,7 +40,8 @@ internal class PropertyControllerTest(@Autowired val mockMvc: MockMvc): BaseCont
 
     @Test
     fun `get all properties`() {
-        every { propertyRepository.findAllByDisabledOrderByNameAscIdAsc(any()) } returns listOf(property.toEntity(), property2.toEntity())
+        every { propertyRepository.findAllByDisabledOrderByNameAscIdAsc(any()) } returns
+                listOf(PropertyDTO.toEntity(property), PropertyDTO.toEntity(property2))
 
         mockMvc.get("/property") {
             accept(MediaType.APPLICATION_JSON)
@@ -54,7 +55,7 @@ internal class PropertyControllerTest(@Autowired val mockMvc: MockMvc): BaseCont
 
     @Test
     fun `save Property`() {
-        every { propertyRepository.save(any<Property>()) } returns property.toEntity()
+        every { propertyRepository.save(any<Property>()) } returns PropertyDTO.toEntity(property)
         every { propertyRepository.findByName(any()) } returns null
 
         mockMvc.post("/property") {
@@ -71,7 +72,7 @@ internal class PropertyControllerTest(@Autowired val mockMvc: MockMvc): BaseCont
 
     @Test
     fun `save Property with already existing name returns Bad Request with BadRequestInfo object in body`() {
-        every { propertyRepository.findByName(any()) } returns property.toEntity()
+        every { propertyRepository.findByName(any()) } returns PropertyDTO.toEntity(property)
 
         mockMvc.post("/property") {
             accept = MediaType.APPLICATION_JSON
