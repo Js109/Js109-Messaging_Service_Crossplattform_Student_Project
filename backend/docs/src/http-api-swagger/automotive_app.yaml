@@ -84,7 +84,7 @@ paths:
         404:
           description: "Topic not found"
         423:
-          description: "The topic has been deactivated and cannot be changed anymore".
+          description: "The topic has been deactivated and cannot be changed anymore"
   /signup:
     post:
       tags:
@@ -175,6 +175,24 @@ paths:
           description: "Bad Request"
         "404":
           description: "Not Found"
+    put:
+      tags:
+        - "Administration - OEM-Web Frontend"
+      summary: "Updates Message with the given id in the backend"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Message to be updated"
+          required: true
+          schema:
+            $ref: "#/definitions/MessageDTO"
+      responses:
+        "200":
+          description: "Successful Operation"
+        "400":
+          description: "Bad Request"
+        "404":
+          description: "Not Found"
 
   /property:
     get:
@@ -222,6 +240,7 @@ paths:
     put:
       tags:
         - "Administration - OEM-Web Frontend"
+      summary: "Updates Property with the given id in the backend"
       parameters:
       - in: "body"
         name: "body"
