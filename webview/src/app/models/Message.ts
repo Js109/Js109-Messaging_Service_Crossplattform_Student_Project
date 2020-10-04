@@ -1,5 +1,7 @@
 import {LocationData} from './LocationData';
 import {FontFamily} from './FontFamily';
+import {Alignment} from "./Alignment";
+import {MessageDisplayProperties} from "./MessageDisplayProperties";
 
 export interface Message {
   id?: number;
@@ -14,8 +16,6 @@ export interface Message {
   endtime: string;
   attachment: string;
   locationData: LocationData | null;
-  fontFamily?: FontFamily;
-  fontColor?: string;
   logoAttachment: string;
-  backgroundColor?: string;
+  messageDisplayProperties: MessageDisplayProperties | null;
 }

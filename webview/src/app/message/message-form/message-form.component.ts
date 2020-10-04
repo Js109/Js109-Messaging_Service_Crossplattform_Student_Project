@@ -39,7 +39,8 @@ export class MessageFormComponent implements OnInit {
     endtime: '',
     attachment: '',
     logoAttachment: '',
-    locationData: null
+    locationData: null,
+    messageDisplayProperties: null
   };
   get message(): Message {
     return this.messageValue;
@@ -54,6 +55,7 @@ export class MessageFormComponent implements OnInit {
   }
 
   locationData: LocationData = {radius: 50};
+  messageDisplayProperties = {}
   expirationOffset: number;
   expirationOffsetType: OffsetType = null;
 

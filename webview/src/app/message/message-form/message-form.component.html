@@ -9,9 +9,9 @@
     <textarea class="form-control mt-2 message-content flex-grow-1" placeholder="Content"
               [(ngModel)]="message.content"
               [ngClass]="{'is-invalid' : hasContentError}"
-              [style.background]="message.backgroundColor"
-              [style.color]="message.fontColor"
-              [style.fontFamily]="fontFamilyToFontString(message.fontFamily)"></textarea>
+              [style.background]="message.messageDisplayProperties.backgroundColor"
+              [style.color]="message.messageDisplayProperties.fontColor"
+              [style.fontFamily]="fontFamilyToFontString(message.messageDisplayProperties.fontFamily)"></textarea>
     <div *ngIf="hasContentError" class="invalid-feedback">Either Content or Files are required.</div>
 
   </div>
@@ -19,19 +19,19 @@
 
     <select
       class="browser-default custom-select"
-      [(ngModel)]="message.fontFamily">
+      [(ngModel)]="message.messageDisplayProperties.fontFamily">
       <option [ngValue]="undefined" selected hidden disabled>Font</option>
       <option [ngValue]="0">{{fontFamilyToFontString(0)}}</option>
       <option [ngValue]="1">{{fontFamilyToFontString(1)}}</option>
       <option [ngValue]="2">{{fontFamilyToFontString(2)}}</option>
       <option [ngValue]="3">{{fontFamilyToFontString(3)}}</option>
     </select>
-    <input class="mt-2 mb-2 mr-2 rounded border color-select" [style.background]="message.fontColor" [(colorPicker)]="message.fontColor"
+    <input class="mt-2 mb-2 mr-2 rounded border color-select" [style.background]="message.messageDisplayProperties.fontColor" [(colorPicker)]="message.messageDisplayProperties.fontColor"
            [cpOKButton]="true" [cpSaveClickOutside]="false" [cpOKButtonClass]="'btn btn-primary btn-xs'"/>
     <label>Text Color</label>
     <mat-divider></mat-divider>
-    <input class="mt-2 mb-2 mr-2 rounded border color-select" [style.background]="message.backgroundColor"
-           [(colorPicker)]="message.backgroundColor" [cpOKButton]="true" [cpSaveClickOutside]="false"
+    <input class="mt-2 mb-2 mr-2 rounded border color-select" [style.background]="message.messageDisplayProperties.backgroundColor"
+           [(colorPicker)]="message.messageDisplayProperties.backgroundColor" [cpOKButton]="true" [cpSaveClickOutside]="false"
            [cpOKButtonClass]="'btn btn-primary btn-xs'"/>
     <label>Background Color</label>
     <mat-divider></mat-divider>
