@@ -1,5 +1,8 @@
 package de.uulm.automotive.cds.models.errors
 
+import de.uulm.automotive.cds.models.BadRequestInfo
+import de.uulm.automotive.cds.models.addErrorGeneric
+
 /**
  * Contains the Error Information for the MessageFilterDTO.
  *
@@ -7,4 +10,7 @@ package de.uulm.automotive.cds.models.errors
  */
 class MessageFilterBadRequestInfo(
         var DateRangeError: String? = null
-)
+) : BadRequestInfo()
+
+fun MessageFilterBadRequestInfo?.addError(addError: (err: MessageFilterBadRequestInfo) -> Unit): MessageFilterBadRequestInfo =
+        addErrorGeneric(addError, MessageFilterBadRequestInfo())
