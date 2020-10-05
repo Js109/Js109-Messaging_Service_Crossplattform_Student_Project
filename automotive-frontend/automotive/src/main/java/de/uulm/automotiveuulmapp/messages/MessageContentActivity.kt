@@ -15,7 +15,9 @@ import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
+import de.uulm.automotive.cds.entities.MessageDisplayPropertiesSerializable
 import de.uulm.automotive.cds.entities.MessageSerializable
+import de.uulm.automotive.cds.models.MessageDisplayProperties
 import de.uulm.automotive.cds.models.getFont
 import de.uulm.automotiveuulmapp.R
 import de.uulm.automotiveuulmapp.messages.messagedb.MessageDatabase
@@ -75,12 +77,16 @@ class MessageContentActivity : AppCompatActivity() {
                                 me.title,
                                 me.messageText,
                                 me.attachment,
+                                me.logoAttachment,
                                 me.links,
                                 null,
                                 null,
-                                me.fontColor,
-                                me.backgroundColor,
-                                me.fontFamily
+                                MessageDisplayPropertiesSerializable(
+                                    me.fontColor,
+                                    me.backgroundColor,
+                                    me.fontFamily,
+                                    me.alignment
+                                )
                             )
                         )
                     }
@@ -99,7 +105,7 @@ class MessageContentActivity : AppCompatActivity() {
 
         val fontColor: Int? =
             try {
-                Color.parseColor(message.fontColor)
+                Color.parseColor(message.messageDisplayProperties?.fontColor)
             } catch (e: IllegalArgumentException) {
                 null
             } catch (e: NullPointerException) {
@@ -107,7 +113,7 @@ class MessageContentActivity : AppCompatActivity() {
             }
         val backgroundColor: Int? =
             try {
-                Color.parseColor(message.backgroundColor)
+                Color.parseColor(message.messageDisplayProperties?.backgroundColor)
             } catch (e: IllegalArgumentException) {
                 null
             } catch (e: NullPointerException) {
@@ -124,17 +130,17 @@ class MessageContentActivity : AppCompatActivity() {
                 it.setTextColor(fontColor)
             }
 
-            messageContentView?.let {
-                it.setTextColor(fontColor)
-            }
+            messageContentView?.setTextColor(fontColor)
         }
 
         titleView?.let {
-            it.typeface = ResourcesCompat.getFont(this.applicationContext, getFont(message.fontFamily))
+            it.typeface = ResourcesCompat
+                .getFont(this.applicationContext, getFont(message.messageDisplayProperties?.fontFamily))
         }
 
         messageContentView?.let {
-            it.typeface = ResourcesCompat.getFont(this.applicationContext, getFont(message.fontFamily))
+            it.typeface = ResourcesCompat
+                .getFont(this.applicationContext, getFont(message.messageDisplayProperties?.fontFamily))
         }
 
         initializeCloseButton()

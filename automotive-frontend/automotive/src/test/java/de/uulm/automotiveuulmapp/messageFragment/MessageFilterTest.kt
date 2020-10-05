@@ -8,9 +8,9 @@ class MessageFilterTest {
     @Test
     fun emptyQueryHasNoEffect() {
         val list = listOf(
-            MessageEntity(1, "test", "test1", "test text 1", null, null, false, false, null, null, null),
-            MessageEntity(1, "test", "test2", "test text 2", null, null, true, false, null, null, null),
-            MessageEntity(1, "test", "test3", "test text 3", null, null, false, false, null, null, null)
+            MessageEntity(1, "test", "test1", "test text 1", null, null, null, false, false, null, null, null, null),
+            MessageEntity(1, "test", "test2", "test text 2", null, null, null, true, false, null, null, null, null),
+            MessageEntity(1, "test", "test3", "test text 3", null, null, null, false, false, null, null, null, null)
         )
         assertThat(MessageFilter.filter(list, "")).isEqualTo(list)
     }
@@ -18,14 +18,14 @@ class MessageFilterTest {
     @Test
     fun prioritiesFavourites() {
         val list = listOf(
-            MessageEntity(1, "test", "test1", "test text 1", null, null, false, false, null,null, null),
-            MessageEntity(1, "test", "test2", "test text 2", null, null, true, false, null, null, null),
-            MessageEntity(1, "test", "test3", "test text 3", null, null, false, false, null, null, null)
+            MessageEntity(1, "test", "test1", "test text 1", null, null, null, false, false, null,null, null, null),
+            MessageEntity(1, "test", "test2", "test text 2", null, null, null, true, false, null, null, null, null),
+            MessageEntity(1, "test", "test3", "test text 3", null, null, null, false, false, null, null, null, null)
         )
         val expectedList = listOf(
-            MessageEntity(1, "test", "test2", "test text 2", null, null, true, false, null, null, null),
-            MessageEntity(1, "test", "test1", "test text 1", null, null, false, false, null, null, null),
-            MessageEntity(1, "test", "test3", "test text 3", null, null, false, false, null, null, null)
+            MessageEntity(1, "test", "test2", "test text 2", null, null, null, true, false, null, null, null, null),
+            MessageEntity(1, "test", "test1", "test text 1", null, null, null, false, false, null, null, null, null),
+            MessageEntity(1, "test", "test3", "test text 3", null, null, null, false, false, null, null, null, null)
         )
         assertThat(MessageFilter.filter(list, "test")).isEqualTo(expectedList)
     }
@@ -33,18 +33,18 @@ class MessageFilterTest {
     @Test
     fun titleMatchFirstThenContentMatch() {
         val list = listOf(
-            MessageEntity(1, "test", "backen", "aligator", null, null, false, false, null, null, null),
-            MessageEntity(1, "test", "aligator", "backen", null, null, true, false, null, null, null),
-            MessageEntity(1, "test", "computer", "computer", null, null, true, false, null, null, null),
-            MessageEntity(1, "test", "aligator", "backen", null, null, false, false, null, null, null),
-            MessageEntity(1, "test", "computer", "computer", null, null, false, false, null, null, null),
-            MessageEntity(1, "test", "backen", "aligator", null, null, true, false, null, null, null)
+            MessageEntity(1, "test", "backen", "aligator", null, null, null, false, false, null, null, null, null),
+            MessageEntity(1, "test", "aligator", "backen", null, null, null, true, false, null, null, null, null),
+            MessageEntity(1, "test", "computer", "computer", null, null, null, true, false, null, null, null, null),
+            MessageEntity(1, "test", "aligator", "backen", null, null, null, false, false, null, null, null, null),
+            MessageEntity(1, "test", "computer", "computer", null, null, null, false, false, null, null, null, null),
+            MessageEntity(1, "test", "backen", "aligator", null, null, null, true, false, null, null, null, null)
         )
         val expectedList = listOf(
-            MessageEntity(1, "test", "aligator", "backen", null, null, true, false, null, null, null),
-            MessageEntity(1, "test", "backen", "aligator", null, null, true, false,null, null, null),
-            MessageEntity(1, "test", "aligator", "backen", null, null, false, false, null, null, null),
-            MessageEntity(1, "test", "backen", "aligator", null, null, false, false,null, null, null)
+            MessageEntity(1, "test", "aligator", "backen", null, null, null, true, false, null, null, null, null),
+            MessageEntity(1, "test", "backen", "aligator", null, null, null, true, false,null, null, null, null),
+            MessageEntity(1, "test", "aligator", "backen", null, null, null, false, false, null, null, null, null),
+            MessageEntity(1, "test", "backen", "aligator", null, null, null, false, false,null, null, null, null)
         )
         assertThat(MessageFilter.filter(list, "aligator")).isEqualTo(expectedList)
     }
