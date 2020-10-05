@@ -2,7 +2,9 @@ package de.uulm.automotive.cds.models.dtos
 
 import de.uulm.automotive.cds.entities.LocationData
 import de.uulm.automotive.cds.entities.Message
-import de.uulm.automotive.cds.models.*
+import de.uulm.automotive.cds.models.DTO
+import de.uulm.automotive.cds.models.EntityConverter
+import de.uulm.automotive.cds.models.ValidateDTO
 import de.uulm.automotive.cds.models.errors.MessageBadRequestInfo
 import org.modelmapper.ModelMapper
 import java.net.URL
@@ -23,53 +25,18 @@ data class MessageDTO(
         var attachment: ByteArray? = null,
         var logoAttachment: ByteArray? = null,
         var links: MutableList<String>? = null,
-        var locationData: LocationData? = null,
-        var backgroundColor: String? = null,
-        var fontColor: String? = null,
-        var fontFamily: FontFamily? = null
-) : DTO, ValidateDTO {
-    companion object : DTOCompanion {
-        override var mapper: ModelMapper = ModelMapper()
-
-        init {
-            mapper.addConverter<String, URL> { ctx -> URL(completeURL(ctx.source)) }
-        }
-
+        var locationData: LocationData? = null
+) : DTO<Message>(), ValidateDTO {
+    companion object : EntityConverter<Message, MessageDTO>(
+            Message::class.java,
+            MessageDTO::class.java
+    ) {
         val regexUrl: String = "[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=,!]*)"
         val regexUrlWithoutProtocol: Regex = Regex("(www\\.)?$regexUrl")
         val regexUrlHttp: Regex = Regex("http?:\\/\\/(www\\.)?$regexUrl")
         val regexUrlHttps: Regex = Regex("https?:\\/\\/(www\\.)?$regexUrl")
 
         val regexHexColor: Regex = Regex("#[A-Fa-f0-9]{6}")
-
-        /**
-         * Maps the Message entity to the corresponding DTO object
-         *
-         * @param Message class of the entity
-         * @param entity Message entity
-         * @return Mapped DTO
-         */
-        override fun <Message : Entity> toDTO(entity: Message): MessageDTO {
-            return mapper.map(entity, MessageDTO::class.java)
-        }
-
-        /**
-         * Checks if the given url is valid or incomplete. If it is incomplete the protocol gets
-         * prepended.
-         *
-         * @param url string
-         * @return url as string if a valid url can be created, returns null if not
-         */
-        fun completeURL(url: String): String? {
-            if (url.contains(regexUrlWithoutProtocol)) {
-                if (url.matches(regexUrlWithoutProtocol)) {
-                    return "https://" + url
-                } else if (url.matches(regexUrlHttp) || url.matches(regexUrlHttps)) {
-                    return url
-                }
-            }
-            return null
-        }
 
         /**
          * Checks if the given string contains a valid hex color.
@@ -81,15 +48,6 @@ data class MessageDTO(
         fun isValidHexColorString(hexColor: String): Boolean {
             return hexColor.matches(regexHexColor)
         }
-    }
-
-    /**
-     * Maps the fields of this DTO to the corresponding Entity
-     *
-     * @return Mapped Message entity
-     */
-    override fun toEntity(): Message {
-        return mapper.map(this, Message::class.java)
     }
 
     /**

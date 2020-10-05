@@ -50,7 +50,7 @@ class TopicController @Autowired constructor(private val topicRepository: TopicR
                     .body(TopicBadRequestInfo(titleError = "Topic title has to be unique."))
         }
 
-        topicRepository.save(topicDto.toEntity().apply { binding = "binding/${title}"})
+        topicRepository.save(TopicDTO.toEntity(topicDto).apply { binding = "binding/${title}"})
         return ResponseEntity.status(HttpStatus.OK).build()
     }
 

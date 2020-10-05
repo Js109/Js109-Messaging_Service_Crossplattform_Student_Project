@@ -109,7 +109,7 @@ class MessageController(private val repository: MessageRepository, private val m
         if (errors != null) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errors)
         }
-        val message = messageDto.toEntity()
+        val message = MessageDTO.toEntity(messageDto)
 
         if (message.starttime == null) {
             message.starttime = LocalDateTime.now()

@@ -50,7 +50,7 @@ class PropertyController(val propertyRepository: PropertyRepository) {
                     .body(PropertyBadRequestInfo(nameError = "Property name must be unique."))
         }
 
-        val propertyEntity = propertyDto.toEntity()
+        val propertyEntity = PropertyDTO.toEntity(propertyDto)
         propertyEntity.binding = "binding/${propertyEntity.name}"
 
         propertyRepository.save(propertyEntity)
