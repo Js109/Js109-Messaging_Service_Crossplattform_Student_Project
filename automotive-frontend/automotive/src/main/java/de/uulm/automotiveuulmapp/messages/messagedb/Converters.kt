@@ -3,6 +3,7 @@ package de.uulm.automotiveuulmapp.messages.messagedb
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import de.uulm.automotive.cds.models.Alignment
 import de.uulm.automotive.cds.models.FontFamily
 import java.lang.reflect.Type
 import java.net.URL
@@ -46,6 +47,20 @@ class Converters {
 
     @TypeConverter
     fun fromFontFamily(value: FontFamily?) =
+        when (value) {
+            null -> null
+            else -> value.name
+        }
+
+    @TypeConverter
+    fun toAlignment(value: String?) =
+        when (value) {
+            null -> null
+            else -> enumValueOf<Alignment>(value)
+        }
+
+    @TypeConverter
+    fun fromAlignment(value: Alignment?) =
         when (value) {
             null -> null
             else -> value.name
