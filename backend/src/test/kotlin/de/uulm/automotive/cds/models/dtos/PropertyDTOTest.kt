@@ -30,7 +30,7 @@ internal class PropertyDTOTest {
     @Test
     fun `propertyDTO to propertyEntity`() {
         val expected = getPropertyEntity()
-        val result = getPropertyDTO().toEntity()
+        val result = PropertyDTO.toEntity(getPropertyDTO())
 
         assertEquals(result.name, expected.name)
         assertEquals(result.binding, expected.binding)

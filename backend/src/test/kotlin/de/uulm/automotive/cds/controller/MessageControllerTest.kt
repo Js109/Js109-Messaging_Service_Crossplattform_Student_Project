@@ -1,17 +1,13 @@
 package de.uulm.automotive.cds.controller
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.ninjasquad.springmockk.MockkBean
 import de.uulm.automotive.cds.entities.LocationData
 import de.uulm.automotive.cds.entities.Message
+import de.uulm.automotive.cds.entities.MessageDisplayProperties
+import de.uulm.automotive.cds.models.Alignment
 import de.uulm.automotive.cds.models.FontFamily
 import de.uulm.automotive.cds.models.dtos.MessageDTO
-import de.uulm.automotive.cds.repositories.MessageRepository
-import de.uulm.automotive.cds.repositories.PropertyRepository
-import de.uulm.automotive.cds.repositories.SignUpRepository
-import de.uulm.automotive.cds.repositories.TopicRepository
-import de.uulm.automotive.cds.services.AmqpChannelService
-import de.uulm.automotive.cds.services.MessageService
+import de.uulm.automotive.cds.models.dtos.MessageDisplayPropertiesDTO
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -47,8 +43,6 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) : BaseCont
             null,
             null,
             null,
-            null,
-            null,
             null
     )
 
@@ -66,12 +60,10 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) : BaseCont
             logoAttachment: ByteArray = ByteArray(150),
             links: MutableList<URL> = mutableListOf(URL("https://www.google.com"), URL("https://www.example.com")),
             locationData: LocationData = LocationData(null, 48.3998807, 9.9878078, 10),
-            backgroundColor: String = "#f5f5f5",
-            fontColor: String = "#F5F5F5",
-            fontFamily: FontFamily = FontFamily.ROBOTO
+            messageDisplayProperties: MessageDisplayProperties = MessageDisplayProperties(1, "#f5f5f5","#F5F5F5", FontFamily.ROBOTO, Alignment.CENTER)
     ): Message {
         return Message(id, topic, sender, title, content, starttime, endtime, isSent, properties,
-                attachment, logoAttachment, links, locationData, backgroundColor, fontColor, fontFamily)
+                attachment, logoAttachment, links, locationData, messageDisplayProperties)
     }
 
     @BeforeEach
@@ -182,8 +174,12 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) : BaseCont
         val invalidDto = MessageDTO(
                 locationData = LocationData(null, 0.0, 181.0, 10),
                 links = arrayListOf("invalid-link", "http://invalid-link"),
-                backgroundColor = "ffffff",
-                fontColor = "ffffff"
+                messageDisplayProperties = MessageDisplayPropertiesDTO(
+                        "ffffff",
+                        "ffffff",
+                        FontFamily.ROBOTO,
+                        Alignment.CENTER
+                )
         )
 
         mockMvc.post("/message") {
@@ -206,10 +202,10 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) : BaseCont
             content { jsonPath("locationError").isNotEmpty }
             content { jsonPath("linkError").exists() }
             content { jsonPath("linkError").isNotEmpty }
-            content { jsonPath("backgroundColorError").exists() }
-            content { jsonPath("backgroundColorError").isNotEmpty }
-            content { jsonPath("fontColorError").exists() }
-            content { jsonPath("fontColorError").isNotEmpty }
+            content { jsonPath("colorError").exists() }
+            content { jsonPath("colorError").isNotEmpty }
+            content { jsonPath("colorFormatError").exists() }
+            content { jsonPath("colorFormatError").isNotEmpty }
         }
 
         verify(exactly = 0) { messageRepository.save(any<Message>()) }

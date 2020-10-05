@@ -5,7 +5,6 @@ import de.uulm.automotive.cds.models.DTO
 import de.uulm.automotive.cds.models.EntityConverter
 import de.uulm.automotive.cds.models.ValidateDTO
 import de.uulm.automotive.cds.models.errors.PropertyBadRequestInfo
-import org.modelmapper.ModelMapper
 import de.uulm.automotive.cds.models.errors.addError
 
 /**

@@ -24,6 +24,10 @@ import { MessageFormComponent } from './message/message-form/message-form.compon
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { TopicDescriptionDialogComponent } from './topic/topic-description-dialog/topic-description-dialog.component';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {NgxMatDatetimePickerModule} from '@angular-material-components/datetime-picker';
+import {NgxMatMomentModule} from '@angular-material-components/moment-adapter';
+import {MatIconModule} from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -53,7 +57,12 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     ColorPickerModule,
     MatTabsModule,
     MatSlideToggleModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatSlideToggleModule,
+    MatDatepickerModule,
+    NgxMatDatetimePickerModule,
+    NgxMatMomentModule,
+    MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]

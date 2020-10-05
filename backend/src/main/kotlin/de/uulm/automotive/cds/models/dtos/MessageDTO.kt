@@ -7,8 +7,6 @@ import de.uulm.automotive.cds.models.EntityConverter
 import de.uulm.automotive.cds.models.ValidateDTO
 import de.uulm.automotive.cds.models.errors.MessageBadRequestInfo
 import de.uulm.automotive.cds.models.errors.addError
-import org.modelmapper.ModelMapper
-import java.net.URL
 import java.time.LocalDateTime
 
 /**
@@ -26,7 +24,8 @@ data class MessageDTO(
         var attachment: ByteArray? = null,
         var logoAttachment: ByteArray? = null,
         var links: MutableList<String>? = null,
-        var locationData: LocationData? = null
+        var locationData: LocationData? = null,
+        var messageDisplayProperties: MessageDisplayPropertiesDTO? = null
 ) : DTO<Message>(), ValidateDTO {
     companion object : EntityConverter<Message, MessageDTO>(
             Message::class.java,
@@ -80,14 +79,13 @@ data class MessageDTO(
             errors = errors.addError { it.linkError = "Please check your link values." }
         }
 
-        if (backgroundColor != null && !isValidHexColorString(backgroundColor!!)) {
-            errors = errors ?: MessageBadRequestInfo()
-            errors.backgroundColorError = "Please enter a valid HexColor."
-        }
-
-        if (fontColor != null && !isValidHexColorString(fontColor!!)) {
-            errors = errors ?: MessageBadRequestInfo()
-            errors.fontColorError = "Please enter a valid HexColor."
+        messageDisplayProperties?.let { dto ->
+            dto.getErrors()?.let { displayError ->
+                errors = errors.addError {
+                    it.colorError = displayError.colorError
+                    it.colorFormatError = displayError.colorFormatError
+                }
+            }
         }
 
         locationData?.let {

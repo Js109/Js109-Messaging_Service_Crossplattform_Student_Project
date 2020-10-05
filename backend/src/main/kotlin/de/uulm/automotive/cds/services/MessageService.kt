@@ -3,6 +3,7 @@ package de.uulm.automotive.cds.services
 import com.rabbitmq.client.AMQP
 import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.entities.MessageSerializable
+import de.uulm.automotive.cds.models.dtos.MessageDisplayPropertiesDTO
 import de.uulm.automotive.cds.repositories.MessageRepository
 import org.hibernate.Hibernate
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,7 +30,18 @@ class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelS
      */
     fun sendMessage(message: Message) {
         val channel = amqpChannelService.openChannel()
-        val messageSerializable = MessageSerializable(message.sender!!, message.title!!, message.content, message.attachment, message.links?.toTypedArray(), message.locationData?.serialize(), message.endtime, message.fontColor, message.backgroundColor, message.fontFamily)
+        val messageSerializable =
+                MessageSerializable(
+                        message.sender!!,
+                        message.title!!,
+                        message.content,
+                        message.attachment,
+                        message.logoAttachment,
+                        message.links?.toTypedArray(),
+                        message.locationData?.serialize(),
+                        message.endtime,
+                        message.messageDisplayProperties?.serialize()
+                )
 
         val properties = AMQP.BasicProperties.Builder()
         message.endtime?.millisFromCurrentTime()
@@ -83,7 +95,7 @@ class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelS
      * @return List of messages which should be processed (sent)
      */
     @Transactional
-    fun filterCurrentMessages(): List<Message>{
+    fun filterCurrentMessages(): List<Message> {
         val messages = messageRepository.findAllByIsSentFalseOrderByStarttimeAsc()
         return messages.filter { message: Message ->
             message.starttime!! < LocalDateTime.now()

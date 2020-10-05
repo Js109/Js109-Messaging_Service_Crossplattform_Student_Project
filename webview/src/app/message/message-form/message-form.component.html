@@ -120,8 +120,15 @@
 <div *ngIf="hasSenderError" class="invalid-feedback">Sender field is required.</div>
 
 <label>Send message at:</label>
-<input name="starttime" class="browser-default custom-select" type="datetime-local"
-       [(ngModel)]="message.starttime"/>
+
+<div class="border rounded bg-white mb-2 d-flex">
+  <mat-datepicker-toggle matSuffix [for]="starttimePicker" class="mr-2"></mat-datepicker-toggle>
+  <input readonly [ngxMatDatetimePicker]="starttimePicker" class="bg-transparent border-0 flex-grow-1"
+         [value]="stringToMoment(message.starttime)"
+         (dateChange)="message.starttime = momentToString($event)"/>
+  <ngx-mat-datetime-picker #starttimePicker [showSeconds]="true"></ngx-mat-datetime-picker>
+  <button class="ml-auto  h-100" mat-icon-button aria-label="remove starttime" (click)="clearStarttime()"><mat-icon>clear</mat-icon></button>
+</div>
 
 <label>Endtime:</label>
 <div style="display: flex">
