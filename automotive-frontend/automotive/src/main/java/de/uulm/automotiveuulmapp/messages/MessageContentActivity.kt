@@ -151,6 +151,7 @@ class MessageContentActivity : AppCompatActivity() {
         // enable persistence button only if message does not come from database
         initializePersistenceButton(intent.hasExtra(EXTRA_MESSAGE), message)
 
+        // clears link list and map view to add new elements
         clearLinksAndMap()
         message.links?.map { messageLink ->
             LinkCategoryIdentifier.identify(messageLink).also {
@@ -212,6 +213,14 @@ class MessageContentActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Adds a new link element to the layout.
+     * Presentation of element depends on the Link category
+     *
+     * @param category Category of the Link
+     * @param link Link to be added as element
+     * @param linkLabel Optional string that is shown instead of the actual URL
+     */
     private fun addLink(category: LinkCategory, link: URL, linkLabel: String? = null) {
         val layoutInflater = LayoutInflater.from(this)
         val linkView: View? = when (category) {

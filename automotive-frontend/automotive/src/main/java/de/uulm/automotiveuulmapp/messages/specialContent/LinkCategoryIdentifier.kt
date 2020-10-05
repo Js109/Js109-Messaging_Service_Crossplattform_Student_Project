@@ -3,6 +3,7 @@ package de.uulm.automotiveuulmapp.messages.specialContent
 import java.net.URL
 
 class LinkCategoryIdentifier {
+    // Possible types of links
     enum class LinkCategory{
         MAPS,
         YOUTUBE,
@@ -10,6 +11,12 @@ class LinkCategoryIdentifier {
     }
 
     companion object {
+        /**
+         * Identifies the category of a URL
+         *
+         * @param url URL to be identified
+         * @return Link type
+         */
         fun identify(url: URL) :LinkCategory{
             if(isGoogleMapsUrl(url))
                 return LinkCategory.MAPS
