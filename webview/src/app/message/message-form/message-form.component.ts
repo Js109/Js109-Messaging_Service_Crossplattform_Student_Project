@@ -7,6 +7,9 @@ import {Message} from '../../models/Message';
 import {LocationData} from '../../models/LocationData';
 import {fontFamilyToFontString} from '../../models/FontFamily';
 import {MatTabChangeEvent} from '@angular/material/tabs';
+import {MatSlideToggleChange} from '@angular/material/slide-toggle';
+import {Moment} from 'moment';
+import * as moment from 'moment';
 
 enum OffsetType {
   Minute, Hour, Day, Week
@@ -53,6 +56,17 @@ export class MessageFormComponent implements OnInit {
     this.properties = this.properties.map(property => [property[0], val.properties.some(value => value === property[0].binding)]);
   }
 
+  /**
+   * Field storing the current date in the date picker calendar to return it in the binding function
+   * to prevent unnecessary rebuilding of the calendar.
+   */
+  currentMoment: Moment;
+  /**
+   * Field for storing the string the current date in the calendar is based on
+   * to detect actual changes in the date.
+   */
+  currentDateString: string;
+
   locationData: LocationData = {radius: 50};
   expirationOffset: number;
   expirationOffsetType: OffsetType = null;
@@ -65,8 +79,12 @@ export class MessageFormComponent implements OnInit {
   onlyOneCoordError = false;
   urlErrors: boolean[] = [];
   hasUrlErrors;
+  hasColorError = false;
 
   fontFamilyToFontString = fontFamilyToFontString;
+  hasCustomColor: false;
+  selectedFontColor = '#000000';
+  selectedBackgroundColor = '#ffffff';
 
   ngOnInit(): void {
     this.http.get(environment.backendApiPath + '/topic', {responseType: 'json'})
@@ -104,13 +122,38 @@ export class MessageFormComponent implements OnInit {
       '((http|https)\\/\\/)?(www\\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)');
     this.urlErrors = this.message.links.map((url) => !urlRegex.test(url));
     this.hasUrlErrors = this.urlErrors.some((element) => element);
+    this.hasColorError = !(
+      (this.message.backgroundColor == null && this.message.fontColor == null)
+      || this.message.backgroundColor !== this.message.fontColor
+    );
     return !(this.hasTopicPropertiesError
       || this.hasSenderError
       || this.hasTitleError
       || this.hasContentError
       || this.coordValueRangeError
       || this.onlyOneCoordError
-      || this.hasUrlErrors);
+      || this.hasUrlErrors
+      || this.hasColorError);
+  }
+
+  setBackgroundColor($event: string): void {
+    this.message.backgroundColor = $event;
+  }
+
+  setFontColor($event: string): void {
+    this.message.fontColor = $event;
+  }
+
+  enableCustomColor($event: MatSlideToggleChange): void {
+    if ($event.checked) {
+      this.message.fontColor = this.selectedFontColor;
+      this.message.backgroundColor = this.selectedBackgroundColor;
+    } else {
+      this.selectedFontColor = this.message.fontColor;
+      this.selectedBackgroundColor = this.message.backgroundColor;
+      this.message.fontColor = null;
+      this.message.backgroundColor = null;
+    }
   }
 
   addLink(): void {
@@ -169,16 +212,16 @@ export class MessageFormComponent implements OnInit {
     return 'data:image/png;base64,' + imageData;
   }
 
-  propertiesSelect(): void {
-    this.message.properties = this.properties.filter(value => value[1]).map(value => value[0].binding);
-  }
-
   locationDataHide(): void {
     if (this.message.locationData == null) {
       this.message.locationData = this.locationData;
     } else {
       this.message.locationData = null;
     }
+  }
+
+  clearStarttime(): void {
+    this.message.starttime = null;
   }
 
   setEndtimeFromExpirationOffset(): void {
@@ -227,5 +270,31 @@ export class MessageFormComponent implements OnInit {
       this.message.topic = null;
       this.propertiesSelect();
     }
+  }
+
+  propertiesSelect(): void {
+    this.message.properties = this.properties.filter(value => value[1]).map(value => value[0].binding);
+  }
+
+  /**
+   * Function to transform message.starttime to a Moment object before binding it to the calendar.
+   * To prevent constant rebuilding of the calendar the same instance of a Moment object needs to be returned
+   * unless an actual change of message.starttime has occured.
+   * If a new dateString is passed (that is if message.starttime was changed) a new Moment will be created from it and returned.
+   */
+  stringToMoment(dateString: string): Moment {
+    if (this.currentDateString !== dateString || this.currentMoment == null) {
+      this.currentDateString = dateString;
+      this.currentMoment = moment(dateString, 'YYYY-MM-DD HH:mm:ss');
+    }
+    return this.currentMoment;
+  }
+
+  /**
+   * Function that transforms the change event of the calendar into a string to bind it to message.starttime.
+   * @param $event Change event containing the new date of the calendar as a Moment object.
+   */
+  momentToString($event): string {
+    return $event.value.local().format('YYYY-MM-DD HH:mm:ss');
   }
 }
