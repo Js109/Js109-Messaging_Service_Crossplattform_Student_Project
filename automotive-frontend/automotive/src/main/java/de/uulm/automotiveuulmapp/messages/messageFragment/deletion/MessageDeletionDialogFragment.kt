@@ -1,8 +1,7 @@
-package de.uulm.automotiveuulmapp.messageFragment
+package de.uulm.automotiveuulmapp.messages.messageFragment.deletion
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 

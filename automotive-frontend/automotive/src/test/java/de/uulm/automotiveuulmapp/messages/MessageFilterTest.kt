@@ -1,5 +1,6 @@
-package de.uulm.automotiveuulmapp.messageFragment
+package de.uulm.automotiveuulmapp.messages
 
+import de.uulm.automotiveuulmapp.messages.messageFragment.MessageFilter
 import de.uulm.automotiveuulmapp.messages.messagedb.MessageEntity
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -12,7 +13,12 @@ class MessageFilterTest {
             MessageEntity(1, "test", "test2", "test text 2", null, null, true, false, null, null, null),
             MessageEntity(1, "test", "test3", "test text 3", null, null, false, false, null, null, null)
         )
-        assertThat(MessageFilter.filter(list, "")).isEqualTo(list)
+        assertThat(
+            MessageFilter.filter(
+                list,
+                ""
+            )
+        ).isEqualTo(list)
     }
 
     @Test
@@ -27,7 +33,12 @@ class MessageFilterTest {
             MessageEntity(1, "test", "test1", "test text 1", null, null, false, false, null, null, null),
             MessageEntity(1, "test", "test3", "test text 3", null, null, false, false, null, null, null)
         )
-        assertThat(MessageFilter.filter(list, "test")).isEqualTo(expectedList)
+        assertThat(
+            MessageFilter.filter(
+                list,
+                "test"
+            )
+        ).isEqualTo(expectedList)
     }
 
     @Test
@@ -46,7 +57,12 @@ class MessageFilterTest {
             MessageEntity(1, "test", "aligator", "backen", null, null, false, false, null, null, null),
             MessageEntity(1, "test", "backen", "aligator", null, null, false, false,null, null, null)
         )
-        assertThat(MessageFilter.filter(list, "aligator")).isEqualTo(expectedList)
+        assertThat(
+            MessageFilter.filter(
+                list,
+                "aligator"
+            )
+        ).isEqualTo(expectedList)
     }
 
 }

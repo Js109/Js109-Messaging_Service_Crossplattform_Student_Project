@@ -11,7 +11,7 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import de.uulm.automotiveuulmapp.messageFragment.MessageFragment
+import de.uulm.automotiveuulmapp.messages.messageFragment.MessageFragment
 import de.uulm.automotiveuulmapp.locationFavourites.LocationFavouritesFragment
 import de.uulm.automotiveuulmapp.messages.messagedb.MessageDatabase
 import de.uulm.automotiveuulmapp.topicFragment.TopicFragment
