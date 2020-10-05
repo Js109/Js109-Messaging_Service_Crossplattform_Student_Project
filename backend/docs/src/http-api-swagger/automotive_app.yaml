@@ -178,11 +178,11 @@ paths:
     put:
       tags:
         - "Administration - OEM-Web Frontend"
-      summary: "Updates Message with the given id in the backend"
+      summary: "Updates Message with given id in the backend"
       parameters:
         - in: "body"
           name: "body"
-          description: "Message to be updated"
+          description: "Message with id to be updated"
           required: true
           schema:
             $ref: "#/definitions/MessageDTO"

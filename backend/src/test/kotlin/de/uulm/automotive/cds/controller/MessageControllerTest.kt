@@ -1,17 +1,10 @@
 package de.uulm.automotive.cds.controller
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.ninjasquad.springmockk.MockkBean
 import de.uulm.automotive.cds.entities.LocationData
 import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.models.FontFamily
 import de.uulm.automotive.cds.models.dtos.MessageDTO
-import de.uulm.automotive.cds.repositories.MessageRepository
-import de.uulm.automotive.cds.repositories.PropertyRepository
-import de.uulm.automotive.cds.repositories.SignUpRepository
-import de.uulm.automotive.cds.repositories.TopicRepository
-import de.uulm.automotive.cds.services.AmqpChannelService
-import de.uulm.automotive.cds.services.MessageService
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -21,10 +14,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.delete
-import org.springframework.test.web.servlet.get
-import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import java.net.URL
 import java.time.LocalDateTime
@@ -39,6 +29,25 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) : BaseCont
             "test sender",
             "test title",
             "test content",
+            null,
+            null,
+            false,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+    )
+
+    private val emptyMessage = Message(
+            5,
+            null,
+            null,
+            null,
+            null,
             null,
             null,
             false,
@@ -76,7 +85,6 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) : BaseCont
 
     @BeforeEach
     fun setUp() {
-
     }
 
     @AfterEach
@@ -187,6 +195,81 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) : BaseCont
         )
 
         mockMvc.post("/message") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(invalidDto)
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isUnprocessableEntity }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            content { jsonPath("senderError").exists() }
+            content { jsonPath("senderError").isNotEmpty }
+            content { jsonPath("titleError").exists() }
+            content { jsonPath("titleError").isNotEmpty }
+            content { jsonPath("topicError").exists() }
+            content { jsonPath("topicError").isNotEmpty }
+            content { jsonPath("contentError").exists() }
+            content { jsonPath("contentError").isNotEmpty }
+            content { jsonPath("locationError").exists() }
+            content { jsonPath("locationError").isNotEmpty }
+            content { jsonPath("linkError").exists() }
+            content { jsonPath("linkError").isNotEmpty }
+            content { jsonPath("backgroundColorError").exists() }
+            content { jsonPath("backgroundColorError").isNotEmpty }
+            content { jsonPath("fontColorError").exists() }
+            content { jsonPath("fontColorError").isNotEmpty }
+        }
+
+        verify(exactly = 0) { messageRepository.save(any<Message>()) }
+    }
+
+    @Test
+    fun `update complete Message`() {
+        every { messageRepository.save(any<Message>()) } returns getMessage()
+        every { messageRepository.findById(any<Long>()) } returns Optional.of(getMessage()) // returns Optional.of(Empty)
+
+        mockMvc.put("/message/1") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(MessageDTO.toDTO(getMessage()))
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isOk }
+        }
+
+        verify(exactly = 1) { messageRepository.save(any<Message>()) }
+    }
+
+    @Test
+    fun `update Message and Message not saved before`() {
+        every { messageRepository.save(any<Message>()) } returns emptyMessage
+        every { messageRepository.findById(any<Long>()) } returns Optional.of(emptyMessage)
+
+        mockMvc.put("/message/5") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(MessageDTO.toDTO(emptyMessage))
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isUnprocessableEntity }
+        }
+
+        verify(exactly = 0) { messageRepository.save(any<Message>()) }
+    }
+
+    @Test
+    fun `update invalid DTO returns Bad Request with BadRequestInfo object in body`() {
+        every { messageRepository.save(any<Message>()) } returns messageBasicAttributesOnly
+        every { messageRepository.findById(any<Long>()) } returns Optional.of(getMessage())
+
+        val invalidDto = MessageDTO(
+                locationData = LocationData(null, 0.0, 181.0, 10),
+                links = arrayListOf("invalid-link", "http://invalid-link"),
+                backgroundColor = "ffffff",
+                fontColor = "ffffff"
+        )
+
+        mockMvc.put("/message/1") {
             accept = MediaType.APPLICATION_JSON
             contentType = MediaType.APPLICATION_JSON
             content = jacksonObjectMapper().writeValueAsString(invalidDto)

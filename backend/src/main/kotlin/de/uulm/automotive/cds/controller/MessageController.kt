@@ -4,6 +4,7 @@ import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.models.dtos.MessageCompactDTO
 import de.uulm.automotive.cds.models.dtos.MessageDTO
 import de.uulm.automotive.cds.models.dtos.PropertyDisableDTO
+import de.uulm.automotive.cds.models.dtos.TopicDisableDTO
 import de.uulm.automotive.cds.models.errors.MessageBadRequestInfo
 import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.services.MessageService
@@ -152,9 +153,9 @@ class MessageController(private val repository: MessageRepository, private val m
      */
     @PutMapping("/{id}")
     fun updateMessage(@PathVariable id: Long, @RequestBody messageDto: MessageDTO): ResponseEntity<MessageBadRequestInfo> {
-        val message = messageDto.toEntity()
-
-        if (message.id == null)
+        val messageOld = repository.findById(id)
+        println(messageOld)
+        if (messageOld.isEmpty)
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find message with id $id and thus cannot update it.")
 
         val errors = messageDto.getErrors()
@@ -162,9 +163,12 @@ class MessageController(private val repository: MessageRepository, private val m
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errors)
         }
 
-        if (message.starttime == null) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errors)
-        } else repository.save(message)
-        return ResponseEntity.status(HttpStatus.OK).build()
+        val message = messageDto.toEntity()
+        message.id = id
+
+        return if (messageOld.get().isSent == false) {
+            repository.save(message)
+            ResponseEntity.status(HttpStatus.OK).build()
+        } else ResponseEntity.status(HttpStatus.LOCKED).build()
     }
 }
