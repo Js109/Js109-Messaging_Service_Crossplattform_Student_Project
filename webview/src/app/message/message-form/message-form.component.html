@@ -9,9 +9,9 @@
     <textarea class="form-control mt-2 message-content flex-grow-1" placeholder="Content"
               [(ngModel)]="message.content"
               [ngClass]="{'is-invalid' : hasContentError}"
-              [style.background]="message.backgroundColor"
-              [style.color]="message.fontColor"
-              [style.fontFamily]="fontFamilyToFontString(message.fontFamily)"></textarea>
+              [style.background]="message.messageDisplayProperties.backgroundColor"
+              [style.color]="message.messageDisplayProperties.fontColor"
+              [style.fontFamily]="fontFamilyToFontString(message.messageDisplayProperties.fontFamily)"></textarea>
     <div *ngIf="hasContentError" class="invalid-feedback">Either Content or Files are required.</div>
 
   </div>
@@ -36,9 +36,9 @@
       <input class="mr-2 rounded border color-select"
              [disabled]="!hasCustomColor"
              [cpDisabled]="!hasCustomColor"
-             [style.background]="message.fontColor"
+             [style.background]="message.messageDisplayProperties.fontColor"
              [cpOutputFormat]="'hex'"
-             [(colorPicker)]="message.fontColor"
+             [(colorPicker)]="message.messageDisplayProperties.fontColor"
              [cpAlphaChannel]="'disabled'"
              (colorPickerSelect)="setFontColor($event)"
       />
@@ -48,9 +48,9 @@
       <input class="mr-2 rounded border color-select"
              [disabled]="!hasCustomColor"
              [cpDisabled]="!hasCustomColor"
-             [style.background]="message.backgroundColor"
+             [style.background]="message.messageDisplayProperties.backgroundColor"
              [cpOutputFormat]="'hex'"
-             [(colorPicker)]="message.backgroundColor"
+             [(colorPicker)]="message.messageDisplayProperties.backgroundColor"
              [cpAlphaChannel]="'disabled'"
              (colorPickerSelect)="setBackgroundColor($event)"
       />

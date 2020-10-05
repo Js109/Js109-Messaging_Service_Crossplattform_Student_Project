@@ -29,7 +29,7 @@ export class MessageComponent implements OnInit {
     attachment: '',
     logoAttachment: '',
     locationData: null,
-    messageDisplayProperties: null,
+    messageDisplayProperties: {},
   };
 
   sendMessage(message: Message): void {
@@ -73,7 +73,7 @@ export class MessageComponent implements OnInit {
       attachment: '',
       locationData: null,
       logoAttachment: '',
-      messageDisplayProperties: null
+      messageDisplayProperties: {}
     };
   }
 }
