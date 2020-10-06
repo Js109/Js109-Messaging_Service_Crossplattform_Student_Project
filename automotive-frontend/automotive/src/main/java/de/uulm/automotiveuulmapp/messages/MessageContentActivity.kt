@@ -168,8 +168,8 @@ class MessageContentActivity : AppCompatActivity() {
         // enable persistence button only if message does not come from database
         initializePersistenceButton(intent.hasExtra(EXTRA_MESSAGE), message)
 
-        // clears link list and map view to add new elements
-        clearLinksAndMap()
+        // clears link list, image view and map view to add new elements
+        preclear()
         message.links?.map { messageLink ->
             LinkCategoryIdentifier.identify(messageLink).also {
                 when (it) {
@@ -217,7 +217,7 @@ class MessageContentActivity : AppCompatActivity() {
     /**
      * Hides content of Map container and removes link list elements
      */
-    private fun clearLinksAndMap() {
+    private fun preclear() {
         findViewById<LinearLayout>(R.id.linkContainer).removeAllViews()
         findViewById<ConstraintLayout>(R.id.message_map_container).visibility = View.GONE
     }
