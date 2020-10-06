@@ -21,7 +21,7 @@ class MessageDisplayPropertiesDTO(
     override fun getErrors(): MessageDisplayPropertiesBadRequestInfo? {
         var errors: MessageDisplayPropertiesBadRequestInfo? = null
 
-        if (backgroundColor == fontColor) {
+        if (backgroundColor  != null && backgroundColor == fontColor) {
             errors = errors.addError { it.colorError = "Please enter different colors for background and font." }
         }
 
