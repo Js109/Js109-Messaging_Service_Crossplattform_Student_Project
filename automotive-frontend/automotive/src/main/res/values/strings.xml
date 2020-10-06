@@ -19,7 +19,6 @@
     <string name="topic_selection_heading">Wählen Sie Themen aus, über die Sie informiert werden möchten</string>
     <string name="notification_msg_title">Message from Queue</string>
     <string name="service_start_toast">Service starting</string>
-    <string name="image_content_description">Image</string>
     <string name="oem_topic_card_titel">Herstellerinhalte</string>
     <string name="oem_topic_card_description">Informationen und Nachrichten des Herstellers</string>
     <string name="oem_unsubsrice_impossible_message">Herstellerinformationen können nicht deabonniert werden</string>
@@ -27,6 +26,12 @@
     <!-- Message view strings -->
     <string name="close_message_view">close</string>
     <string name="persist_message">Save Message</string>
+
+    <!-- Message Deletion Overlay Strings -->
+    <string name="swipe_hint">Swipe left to delete a message</string>
+    <string name="close_overlay_hint">Tap anywhere to continue</string>
+    <string name="swipe_direction_icon_description">Swipe direction left</string>
+    <string name="tap_icon_description">Tap screen</string>
 
     <!-- Navigation view Strings-->
     <string name="message_nav_item">Saved Messages</string>

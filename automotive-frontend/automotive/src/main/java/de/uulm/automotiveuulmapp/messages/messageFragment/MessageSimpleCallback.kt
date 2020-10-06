@@ -1,9 +1,10 @@
-package de.uulm.automotiveuulmapp.messageFragment
+package de.uulm.automotiveuulmapp.messages.messageFragment
 
 import android.graphics.Canvas
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import de.uulm.automotiveuulmapp.messages.messageFragment.deletion.MessageDeletionDialogFragment
 
 class MessageSimpleCallback(
     private val onDeleteConfirm: (itemPos: Int) -> Unit,
@@ -22,9 +23,11 @@ class MessageSimpleCallback(
     // is triggered when the element has reached its swipe destination
     // calls a dialogue, if the element should be deleted
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        val dialog = MessageDeletionDialogFragment (
-            onConfirm = { onDeleteConfirm(viewHolder.adapterPosition) },
-            onDeny = onDeleteCancel)
+        val dialog =
+            MessageDeletionDialogFragment(
+                onConfirm = { onDeleteConfirm(viewHolder.adapterPosition) },
+                onDeny = onDeleteCancel
+            )
         dialog.show(fragmentManager, "MessageViewDeletionDialogue")
     }
 
