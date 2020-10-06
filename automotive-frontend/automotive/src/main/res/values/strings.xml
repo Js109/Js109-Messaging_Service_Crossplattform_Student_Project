@@ -51,11 +51,6 @@
     <string name="location_deletion_dialogue_title">Delete location favourite</string>
     <string name="location_deletion_dialogue_question">Do you really want to delete this location?</string>
     <string name="title_activity_help_overlay">HelpOverlay</string>
-    <!--
-    This string is used for square devices and overridden by hello_world in
-    values-round/strings.xml for round devices.
-    -->
-    <string name="hello_world">Hello Square World!</string>
 
     <!-- Topic/S view strings -->
     <string name="search_bar_hint">Filter</string>
@@ -65,4 +60,7 @@
     <string name="header_bar_location_favourites_title">Location Favourites</string>
     <string name="header_bar_subscription_title">Topic Subscriptions</string>
 
+    <!-- Message content activity strings -->
+    <string name="youtube_icon_content_description">Image</string>
+    <string name="browser_icon_content_description">Image</string>
 </resources>

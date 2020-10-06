@@ -59,6 +59,7 @@
         <!--        Test Activities -->
         <activity android:name=".TopicAdapterTestActivity" />
         <activity android:name=".MessageAdapterTestActivity" />
+        <activity android:name=".MessageFragmentTestActivity"/>
     </application>
 
 </manifest>
