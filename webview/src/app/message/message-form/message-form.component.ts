@@ -299,7 +299,7 @@ export class MessageFormComponent implements OnInit {
   stringToMoment(dateString: string): Moment {
     if (this.currentDateString !== dateString || this.currentMoment == null) {
       this.currentDateString = dateString;
-      this.currentMoment = moment(dateString, 'YYYY-MM-DD HH:mm:ss');
+      this.currentMoment = moment(dateString, 'YYYY-MM-DD[T]HH:mm:ss');
     }
     return this.currentMoment;
   }
@@ -309,6 +309,6 @@ export class MessageFormComponent implements OnInit {
    * @param $event Change event containing the new date of the calendar as a Moment object.
    */
   momentToString($event): string {
-    return $event.value.local().format('YYYY-MM-DD HH:mm:ss');
+    return $event.value.local().format('YYYY-MM-DD[T]HH:mm:ss');
   }
 }
