@@ -1,7 +1,7 @@
-package de.uulm.automotiveuulmapp.messageFragment
+package de.uulm.automotiveuulmapp.messages.messageFragment
 
 import de.uulm.automotiveuulmapp.messages.messagedb.MessageEntity
-import de.uulm.automotiveuulmapp.topic.TopicModel
+import java.util.*
 
 object MessageFilter {
 
@@ -15,12 +15,12 @@ object MessageFilter {
     }
 
     private fun filterByContent(messageList: List<MessageEntity>, query: String) : List<MessageEntity> {
-        val query = query.toLowerCase()
+        val query = query.toLowerCase(Locale.ROOT)
         val (titleMatch, nonTitleMatch) = messageList.partition {
-            it.title.toLowerCase().contains(query)
+            it.title.toLowerCase(Locale.ROOT).contains(query)
         }
         val textMatch = nonTitleMatch.filter {
-            it.messageText?.toLowerCase()?.contains(query) == true
+            it.messageText?.toLowerCase(Locale.ROOT)?.contains(query) == true
         }
         return titleMatch + textMatch
     }

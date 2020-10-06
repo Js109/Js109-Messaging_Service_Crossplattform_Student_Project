@@ -1,6 +1,5 @@
-package de.uulm.automotiveuulmapp.messageFragment
+package de.uulm.automotiveuulmapp.messages.messageFragment
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.test.espresso.Espresso.onView
