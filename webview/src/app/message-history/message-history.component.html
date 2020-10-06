@@ -58,7 +58,7 @@
       <td>{{message.title}}</td>
       <td>{{message.content}}</td>
       <td *ngIf="message.isSent">
-        <button class="btn btn-light" style="margin-left: 35px" (click)="open(content, message)">
+        <button class="btn btn-light" style="margin-left: 35px" (click)="viewMessage(message)">
           <svg width="1.8em" height="1.8em" viewBox="0 0 16 16" class="bi bi-search"
                fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd"
@@ -116,41 +116,6 @@
     </tr>
     </tbody>
   </table>
-
-  <ng-template #content let-c="close" let-d="dismiss">
-    <div class="modal-header">
-      <h2>View Message</h2>
-      <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <h2>{{chosenMessage.title}}</h2>
-      <h3>{{chosenMessage.content}}</h3>
-      <div>
-        <h3>Image</h3>
-      </div>
-      <div>
-        <h3>Links: {{chosenMessage.links}}</h3>
-      </div>
-    </div>
-    <div class="modal-body">
-      <div>
-        <h3>Sender {{chosenMessage.sender}}</h3>
-      </div>
-      <h3>Topic {{chosenMessage.topic}}</h3>
-      <div>
-        <h3>Image</h3>
-      </div>
-      <div>
-        <h3>Links: {{chosenMessage.endtime}}</h3>
-      </div>
-      <p></p>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Copy to new Message</button>
-    </div>
-  </ng-template>
 
 </div>
 

@@ -6,11 +6,12 @@ import {HttpParams} from '@angular/common/http';
 import {Topic} from '../models/Topic';
 import {Property} from '../models/Property';
 import {MessageFilter} from '../models/MessageFilter';
-import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {NgbModalConfig, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {MatDialog} from '@angular/material/dialog';
-import {SaveTemplateDialogComponent} from '../message/template-load/save-template-dialog/save-template-dialog.component';
-import {TemplateMessage} from '../models/TemplateMessage';
 import {EditMessageDialogComponent} from './edit-message-dialog/edit-message-dialog.component';
+import {ViewMessageDialogComponent} from './view-message-dialog/view-message-dialog.component';
+import {Router} from '@angular/router'; // import router from angular router
+import {MessageComponent} from '../message/message.component';
 
 @Component({
   selector: 'app-message-history',
@@ -21,7 +22,8 @@ import {EditMessageDialogComponent} from './edit-message-dialog/edit-message-dia
 })
 export class MessageHistoryComponent implements OnInit {
 
-  constructor(private http: HttpClient, private ngZone: NgZone, config: NgbModalConfig, private modalService: NgbModal, private dialog: MatDialog) {
+  constructor(private http: HttpClient, private ngZone: NgZone, config: NgbModalConfig,
+              private modalService: NgbModal, private dialog: MatDialog, private route: Router) {
     // customize default values of modals used by this component tree
     config.backdrop = 'static';
     config.keyboard = false;
@@ -79,7 +81,7 @@ export class MessageHistoryComponent implements OnInit {
   }
 
   deleteMessage(id: number): void {
-    this.http.delete(environment.backendApiPath + '/message/' + id, ).subscribe(
+    this.http.delete(environment.backendApiPath + '/message/' + id ).subscribe(
       value => {
         console.log(`send delete message with ${id}`);
       },
@@ -87,16 +89,11 @@ export class MessageHistoryComponent implements OnInit {
         console.log(error);
       },
       () => {
-        this.ngZone.run( () => {
+        this.ngZone.run(() => {
           this.showMessages();
         });
       }
     );
-  }
-
-  open(content, message): void {
-    this.chosenMessage = message;
-    this.modalService.open(content);
   }
 
   editMessage(message: Message): void {
@@ -104,12 +101,36 @@ export class MessageHistoryComponent implements OnInit {
 
     dialogRef.componentInstance.message = message;
     dialogRef.afterClosed().subscribe(dialogResult => {
-      if (dialogResult.action === 'save'){
+      if (dialogResult.action === 'save') {
+        this.http.put(environment.backendApiPath + '/message/' + dialogResult.message.id , dialogResult.message, {}).subscribe(
+          value => {
+            console.log('sent put request to update message with given id');
+          },
+          error => {
+            console.log(error);
+          }
+        );
         console.log('save' + dialogResult.message.title);
-      } else if (dialogResult.action === 'copy'){
+      } else if (dialogResult.action === 'copy') {
         console.log('copy' + dialogResult.message.title);
       }
     });
   }
+
+  viewMessage(message: Message): void {
+    const dialogRef = this.dialog.open(ViewMessageDialogComponent, {height: '80%', width: '60%'});
+
+    dialogRef.componentInstance.message = message;
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult.action === 'copy') {
+        this.route.navigate(['/message'], {queryParams: {message}});
+        // Navigate to /results?page=1
+        // this.router.navigate(['/results'], { queryParams: { page: 1 } });
+        // this.router.navigate(['/dashboard/registration/unit/addHH', id]);
+        console.log('copy' + dialogResult.message.title);
+      }
+    });
+  }
+
 
 }

@@ -24,6 +24,8 @@ import { MessageFormComponent } from './message/message-form/message-form.compon
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { TopicDescriptionDialogComponent } from './topic/topic-description-dialog/topic-description-dialog.component';
 import {EditMessageDialogComponent} from './message-history/edit-message-dialog/edit-message-dialog.component';
+import {MatIconModule} from '@angular/material/icon';
+import { ViewMessageDialogComponent } from './message-history/view-message-dialog/view-message-dialog.component';
 
 @NgModule({
   declarations: [
@@ -37,24 +39,26 @@ import {EditMessageDialogComponent} from './message-history/edit-message-dialog/
     SaveTemplateDialogComponent,
     MessageFormComponent,
     TopicDescriptionDialogComponent,
-    EditMessageDialogComponent
+    EditMessageDialogComponent,
+    ViewMessageDialogComponent
   ],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    FormsModule,
-    AppRoutingModule,
-    RouterModule,
-    BrowserAnimationsModule,
-    MatListModule,
-    MatSidenavModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatToolbarModule,
-    ColorPickerModule,
-    MatTabsModule,
-    MatSlideToggleModule
-  ],
+    imports: [
+        BrowserModule,
+        HttpClientModule,
+        FormsModule,
+        AppRoutingModule,
+        RouterModule,
+        BrowserAnimationsModule,
+        MatListModule,
+        MatSidenavModule,
+        MatDialogModule,
+        MatButtonModule,
+        MatToolbarModule,
+        ColorPickerModule,
+        MatTabsModule,
+        MatSlideToggleModule,
+        MatIconModule
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })
