@@ -42,7 +42,8 @@ export class MessageFormComponent implements OnInit {
     endtime: '',
     attachment: '',
     logoAttachment: '',
-    locationData: null
+    locationData: null,
+    messageDisplayProperties: {}
   };
   get message(): Message {
     return this.messageValue;
@@ -102,9 +103,22 @@ export class MessageFormComponent implements OnInit {
   retrieveMessage(): Message {
     if (this.validateInputs()) {
       this.setEndtimeFromExpirationOffset();
-      return this.message;
+      const message: Message = {...this.message};
+      if (this.displayPropertiesEmpty()) {
+        message.messageDisplayProperties = null;
+      }
+      return message;
     }
     return null;
+  }
+
+  displayPropertiesEmpty(): boolean {
+    for (const key in this.message.messageDisplayProperties) {
+      if (this.message.messageDisplayProperties[key] != null) {
+        return false;
+      }
+    }
+    return true;
   }
 
   validateInputs(): boolean {
@@ -123,8 +137,8 @@ export class MessageFormComponent implements OnInit {
     this.urlErrors = this.message.links.map((url) => !urlRegex.test(url));
     this.hasUrlErrors = this.urlErrors.some((element) => element);
     this.hasColorError = !(
-      (this.message.backgroundColor == null && this.message.fontColor == null)
-      || this.message.backgroundColor !== this.message.fontColor
+      (this.message.messageDisplayProperties.backgroundColor == null && this.message.messageDisplayProperties.fontColor == null)
+      || this.message.messageDisplayProperties.backgroundColor !== this.message.messageDisplayProperties.fontColor
     );
     return !(this.hasTopicPropertiesError
       || this.hasSenderError
@@ -137,22 +151,22 @@ export class MessageFormComponent implements OnInit {
   }
 
   setBackgroundColor($event: string): void {
-    this.message.backgroundColor = $event;
+    this.message.messageDisplayProperties.backgroundColor = $event;
   }
 
   setFontColor($event: string): void {
-    this.message.fontColor = $event;
+    this.message.messageDisplayProperties.fontColor = $event;
   }
 
   enableCustomColor($event: MatSlideToggleChange): void {
     if ($event.checked) {
-      this.message.fontColor = this.selectedFontColor;
-      this.message.backgroundColor = this.selectedBackgroundColor;
+      this.message.messageDisplayProperties.fontColor = this.selectedFontColor;
+      this.message.messageDisplayProperties.backgroundColor = this.selectedBackgroundColor;
     } else {
-      this.selectedFontColor = this.message.fontColor;
-      this.selectedBackgroundColor = this.message.backgroundColor;
-      this.message.fontColor = null;
-      this.message.backgroundColor = null;
+      this.selectedFontColor = this.message.messageDisplayProperties.fontColor;
+      this.selectedBackgroundColor = this.message.messageDisplayProperties.backgroundColor;
+      this.message.messageDisplayProperties.fontColor = null;
+      this.message.messageDisplayProperties.backgroundColor = null;
     }
   }
 

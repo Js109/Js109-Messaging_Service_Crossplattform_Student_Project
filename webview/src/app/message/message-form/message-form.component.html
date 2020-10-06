@@ -9,9 +9,9 @@
     <textarea class="form-control mt-2 message-content flex-grow-1" placeholder="Content"
               [(ngModel)]="message.content"
               [ngClass]="{'is-invalid' : hasContentError}"
-              [style.background]="message.backgroundColor"
-              [style.color]="message.fontColor"
-              [style.fontFamily]="fontFamilyToFontString(message.fontFamily)"></textarea>
+              [style.background]="message.messageDisplayProperties.backgroundColor"
+              [style.color]="message.messageDisplayProperties.fontColor"
+              [style.fontFamily]="fontFamilyToFontString(message.messageDisplayProperties.fontFamily)"></textarea>
     <div *ngIf="hasContentError" class="invalid-feedback">Either Content or Files are required.</div>
 
   </div>
@@ -19,7 +19,7 @@
 
     <select
       class="browser-default custom-select mb-2"
-      [(ngModel)]="message.fontFamily">
+      [(ngModel)]="message.messageDisplayProperties.fontFamily">
       <option [ngValue]="undefined" selected hidden disabled>Font</option>
       <option [ngValue]="0">{{fontFamilyToFontString(0)}}</option>
       <option [ngValue]="1">{{fontFamilyToFontString(1)}}</option>
@@ -36,9 +36,9 @@
       <input class="mr-2 rounded border color-select"
              [disabled]="!hasCustomColor"
              [cpDisabled]="!hasCustomColor"
-             [style.background]="message.fontColor"
+             [style.background]="message.messageDisplayProperties.fontColor"
              [cpOutputFormat]="'hex'"
-             [(colorPicker)]="message.fontColor"
+             [(colorPicker)]="message.messageDisplayProperties.fontColor"
              [cpAlphaChannel]="'disabled'"
              (colorPickerSelect)="setFontColor($event)"
       />
@@ -48,9 +48,9 @@
       <input class="mr-2 rounded border color-select"
              [disabled]="!hasCustomColor"
              [cpDisabled]="!hasCustomColor"
-             [style.background]="message.backgroundColor"
+             [style.background]="message.messageDisplayProperties.backgroundColor"
              [cpOutputFormat]="'hex'"
-             [(colorPicker)]="message.backgroundColor"
+             [(colorPicker)]="message.messageDisplayProperties.backgroundColor"
              [cpAlphaChannel]="'disabled'"
              (colorPickerSelect)="setBackgroundColor($event)"
       />
@@ -141,8 +141,7 @@
     <option [ngValue]="2">Days</option>
     <option [ngValue]="3">Weeks</option>
   </select>
-  <input name="endtime" type="number" class="form-control col no-left-rounding border-left-0" id="endTime"
-         placeholder=""
+  <input name="endtime" type="number" class="form-control col no-left-rounding border-left-0" id="endTime" placeholder=""
          size="10" maxlength="10" [(ngModel)]="expirationOffset" [disabled]="expirationOffsetType == null">
 </div>
 
