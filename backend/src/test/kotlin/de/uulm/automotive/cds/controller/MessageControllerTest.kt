@@ -1,17 +1,13 @@
 package de.uulm.automotive.cds.controller
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.ninjasquad.springmockk.MockkBean
 import de.uulm.automotive.cds.entities.LocationData
 import de.uulm.automotive.cds.entities.Message
+import de.uulm.automotive.cds.entities.MessageDisplayProperties
+import de.uulm.automotive.cds.models.Alignment
 import de.uulm.automotive.cds.models.FontFamily
 import de.uulm.automotive.cds.models.dtos.MessageDTO
-import de.uulm.automotive.cds.repositories.MessageRepository
-import de.uulm.automotive.cds.repositories.PropertyRepository
-import de.uulm.automotive.cds.repositories.SignUpRepository
-import de.uulm.automotive.cds.repositories.TopicRepository
-import de.uulm.automotive.cds.services.AmqpChannelService
-import de.uulm.automotive.cds.services.MessageService
+import de.uulm.automotive.cds.models.dtos.MessageDisplayPropertiesDTO
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -21,10 +17,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.delete
-import org.springframework.test.web.servlet.get
-import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import java.net.URL
 import java.time.LocalDateTime
@@ -47,6 +40,21 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) : BaseCont
             null,
             null,
             null,
+            null
+    )
+
+    private val emptyMessage = Message(
+            5,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            false,
+            null,
+            null,
+            null,
             null,
             null,
             null
@@ -66,17 +74,14 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) : BaseCont
             logoAttachment: ByteArray = ByteArray(150),
             links: MutableList<URL> = mutableListOf(URL("https://www.google.com"), URL("https://www.example.com")),
             locationData: LocationData = LocationData(null, 48.3998807, 9.9878078, 10),
-            backgroundColor: String = "#f5f5f5",
-            fontColor: String = "#F5F5F5",
-            fontFamily: FontFamily = FontFamily.ROBOTO
+            messageDisplayProperties: MessageDisplayProperties = MessageDisplayProperties(1, "#f5f5f5","#F5F5F5", FontFamily.ROBOTO, Alignment.CENTER)
     ): Message {
         return Message(id, topic, sender, title, content, starttime, endtime, isSent, properties,
-                attachment, logoAttachment, links, locationData, backgroundColor, fontColor, fontFamily)
+                attachment, logoAttachment, links, locationData, messageDisplayProperties)
     }
 
     @BeforeEach
     fun setUp() {
-
     }
 
     @AfterEach
@@ -182,8 +187,12 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) : BaseCont
         val invalidDto = MessageDTO(
                 locationData = LocationData(null, 0.0, 181.0, 10),
                 links = arrayListOf("invalid-link", "http://invalid-link"),
-                backgroundColor = "ffffff",
-                fontColor = "ffffff"
+                messageDisplayProperties = MessageDisplayPropertiesDTO(
+                        "ffffff",
+                        "ffffff",
+                        FontFamily.ROBOTO,
+                        Alignment.CENTER
+                )
         )
 
         mockMvc.post("/message") {
@@ -206,10 +215,91 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) : BaseCont
             content { jsonPath("locationError").isNotEmpty }
             content { jsonPath("linkError").exists() }
             content { jsonPath("linkError").isNotEmpty }
-            content { jsonPath("backgroundColorError").exists() }
-            content { jsonPath("backgroundColorError").isNotEmpty }
-            content { jsonPath("fontColorError").exists() }
-            content { jsonPath("fontColorError").isNotEmpty }
+            content { jsonPath("colorError").exists() }
+            content { jsonPath("colorError").isNotEmpty }
+            content { jsonPath("colorFormatError").exists() }
+            content { jsonPath("colorFormatError").isNotEmpty }
+        }
+
+        verify(exactly = 0) { messageRepository.save(any<Message>()) }
+    }
+
+    @Test
+    fun `update complete Message`() {
+        every { messageRepository.save(any<Message>()) } returns getMessage()
+        every { messageRepository.findById(any<Long>()) } returns Optional.of(getMessage()) // returns Optional.of(Empty)
+
+        mockMvc.put("/message/1") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(MessageDTO.toDTO(getMessage()))
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isOk }
+        }
+
+        verify(exactly = 1) { messageRepository.save(any<Message>()) }
+    }
+
+    @Test
+    fun `update Message and Message not saved before`() {
+        every { messageRepository.save(any<Message>()) } returns emptyMessage
+        every { messageRepository.findById(any<Long>()) } returns Optional.empty()
+
+        mockMvc.put("/message/5") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(MessageDTO.toDTO(emptyMessage))
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isNotFound }
+        }
+
+        verify(exactly = 0) { messageRepository.save(any<Message>()) }
+    }
+
+    @Test
+    fun `update invalid DTO returns Bad Request with BadRequestInfo object in body`() {
+        every { messageRepository.save(any<Message>()) } returns messageBasicAttributesOnly
+        every { messageRepository.findById(any<Long>()) } returns Optional.of(getMessage())
+
+        val invalidDto = MessageDTO(
+                locationData = LocationData(null, 0.0, 181.0, 10),
+                links = arrayListOf("invalid-link", "http://invalid-link")
+        ).apply {
+            messageDisplayProperties = MessageDisplayPropertiesDTO(
+                    "ffffff",
+                    "ffffff" ,
+                    null,
+                    null
+            )
+
+        }
+
+        mockMvc.put("/message/1") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = jacksonObjectMapper().writeValueAsString(invalidDto)
+            characterEncoding = "UTF-8"
+        }.andExpect {
+            status { isUnprocessableEntity }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            content { jsonPath("senderError").exists() }
+            content { jsonPath("senderError").isNotEmpty }
+            content { jsonPath("titleError").exists() }
+            content { jsonPath("titleError").isNotEmpty }
+            content { jsonPath("topicError").exists() }
+            content { jsonPath("topicError").isNotEmpty }
+            content { jsonPath("contentError").exists() }
+            content { jsonPath("contentError").isNotEmpty }
+            content { jsonPath("locationError").exists() }
+            content { jsonPath("locationError").isNotEmpty }
+            content { jsonPath("linkError").exists() }
+            content { jsonPath("linkError").isNotEmpty }
+            content { jsonPath("colorError").exists() }
+            content { jsonPath("colorError").isNotEmpty }
+            content { jsonPath("colorFormatError").exists() }
+            content { jsonPath("colorFormatError").isNotEmpty }
         }
 
         verify(exactly = 0) { messageRepository.save(any<Message>()) }

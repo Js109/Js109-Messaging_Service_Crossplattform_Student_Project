@@ -4,6 +4,7 @@ import {Topic} from '../models/Topic';
 import {environment} from '../../environments/environment';
 import {MatDialog} from '@angular/material/dialog';
 import {TopicDescriptionDialogComponent} from './topic-description-dialog/topic-description-dialog.component';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-topic',
@@ -14,7 +15,7 @@ export class TopicComponent implements OnInit {
 
   @HostBinding('class') class = 'flex-grow-1';
 
-  constructor(private http: HttpClient, private dialog: MatDialog) { }
+  constructor(private http: HttpClient, private dialog: MatDialog, private snackBar: MatSnackBar) { }
 
   topic: Topic = {
     id: null,
@@ -38,10 +39,27 @@ export class TopicComponent implements OnInit {
   createTopic(): void {
     this.http.post(environment.backendApiPath + '/topic', this.topic, {}).subscribe(
       value => {
-        console.log('topic was sent');
         this.loadTopics();
       },
       error => {
+        if (error.error.titleError) {
+          this.snackBar.open(error.error.titleError, '',  {
+            duration: 1000,
+            panelClass: ['alert', 'alert-danger', 'text-center', 'text-danger']
+          });
+        } else if (error.error.descriptionError) {
+          this.snackBar.open(error.error.descriptionError, '',  {
+            duration: 1000,
+            panelClass: ['alert', 'alert-danger', 'text-center', 'text-danger']
+          });
+        } else if (error.error.tagError) {
+          this.snackBar.open(error.error.tagError, '',  {
+            duration: 1000,
+            panelClass: ['alert', 'alert-danger', 'text-center', 'text-danger']
+          });
+        } else {
+          this.snackBar.open('Could not store new topic!', '',  {duration: 1000, panelClass: ['alert', 'alert-danger', 'text-center', 'text-danger']});
+        }
         console.log(error);
       }
     );

@@ -1,4 +1,4 @@
-package de.uulm.automotiveuulmapp.messageFragment
+package de.uulm.automotiveuulmapp.messages.messageFragment
 
 import android.content.Context
 import android.content.Intent
@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import de.uulm.automotiveuulmapp.BaseFragment
 import de.uulm.automotiveuulmapp.R
+import de.uulm.automotiveuulmapp.messages.messageFragment.deletion.MessageDeletionHelper
 import de.uulm.automotiveuulmapp.messages.messagedb.MessageDatabase
 
 class MessageFragment : BaseFragment() {
@@ -89,7 +90,7 @@ class MessageFragment : BaseFragment() {
             if(showMessageDeletionHint){
                 with(it.edit()){
                     putBoolean("showMessageDeletionHint", false)
-                    commit()
+                    apply()
                     hintRequired = true
                 }
             }

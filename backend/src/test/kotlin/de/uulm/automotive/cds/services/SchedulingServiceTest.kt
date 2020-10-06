@@ -34,8 +34,6 @@ internal class SchedulingServiceTest {
             null,
             null,
             null,
-            null,
-            null,
             null
     )
 
@@ -53,8 +51,6 @@ internal class SchedulingServiceTest {
             ByteArray(150),
             mutableListOf(URL("https://www.google.com"), URL("https://www.example.com")),
             LocationData(null, 48.3998807, 9.9878078, 10),
-            null,
-            null,
             null
     )
 

@@ -2,10 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Message} from '../models/Message';
 import {environment} from '../../environments/environment';
-
-enum OffsetType {
-  Minute, Hour, Day, Week
-}
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-message',
@@ -14,7 +11,7 @@ enum OffsetType {
 })
 export class MessageComponent implements OnInit {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private snackBar: MatSnackBar) {
   }
 
   showTemplateList = true;
@@ -32,17 +29,23 @@ export class MessageComponent implements OnInit {
     attachment: '',
     logoAttachment: '',
     locationData: null,
+    messageDisplayProperties: {},
   };
 
   sendMessage(message: Message): void {
-    this.http.post(environment.backendApiPath + '/message', message, {}).subscribe(
-      value => {
-        console.log('send');
-      },
-      error => {
-        console.log(error);
-      }
-    );
+    if (message != null) {
+      this.http.post(environment.backendApiPath + '/message', message, {}).subscribe(
+        value => {
+          this.snackBar.open('Successful Send!', '',  {duration: 1000, });
+          this.clearMessage();
+        },
+        error => {
+          this.snackBar.open('Could not send message!', '',  {duration: 1000, panelClass: ['alert', 'alert-danger', 'text-center', 'text-danger']});
+        }
+      );
+    } else {
+      this.snackBar.open('Some message inputs are invalid!', '',  {duration: 1000, panelClass: ['alert', 'alert-danger', 'text-center', 'text-danger']});
+    }
   }
 
   toggleTemplateList(): void {
@@ -69,7 +72,8 @@ export class MessageComponent implements OnInit {
       isSent: false,
       attachment: '',
       locationData: null,
-      logoAttachment: ''
+      logoAttachment: '',
+      messageDisplayProperties: {}
     };
   }
 }

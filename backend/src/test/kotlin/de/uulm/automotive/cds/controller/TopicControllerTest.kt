@@ -35,7 +35,8 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) : BaseContro
 
     @Test
     fun `get all Topics`() {
-        every { topicRepository.findAllByDisabledOrderByTitleAscIdAsc(false) } returns listOf(topic.toEntity(), topic2.toEntity())
+        every { topicRepository.findAllByDisabledOrderByTitleAscIdAsc(false) } returns
+                listOf(TopicDTO.toEntity(topic), TopicDTO.toEntity(topic2))
 
         mockMvc.get("/topic") {
             accept(MediaType.APPLICATION_JSON)
@@ -55,7 +56,7 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) : BaseContro
 
     @Test
     fun `save Topic`() {
-        every { topicRepository.save(any<Topic>()) } returns topic.toEntity()
+        every { topicRepository.save(any<Topic>()) } returns TopicDTO.toEntity(topic)
         every { topicRepository.findByTitle(any()) } returns null
 
         mockMvc.post("/topic") {
@@ -72,7 +73,7 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) : BaseContro
 
     @Test
     fun `save Topic with already existing name returns Bad Request with BadRequestInfo object in body`() {
-        every { topicRepository.findByTitle(any()) } returns topic.toEntity()
+        every { topicRepository.findByTitle(any()) } returns TopicDTO.toEntity(topic)
 
         mockMvc.post("/topic") {
             accept = MediaType.APPLICATION_JSON
@@ -120,10 +121,10 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) : BaseContro
     fun `update Topic description`(){
         val descriptionUpdateString = "New description"
         val topicUpdateDTO = TopicUpdateDTO(descriptionUpdateString)
-        val updatedTopicEntity = topic.toEntity()
+        val updatedTopicEntity = TopicDTO.toEntity(topic)
         updatedTopicEntity.description = descriptionUpdateString
 
-        every { topicRepository.findById(1) } returns Optional.of(topic.toEntity())
+        every { topicRepository.findById(1) } returns Optional.of(TopicDTO.toEntity(topic))
         every { topicRepository.save(any<Topic>()) } returns updatedTopicEntity
 
         mockMvc.patch("/topic/1") {
@@ -166,7 +167,7 @@ internal class TopicControllerTest(@Autowired val mockMvc: MockMvc) : BaseContro
     fun `update description of deleted Topic`(){
         val descriptionUpdateString = "New description"
         val topicUpdateDTO = TopicUpdateDTO(descriptionUpdateString)
-        val deletedTopicEntity = topic.toEntity()
+        val deletedTopicEntity = TopicDTO.toEntity(topic)
         deletedTopicEntity.disabled = true
 
         every { topicRepository.findById(1) } returns Optional.of(deletedTopicEntity)

@@ -77,11 +77,13 @@ class MessagePersistenceService : IntentService("MessagePersistenceService") {
             msg.title,
             msg.messageText,
             msg.attachment,
+            msg.logoAttachment,
             msg.links,
             read = true,
-            fontColor = msg.fontColor,
-            backgroundColor = msg.backgroundColor,
-            fontFamily = msg.fontFamily
+            fontColor = msg.messageDisplayProperties?.fontColor,
+            backgroundColor = msg.messageDisplayProperties?.backgroundColor,
+            fontFamily = msg.messageDisplayProperties?.fontFamily,
+            alignment = msg.messageDisplayProperties?.alignment
         )
         db.messageDao().insert(msgEntity)
     }

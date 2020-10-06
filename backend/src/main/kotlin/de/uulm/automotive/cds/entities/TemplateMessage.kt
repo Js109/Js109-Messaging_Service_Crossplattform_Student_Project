@@ -1,5 +1,6 @@
 package de.uulm.automotive.cds.entities
 
+import de.uulm.automotive.cds.models.Alignment
 import de.uulm.automotive.cds.models.FontFamily
 import java.net.URL
 import java.time.LocalDateTime
@@ -28,7 +29,8 @@ class TemplateMessage(
         locationData: LocationData?,
         backgroundColor: String?,
         fontColor: String?,
-        fontFamily: FontFamily?
+        fontFamily: FontFamily?,
+        alignment: Alignment?
 ) : Message(
         id,
         topic,
@@ -43,9 +45,13 @@ class TemplateMessage(
         logoAttachment,
         links,
         locationData,
-        backgroundColor,
-        fontColor,
-        fontFamily
+        MessageDisplayProperties(
+                null,
+                backgroundColor,
+                fontColor,
+                fontFamily,
+                alignment
+        )
 ) {
     var templateName = templateName
 }

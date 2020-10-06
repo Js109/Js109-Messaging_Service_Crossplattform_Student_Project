@@ -2,9 +2,7 @@ package de.uulm.automotive.cds.models.dtos
 
 import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.models.DTO
-import de.uulm.automotive.cds.models.DTOCompanion
-import de.uulm.automotive.cds.models.Entity
-import org.modelmapper.ModelMapper
+import de.uulm.automotive.cds.models.EntityConverter
 import java.time.LocalDateTime
 
 /**
@@ -19,30 +17,9 @@ data class MessageCompactDTO(
         var content: String? = null,
         var starttime: LocalDateTime? = null,
         var isSent: Boolean? = null
-) : DTO {
-    companion object : DTOCompanion {
-        override var mapper: ModelMapper = ModelMapper()
-
-        /**
-         * Maps the Message entity to the corresponding DTO object
-         *
-         * @param Message class of the entity
-         * @param entity Message entity
-         * @return Mapped DTO
-         */
-        override fun <Message : Entity> toDTO(entity: Message): MessageCompactDTO {
-            return mapper.map(entity, MessageCompactDTO::class.java)
-        }
-
-    }
-
-    /**
-     * Maps the fields of this DTO to the corresponding Entity
-     *
-     * @return Mapped Message entity
-     */
-    override fun toEntity(): Message {
-        return mapper.map(this, Message::class.java)
-    }
-
+) : DTO<Message>() {
+    companion object : EntityConverter<Message, MessageCompactDTO>(
+            Message::class.java,
+            MessageCompactDTO::class.java
+    )
 }

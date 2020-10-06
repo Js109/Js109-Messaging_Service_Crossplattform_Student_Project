@@ -26,6 +26,11 @@ import { TopicDescriptionDialogComponent } from './topic/topic-description-dialo
 import {EditMessageDialogComponent} from './message-history/edit-message-dialog/edit-message-dialog.component';
 import {MatIconModule} from '@angular/material/icon';
 import { ViewMessageDialogComponent } from './message-history/view-message-dialog/view-message-dialog.component';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {NgxMatDatetimePickerModule} from '@angular-material-components/datetime-picker';
+import {NgxMatMomentModule} from '@angular-material-components/moment-adapter';
+import {MatIconModule} from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -42,23 +47,28 @@ import { ViewMessageDialogComponent } from './message-history/view-message-dialo
     EditMessageDialogComponent,
     ViewMessageDialogComponent
   ],
-    imports: [
-        BrowserModule,
-        HttpClientModule,
-        FormsModule,
-        AppRoutingModule,
-        RouterModule,
-        BrowserAnimationsModule,
-        MatListModule,
-        MatSidenavModule,
-        MatDialogModule,
-        MatButtonModule,
-        MatToolbarModule,
-        ColorPickerModule,
-        MatTabsModule,
-        MatSlideToggleModule,
-        MatIconModule
-    ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    FormsModule,
+    AppRoutingModule,
+    RouterModule,
+    BrowserAnimationsModule,
+    MatListModule,
+    MatSidenavModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatToolbarModule,
+    ColorPickerModule,
+    MatTabsModule,
+    MatSlideToggleModule,
+    MatSnackBarModule,
+    MatSlideToggleModule,
+    MatDatepickerModule,
+    NgxMatDatetimePickerModule,
+    NgxMatMomentModule,
+    MatIconModule
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })

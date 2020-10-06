@@ -1,6 +1,7 @@
 package de.uulm.automotive.cds.models.dtos
 
 import de.uulm.automotive.cds.models.errors.MessageFilterBadRequestInfo
+import de.uulm.automotive.cds.models.errors.addError
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -21,8 +22,7 @@ data class MessageFilterDTO(
         val dateStartTimePeriod = if (startTimePeriod!!.isNotEmpty()) LocalDate.parse(startTimePeriod, formatter).atTime(0, 0) else null
         val dateEndTimePeriod = if (endTimePeriod!!.isNotEmpty()) LocalDate.parse(endTimePeriod, formatter).atTime(23, 59) else null
         if (dateStartTimePeriod!! > dateEndTimePeriod!!) {
-            errors = errors ?: MessageFilterBadRequestInfo()
-            errors.DateRangeError = "Starttime must be before Endtime and it's only allowed to use a Daterange, not a single date."
+            errors = errors.addError { it.DateRangeError = "Starttime must be before Endtime and it's only allowed to use a Daterange, not a single date." }
         }
 
         return errors

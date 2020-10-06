@@ -3,6 +3,8 @@ package de.uulm.automotive.cds.controller
 import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.models.dtos.MessageCompactDTO
 import de.uulm.automotive.cds.models.dtos.MessageDTO
+import de.uulm.automotive.cds.models.dtos.PropertyDisableDTO
+import de.uulm.automotive.cds.models.dtos.TopicDisableDTO
 import de.uulm.automotive.cds.models.errors.MessageBadRequestInfo
 import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.services.MessageService
@@ -109,7 +111,7 @@ class MessageController(private val repository: MessageRepository, private val m
         if (errors != null) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errors)
         }
-        val message = messageDto.toEntity()
+        val message = MessageDTO.toEntity(messageDto)
 
         if (message.starttime == null) {
             message.starttime = LocalDateTime.now()
@@ -122,6 +124,12 @@ class MessageController(private val repository: MessageRepository, private val m
         return ResponseEntity.status(HttpStatus.OK).build()
     }
 
+    /**
+     * REST-Endpoint for deleting a message.
+     * See swagger definition of DELETE /message for more details.
+     *
+     * @param id id of the message
+     */
     @DeleteMapping("/{id}")
     fun deleteMessage(@PathVariable id: Long) {
         val message: Optional<Message> = repository.findById(id)
@@ -133,5 +141,33 @@ class MessageController(private val repository: MessageRepository, private val m
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Already sent messages can't be deleted $id.")
 
         repository.deleteById(id)
+    }
+
+    /**
+     * REST-Endpoint for updating a message.
+     * See swagger definition of PUT /message for more details.
+     *
+     * @param id id of the message
+     * @param messageDto DTO of the message
+     * @return Response Entity Containing Error Object in case of an invalid DTO
+     */
+    @PutMapping("/{id}")
+    fun updateMessage(@PathVariable id: Long, @RequestBody messageDto: MessageDTO): ResponseEntity<MessageBadRequestInfo> {
+        val messageOld = repository.findById(id)
+        if (messageOld.isEmpty)
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find message with id $id and thus cannot update it.")
+
+        val errors = messageDto.getErrors()
+        if (errors != null) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errors)
+        }
+
+        val message = MessageDTO.toEntity(messageDto)
+        message.id = id
+
+        return if (messageOld.get().isSent == false) {
+            repository.save(message)
+            ResponseEntity.status(HttpStatus.OK).build()
+        } else ResponseEntity.status(HttpStatus.LOCKED).build()
     }
 }
