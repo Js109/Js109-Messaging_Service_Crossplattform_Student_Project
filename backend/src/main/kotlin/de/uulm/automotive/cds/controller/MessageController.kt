@@ -162,7 +162,7 @@ class MessageController(private val repository: MessageRepository, private val m
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errors)
         }
 
-        val message = messageDto.toEntity()
+        val message = MessageDTO.toEntity(messageDto)
         message.id = id
 
         return if (messageOld.get().isSent == false) {

@@ -57,8 +57,6 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) : BaseCont
             null,
             null,
             null,
-            null,
-            null,
             null
     )
 
@@ -267,10 +265,16 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) : BaseCont
 
         val invalidDto = MessageDTO(
                 locationData = LocationData(null, 0.0, 181.0, 10),
-                links = arrayListOf("invalid-link", "http://invalid-link"),
-                backgroundColor = "ffffff",
-                fontColor = "ffffff"
-        )
+                links = arrayListOf("invalid-link", "http://invalid-link")
+        ).apply {
+            messageDisplayProperties = MessageDisplayPropertiesDTO(
+                    "ffffff",
+                    "ffffff" ,
+                    null,
+                    null
+            )
+
+        }
 
         mockMvc.put("/message/1") {
             accept = MediaType.APPLICATION_JSON
@@ -292,10 +296,10 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) : BaseCont
             content { jsonPath("locationError").isNotEmpty }
             content { jsonPath("linkError").exists() }
             content { jsonPath("linkError").isNotEmpty }
-            content { jsonPath("backgroundColorError").exists() }
-            content { jsonPath("backgroundColorError").isNotEmpty }
-            content { jsonPath("fontColorError").exists() }
-            content { jsonPath("fontColorError").isNotEmpty }
+            content { jsonPath("colorError").exists() }
+            content { jsonPath("colorError").isNotEmpty }
+            content { jsonPath("colorFormatError").exists() }
+            content { jsonPath("colorFormatError").isNotEmpty }
         }
 
         verify(exactly = 0) { messageRepository.save(any<Message>()) }
