@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.chrono.ChronoLocalDateTime
+import java.util.*
+import kotlin.collections.HashMap
 
 /**
  * A service class that takes care of sending messages via the amqp broker.
@@ -98,7 +101,8 @@ class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelS
     fun filterCurrentMessages(): List<Message> {
         val messages = messageRepository.findAllByIsSentFalseOrderByStarttimeAsc()
         return messages.filter { message: Message ->
-            message.starttime!! < LocalDateTime.now()
+            val starttime = message.starttime
+            starttime == null || starttime < LocalDateTime.now()
         }.apply {
             forEach { message ->
                 // triggers the loading of the lazy-fetch attributes
