@@ -2,10 +2,11 @@ package de.uulm.automotive.cds.models.dtos
 
 import de.uulm.automotive.cds.entities.LocationData
 import de.uulm.automotive.cds.entities.Message
-import de.uulm.automotive.cds.models.*
+import de.uulm.automotive.cds.models.DTO
+import de.uulm.automotive.cds.models.EntityConverter
+import de.uulm.automotive.cds.models.ValidateDTO
 import de.uulm.automotive.cds.models.errors.MessageBadRequestInfo
-import org.modelmapper.ModelMapper
-import java.net.URL
+import de.uulm.automotive.cds.models.errors.addError
 import java.time.LocalDateTime
 
 /**
@@ -24,52 +25,18 @@ data class MessageDTO(
         var logoAttachment: ByteArray? = null,
         var links: MutableList<String>? = null,
         var locationData: LocationData? = null,
-        var backgroundColor: String? = null,
-        var fontColor: String? = null,
-        var fontFamily: FontFamily? = null
-) : DTO, ValidateDTO {
-    companion object : DTOCompanion {
-        override var mapper: ModelMapper = ModelMapper()
-
-        init {
-            mapper.addConverter<String, URL> { ctx -> URL(completeURL(ctx.source)) }
-        }
-
+        var messageDisplayProperties: MessageDisplayPropertiesDTO? = null
+) : DTO<Message>(), ValidateDTO {
+    companion object : EntityConverter<Message, MessageDTO>(
+            Message::class.java,
+            MessageDTO::class.java
+    ) {
         val regexUrl: String = "[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=,!]*)"
         val regexUrlWithoutProtocol: Regex = Regex("(www\\.)?$regexUrl")
         val regexUrlHttp: Regex = Regex("http?:\\/\\/(www\\.)?$regexUrl")
         val regexUrlHttps: Regex = Regex("https?:\\/\\/(www\\.)?$regexUrl")
 
         val regexHexColor: Regex = Regex("#[A-Fa-f0-9]{6}")
-
-        /**
-         * Maps the Message entity to the corresponding DTO object
-         *
-         * @param Message class of the entity
-         * @param entity Message entity
-         * @return Mapped DTO
-         */
-        override fun <Message : Entity> toDTO(entity: Message): MessageDTO {
-            return mapper.map(entity, MessageDTO::class.java)
-        }
-
-        /**
-         * Checks if the given url is valid or incomplete. If it is incomplete the protocol gets
-         * prepended.
-         *
-         * @param url string
-         * @return url as string if a valid url can be created, returns null if not
-         */
-        fun completeURL(url: String): String? {
-            if (url.contains(regexUrlWithoutProtocol)) {
-                if (url.matches(regexUrlWithoutProtocol)) {
-                    return "https://" + url
-                } else if (url.matches(regexUrlHttp) || url.matches(regexUrlHttps)) {
-                    return url
-                }
-            }
-            return null
-        }
 
         /**
          * Checks if the given string contains a valid hex color.
@@ -84,15 +51,6 @@ data class MessageDTO(
     }
 
     /**
-     * Maps the fields of this DTO to the corresponding Entity
-     *
-     * @return Mapped Message entity
-     */
-    override fun toEntity(): Message {
-        return mapper.map(this, Message::class.java)
-    }
-
-    /**
      * Validates all the fields of the DTO. If errors are present, an error object gets created.
      * The found errors are then saved inside the error object.
      *
@@ -102,44 +60,37 @@ data class MessageDTO(
         var errors: MessageBadRequestInfo? = null
 
         if (sender.isNullOrBlank()) {
-            errors = errors ?: MessageBadRequestInfo()
-            errors.senderError = "Sender field is required."
+            errors = errors.addError { it.senderError = "Sender field is required" }
         }
 
         if (title.isNullOrBlank()) {
-            errors = errors ?: MessageBadRequestInfo()
-            errors.titleError = "Title field is required."
+            errors = errors.addError { it.titleError = "Title field is required." }
         }
 
         if (!(topic.isNullOrBlank().xor(properties.isNullOrEmpty()))) {
-            errors = errors ?: MessageBadRequestInfo()
-            errors.topicError = "Either Topics or Properties are required."
+            errors = errors.addError { it.topicError = "Either Topics or Properties are required." }
         }
 
         if (content.isNullOrEmpty() && (attachment == null || attachment!!.isEmpty())) {
-            errors = errors ?: MessageBadRequestInfo()
-            errors.contentError = "Either Content or Files are required."
+            errors = errors.addError { it.contentError = "Either Content or Files are required." }
         }
 
         if (!hasValidURLs()) {
-            errors = errors ?: MessageBadRequestInfo()
-            errors.linkError = "Please check your link values."
+            errors = errors.addError { it.linkError = "Please check your link values." }
         }
 
-        if (backgroundColor != null && !isValidHexColorString(backgroundColor!!)) {
-            errors = errors ?: MessageBadRequestInfo()
-            errors.backgroundColorError = "Please enter a valid HexColor."
-        }
-
-        if (fontColor != null && !isValidHexColorString(fontColor!!)) {
-            errors = errors ?: MessageBadRequestInfo()
-            errors.fontColorError = "Please enter a valid HexColor."
+        messageDisplayProperties?.let { dto ->
+            dto.getErrors()?.let { displayError ->
+                errors = errors.addError {
+                    it.colorError = displayError.colorError
+                    it.colorFormatError = displayError.colorFormatError
+                }
+            }
         }
 
         locationData?.let {
             if (it.lat < -90 || it.lat > 90 || it.lng > 180 || it.lng < -180) {
-                errors = errors ?: MessageBadRequestInfo()
-                errors!!.locationError = "Please check your coordinate values!"
+                errors = errors.addError { err -> err.locationError = "Please check your coordinate values!" }
             }
         }
 

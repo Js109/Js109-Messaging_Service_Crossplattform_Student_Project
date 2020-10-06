@@ -1,6 +1,7 @@
 package de.uulm.automotive.cds.models.errors
 
 import de.uulm.automotive.cds.models.BadRequestInfo
+import de.uulm.automotive.cds.models.addErrorGeneric
 
 /**
  * Contains the Error Information for the TopicDTO.
@@ -13,3 +14,6 @@ class TopicBadRequestInfo(
         var descriptionError: String? = null,
         var tagError: String? = null
 ) : BadRequestInfo()
+
+fun TopicBadRequestInfo?.addError(addError: (err: TopicBadRequestInfo) -> Unit): TopicBadRequestInfo =
+        addErrorGeneric(addError, TopicBadRequestInfo())

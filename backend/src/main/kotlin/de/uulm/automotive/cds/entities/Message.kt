@@ -1,6 +1,6 @@
 package de.uulm.automotive.cds.entities
 
-import de.uulm.automotive.cds.models.FontFamily
+import de.uulm.automotive.cds.models.dtos.MessageDisplayPropertiesDTO
 import java.net.URL
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -41,9 +41,6 @@ class Message(
         var links: MutableList<URL>?,
         @OneToOne(cascade = [CascadeType.ALL])
         var locationData: LocationData?,
-        @Column(length = 7)
-        var backgroundColor: String?,
-        @Column(length = 7)
-        var fontColor: String?,
-        var fontFamily: FontFamily?
+        @OneToOne(cascade = [CascadeType.ALL])
+        var messageDisplayProperties: MessageDisplayProperties?
 ) : de.uulm.automotive.cds.models.Entity()

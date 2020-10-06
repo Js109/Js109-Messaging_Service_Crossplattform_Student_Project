@@ -2,6 +2,9 @@ package de.uulm.automotive.cds.models.dtos
 
 import de.uulm.automotive.cds.entities.LocationData
 import de.uulm.automotive.cds.entities.Message
+import de.uulm.automotive.cds.entities.MessageDisplayProperties
+import de.uulm.automotive.cds.models.Alignment
+import de.uulm.automotive.cds.models.EntityConverter
 import de.uulm.automotive.cds.models.FontFamily
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -24,9 +27,13 @@ internal class MessageDTOTest {
             ByteArray(10),
             arrayListOf(URL("https://www.example.com"), URL("https://example2.com")),
             LocationData(1, 10.0, 10.0, 10),
-            "#f5f5f5",
-            "#F5F5F5",
-            FontFamily.ROBOTO
+            MessageDisplayProperties(
+                    1,
+                    "#f5f5f5",
+                    "#F5F5F5",
+                    FontFamily.ROBOTO,
+                    Alignment.CENTER
+            )
     )
 
     private fun getMessageEntity(): Message {
@@ -47,7 +54,8 @@ internal class MessageDTOTest {
             updatedLocationData: LocationData? = null,
             updatedBackgroundColor: String? = null,
             updatedFontColor: String? = null,
-            updatedFontFamily: FontFamily? = null
+            updatedFontFamily: FontFamily? = null,
+            updatedAlignment: Alignment? = null
     ): MessageDTO {
         return MessageDTO(
                 updatedTopic ?: message.topic,
@@ -61,18 +69,21 @@ internal class MessageDTOTest {
                 updatedLogoAttachment ?: message.logoAttachment,
                 updatedLinks,
                 updatedLocationData ?: message.locationData,
-                updatedBackgroundColor ?: message.backgroundColor,
-                updatedFontColor ?: message.fontColor,
-                updatedFontFamily ?: message.fontFamily
+                MessageDisplayPropertiesDTO(
+                        updatedBackgroundColor ?: message.messageDisplayProperties!!.backgroundColor,
+                        updatedFontColor ?: message.messageDisplayProperties!!.fontColor,
+                        updatedFontFamily ?: message.messageDisplayProperties!!.fontFamily,
+                        updatedAlignment ?: message.messageDisplayProperties!!.alignment
+                )
         )
     }
 
     @Test
     fun `messageDTO to message entity`() {
         val expected = getMessageEntity()
-        val result = getMessageDTO(
+        val result = MessageDTO.toEntity(getMessageDTO(
                 updatedLinks = arrayListOf("https://www.example.com", "example2.com")
-        ).toEntity()
+        ))
 
         assertEquals(result.topic, expected.topic)
         assertEquals(result.sender, expected.sender)
@@ -89,9 +100,11 @@ internal class MessageDTOTest {
         assertTrue(result.logoAttachment!!.contentEquals(expected.logoAttachment!!))
         assertEquals(result.links, expected.links)
         assertEquals(result.locationData, expected.locationData)
-        assertEquals(result.backgroundColor, expected.backgroundColor)
-        assertEquals(result.fontColor, expected.fontColor)
-        assertEquals(result.fontFamily, expected.fontFamily)
+        assertNotNull(result.messageDisplayProperties)
+        assertEquals(result.messageDisplayProperties!!.backgroundColor, expected.messageDisplayProperties!!.backgroundColor)
+        assertEquals(result.messageDisplayProperties!!.fontColor, expected.messageDisplayProperties!!.fontColor)
+        assertEquals(result.messageDisplayProperties!!.fontFamily, expected.messageDisplayProperties!!.fontFamily)
+        assertEquals(result.messageDisplayProperties!!.alignment, expected.messageDisplayProperties!!.alignment)
 
         assertNotNull(result.links)
         assertNull(result.id)
@@ -127,7 +140,7 @@ internal class MessageDTOTest {
     @Test
     fun `complete invalid url results in null`() {
         val invalidUrl = "invalid-url"
-        val result = MessageDTO.completeURL(invalidUrl)
+        val result = EntityConverter.completeURL(invalidUrl)
 
         assertNull(result)
     }
@@ -135,7 +148,7 @@ internal class MessageDTOTest {
     @Test
     fun `complete url without protocol results in valid url`() {
         val urlWithoutPort = "example.com"
-        val result = MessageDTO.completeURL(urlWithoutPort)
+        val result = EntityConverter.completeURL(urlWithoutPort)
 
         assertEquals(result, "https://example.com")
     }
@@ -149,7 +162,7 @@ internal class MessageDTOTest {
         )
 
         validUrls.forEach {
-            val result = MessageDTO.completeURL(it)
+            val result = EntityConverter.completeURL(it)
             assertEquals(result, it)
         }
     }
@@ -218,8 +231,8 @@ internal class MessageDTOTest {
         assertNull(errors.contentError)
         assertNull(errors.locationError)
         assertNull(errors.linkError)
-        assertNull(errors.backgroundColorError)
-        assertNull(errors.fontColorError)
+        assertNull(errors.colorError)
+        assertNull(errors.colorFormatError)
     }
 
     @Test
@@ -265,8 +278,8 @@ internal class MessageDTOTest {
         assertNull(errors.contentError)
         assertNull(errors.locationError)
         assertNull(errors.linkError)
-        assertNull(errors.backgroundColorError)
-        assertNull(errors.fontColorError)
+        assertNull(errors.colorError)
+        assertNull(errors.colorFormatError)
     }
 
     @Test
@@ -286,8 +299,8 @@ internal class MessageDTOTest {
         assertNull(errors.contentError)
         assertNull(errors.locationError)
         assertNull(errors.linkError)
-        assertNull(errors.backgroundColorError)
-        assertNull(errors.fontColorError)
+        assertNull(errors.colorError)
+        assertNull(errors.colorFormatError)
     }
 
     @Test
@@ -307,8 +320,8 @@ internal class MessageDTOTest {
         assertNull(errors.contentError)
         assertNull(errors.locationError)
         assertNull(errors.linkError)
-        assertNull(errors.backgroundColorError)
-        assertNull(errors.fontColorError)
+        assertNull(errors.colorError)
+        assertNull(errors.colorFormatError)
     }
 
     @Test
@@ -329,8 +342,8 @@ internal class MessageDTOTest {
         assertNull(errors.titleError)
         assertNull(errors.locationError)
         assertNull(errors.linkError)
-        assertNull(errors.backgroundColorError)
-        assertNull(errors.fontColorError)
+        assertNull(errors.colorError)
+        assertNull(errors.colorFormatError)
     }
 
     @Test
@@ -371,8 +384,8 @@ internal class MessageDTOTest {
         assertNull(errors.titleError)
         assertNull(errors.contentError)
         assertNull(errors.linkError)
-        assertNull(errors.backgroundColorError)
-        assertNull(errors.fontColorError)
+        assertNull(errors.colorError)
+        assertNull(errors.colorFormatError)
     }
 
     @Test
@@ -393,8 +406,8 @@ internal class MessageDTOTest {
         assertNull(errors.titleError)
         assertNull(errors.contentError)
         assertNull(errors.linkError)
-        assertNull(errors.backgroundColorError)
-        assertNull(errors.fontColorError)
+        assertNull(errors.colorError)
+        assertNull(errors.colorFormatError)
     }
 
     @Test
@@ -426,8 +439,8 @@ internal class MessageDTOTest {
         assertNull(errors.titleError)
         assertNull(errors.contentError)
         assertNull(errors.locationError)
-        assertNull(errors.backgroundColorError)
-        assertNull(errors.fontColorError)
+        assertNull(errors.colorError)
+        assertNull(errors.colorFormatError)
     }
 
     @Test
@@ -440,8 +453,8 @@ internal class MessageDTOTest {
 
         assertNotNull(errors)
 
-        assertNotNull(errors!!.backgroundColorError)
-        assertTrue(errors.backgroundColorError!!.isNotBlank())
+        assertNotNull(errors!!.colorFormatError)
+        assertTrue(errors.colorFormatError!!.isNotBlank())
 
         assertNull(errors.topicError)
         assertNull(errors.senderError)
@@ -449,7 +462,7 @@ internal class MessageDTOTest {
         assertNull(errors.contentError)
         assertNull(errors.locationError)
         assertNull(errors.linkError)
-        assertNull(errors.fontColorError)
+        assertNull(errors.colorError)
     }
 
     @Test
@@ -462,8 +475,8 @@ internal class MessageDTOTest {
 
         assertNotNull(errors)
 
-        assertNotNull(errors!!.fontColorError)
-        assertTrue(errors.fontColorError!!.isNotBlank())
+        assertNotNull(errors!!.colorFormatError)
+        assertTrue(errors.colorFormatError!!.isNotBlank())
 
         assertNull(errors.topicError)
         assertNull(errors.senderError)
@@ -471,7 +484,30 @@ internal class MessageDTOTest {
         assertNull(errors.contentError)
         assertNull(errors.locationError)
         assertNull(errors.linkError)
-        assertNull(errors.backgroundColorError)
+        assertNull(errors.colorError)
+    }
+
+    @Test
+    fun `having the same color for font and background results in Error` () {
+        val dto = getMessageDTO(
+                updatedFontColor = "#ffffff",
+                updatedBackgroundColor = "#ffffff"
+        )
+
+        val errors = dto.getErrors()
+
+        assertNotNull(errors)
+
+        assertNotNull(errors!!.colorError)
+        assertTrue(errors.colorError!!.isNotBlank())
+
+        assertNull(errors.topicError)
+        assertNull(errors.senderError)
+        assertNull(errors.titleError)
+        assertNull(errors.contentError)
+        assertNull(errors.locationError)
+        assertNull(errors.linkError)
+        assertNull(errors.colorFormatError)
     }
 
     @Test

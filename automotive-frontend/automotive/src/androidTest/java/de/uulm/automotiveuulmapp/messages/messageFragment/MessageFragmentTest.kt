@@ -44,15 +44,15 @@ class MessageFragmentTest {
                 liveDataObserver = (call.invocation.args[0] as Observer<in List<MessageEntity>>)
                 liveDataObserver?.onChanged(
                     listOf(
-                        MessageEntity(1, "Test", "Testtitle", "Message text", null, null, false, false, null, null, null),
-                        MessageEntity(2, "Sender", "Title 2", "Content text", null, null, true, false, null, null, null)
+                        MessageEntity(1, "Test", "Testtitle", "Message text", null, null, null, false, false, null, null, null, null),
+                        MessageEntity(2, "Sender", "Title 2", "Content text", null, null, null, true, false, null, null, null, null)
                     )
                 ) }
             every { mockMessageDao.getLiveData() } returns mockLiveData
             every { mockMessageDao.delete(any()) } answers {
                 liveDataObserver?.onChanged(
                     listOf(
-                        MessageEntity(2, "Sender", "Title 2", "Content text", null, null, true, false, null, null, null)
+                        MessageEntity(2, "Sender", "Title 2", "Content text", null, null, null, true, false, null, null, null, null)
                     )
                 )
             }
