@@ -51,6 +51,9 @@ export class MessageFormComponent implements OnInit {
   @Input()
   set message(val) {
     this.messageValue = val;
+    if (this.message.messageDisplayProperties == null){
+      this.message.messageDisplayProperties = {};
+    }
     if (val.locationData != null) {
       this.locationData = val.locationData;
     }

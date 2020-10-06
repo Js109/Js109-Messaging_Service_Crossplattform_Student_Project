@@ -41,7 +41,6 @@ export class MessageHistoryComponent implements OnInit {
   messagesArray = [];
   hasDateRangeError = false;
   hasTopicPropertiesError = false;
-  chosenMessage;
 
   ngOnInit(): void {
     this.http.get(environment.backendApiPath + '/topic', {responseType: 'json'})
@@ -81,7 +80,7 @@ export class MessageHistoryComponent implements OnInit {
   }
 
   deleteMessage(id: number): void {
-    this.http.delete(environment.backendApiPath + '/message/' + id ).subscribe(
+    this.http.delete(environment.backendApiPath + '/message/' + id).subscribe(
       value => {
         console.log(`send delete message with ${id}`);
       },
@@ -97,24 +96,33 @@ export class MessageHistoryComponent implements OnInit {
   }
 
   editMessage(message: Message): void {
-    const dialogRef = this.dialog.open(EditMessageDialogComponent, {height: '80%', width: '60%'});
+    this.http.get<Message>(environment.backendApiPath + '/message/' + message.id)
+      .subscribe(
+        retrievedMessage => {
+          const dialogRef = this.dialog.open(EditMessageDialogComponent, {height: '80%', width: '60%'});
+          dialogRef.componentInstance.message = retrievedMessage;
+          dialogRef.afterClosed().subscribe(dialogResult => {
+            if (dialogResult.action === 'save') {
+              this.http.put(environment.backendApiPath + '/message/' + dialogResult.message.id, dialogResult.message, {}).subscribe(
+                value => {
+                  console.log('sent put request to update message with given id');
+                  this.showMessages()
+                },
+                error => {
+                  console.log(error);
+                }
+              );
+              console.log('save' + dialogResult.message.title);
+            } else if (dialogResult.action === 'copy') {
+              console.log('copy' + dialogResult.message.title);
+            }
+          });
+        },
+        error => {
+          console.log(error);
+        }
+      );
 
-    dialogRef.componentInstance.message = message;
-    dialogRef.afterClosed().subscribe(dialogResult => {
-      if (dialogResult.action === 'save') {
-        this.http.put(environment.backendApiPath + '/message/' + dialogResult.message.id , dialogResult.message, {}).subscribe(
-          value => {
-            console.log('sent put request to update message with given id');
-          },
-          error => {
-            console.log(error);
-          }
-        );
-        console.log('save' + dialogResult.message.title);
-      } else if (dialogResult.action === 'copy') {
-        console.log('copy' + dialogResult.message.title);
-      }
-    });
   }
 
   viewMessage(message: Message): void {
