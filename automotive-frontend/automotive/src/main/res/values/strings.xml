@@ -66,6 +66,8 @@
     <string name="header_bar_subscription_title">Topic Subscriptions</string>
 
     <!-- Message content activity strings -->
-    <string name="youtube_icon_content_description">Image</string>
-    <string name="browser_icon_content_description">Image</string>
+    <string name="youtube_icon_content_description">Youtube icon</string>
+    <string name="browser_icon_content_description">Browser icon</string>
+    <string name="image_content_description">Image</string>
+
 </resources>
