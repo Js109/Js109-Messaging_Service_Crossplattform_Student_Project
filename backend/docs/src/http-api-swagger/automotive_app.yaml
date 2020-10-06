@@ -189,10 +189,10 @@ paths:
       responses:
         "200":
           description: "Successful Operation"
-        "400":
-          description: "Bad Request"
-        "404":
-          description: "Not Found"
+        "422":
+          description: "Unprocessable Entity"
+        "423":
+          description: "Locked"
 
   /property:
     get:

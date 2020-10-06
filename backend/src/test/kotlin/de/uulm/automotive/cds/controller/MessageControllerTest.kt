@@ -243,7 +243,7 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) : BaseCont
     @Test
     fun `update Message and Message not saved before`() {
         every { messageRepository.save(any<Message>()) } returns emptyMessage
-        every { messageRepository.findById(any<Long>()) } returns Optional.of(emptyMessage)
+        every { messageRepository.findById(any<Long>()) } returns Optional.empty()
 
         mockMvc.put("/message/5") {
             accept = MediaType.APPLICATION_JSON
@@ -251,7 +251,7 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) : BaseCont
             content = jacksonObjectMapper().writeValueAsString(MessageDTO.toDTO(emptyMessage))
             characterEncoding = "UTF-8"
         }.andExpect {
-            status { isUnprocessableEntity }
+            status { isNotFound }
         }
 
         verify(exactly = 0) { messageRepository.save(any<Message>()) }

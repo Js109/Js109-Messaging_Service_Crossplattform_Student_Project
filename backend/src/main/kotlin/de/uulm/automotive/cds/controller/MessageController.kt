@@ -154,7 +154,6 @@ class MessageController(private val repository: MessageRepository, private val m
     @PutMapping("/{id}")
     fun updateMessage(@PathVariable id: Long, @RequestBody messageDto: MessageDTO): ResponseEntity<MessageBadRequestInfo> {
         val messageOld = repository.findById(id)
-        println(messageOld)
         if (messageOld.isEmpty)
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Could not find message with id $id and thus cannot update it.")
 
