@@ -22,7 +22,7 @@ class Converters {
     @TypeConverter
     fun fromString(value: String?): Array<URL> {
         val listType: Type = object : TypeToken<Array<URL?>?>() {}.type
-        return Gson().fromJson(value, listType)
+        return value?.let { Gson().fromJson<Array<URL>>(it, listType) } ?: emptyArray()
     }
 
 
