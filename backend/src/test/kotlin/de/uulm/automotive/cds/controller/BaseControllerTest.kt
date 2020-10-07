@@ -4,6 +4,7 @@ import com.ninjasquad.springmockk.MockkBean
 import de.uulm.automotive.cds.repositories.*
 import de.uulm.automotive.cds.services.AmqpChannelService
 import de.uulm.automotive.cds.services.MessageService
+import de.uulm.automotive.cds.services.MetricsService
 
 /**
  * A WebMvcTest creates all Controllers defined in the project.
@@ -30,6 +31,9 @@ open class BaseControllerTest {
 
     @MockkBean
     protected lateinit var messageService: MessageService
+
+    @MockkBean
+    protected lateinit var metricsService: MetricsService
 
     @MockkBean
     protected lateinit var amqpChannelService: AmqpChannelService
