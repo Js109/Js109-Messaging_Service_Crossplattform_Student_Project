@@ -12,7 +12,7 @@ class MetricsDTO(
         var averageMessageLength: Double? = null,
         var mostActiveSender: String? = null,
         var mostActiveWeekday: DayOfWeek? = null,
-        var sentMessagesByTimeOfDay: Array<Int> = arrayOf(),
+        var sentMessagesByTimeOfDay: Map<Int, Int> = mapOf(),
         var sentMessagesByDate: Map<LocalDate, Int> = mapOf(),
         var scheduledMessagesByDate: Map<LocalDate, Int> = mapOf(),
         var subscriberGainByDate: Map<LocalDate, Int> = mapOf()

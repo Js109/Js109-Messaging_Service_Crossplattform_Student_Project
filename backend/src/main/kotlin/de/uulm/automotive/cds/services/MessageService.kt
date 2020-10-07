@@ -4,17 +4,16 @@ import com.rabbitmq.client.AMQP
 import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.entities.MessageSerializable
 import de.uulm.automotive.cds.entities.TemplateMessage
-import de.uulm.automotive.cds.models.dtos.MessageDisplayPropertiesDTO
+import de.uulm.automotive.cds.models.dtos.MetricsFilterDTO
 import de.uulm.automotive.cds.repositories.MessageRepository
 import org.hibernate.Hibernate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
-import java.time.chrono.ChronoLocalDateTime
-import java.util.*
-import kotlin.collections.HashMap
 
 /**
  * A service class that takes care of sending messages via the amqp broker.
@@ -113,4 +112,16 @@ class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelS
             }
         }
     }
+
+    fun filterMessagesForMetrics(metricsFilter: MetricsFilterDTO): Iterable<Message> =
+            messageRepository
+                    .findAllFiltered(
+                            metricsFilter.topicName,
+                            metricsFilter.propertyName,
+                            LocalDateTime.of(metricsFilter.timeSpanBegin
+                                    ?: LocalDate.MIN, LocalTime.MIN),
+                            LocalDateTime.of(metricsFilter.timeSpanEnd
+                                    ?: LocalDate.MAX, LocalTime.MAX)
+                    )
+                    .filter { it::class.java != TemplateMessage::class.java }
 }

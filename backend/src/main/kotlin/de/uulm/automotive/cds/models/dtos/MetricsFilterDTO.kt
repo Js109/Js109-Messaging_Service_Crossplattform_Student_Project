@@ -6,15 +6,15 @@ import de.uulm.automotive.cds.models.errors.addError
 import java.time.LocalDate
 
 class MetricsFilterDTO(
-        var topicID: Long? = null,
-        var propertyID: Long? = null,
+        var topicName: String? = null,
+        var propertyName: String? = null,
         var timeSpanBegin: LocalDate? = null,
         var timeSpanEnd: LocalDate? = null
 ) : ValidateDTO {
     override fun getErrors(): MetricsFilterBadRequestInfo? {
         var errors: MetricsFilterBadRequestInfo? = null
 
-        if (topicID != null && propertyID != null) {
+        if (!topicName.isNullOrBlank() && !propertyName.isNullOrBlank()) {
             errors = errors.addError { it.keyError = "Only one of topicID or propertyID may be set!" }
         }
 
