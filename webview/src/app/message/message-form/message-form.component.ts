@@ -55,6 +55,11 @@ export class MessageFormComponent implements OnInit {
     if (val.locationData != null) {
       this.locationData = val.locationData;
     }
+    if (val.messageDisplayProperties.fontColor == null || val.messageDisplayProperties.backgroundColor == null) {
+      this.hasCustomColor = false;
+      this.selectedFontColor = '#000000';
+      this.selectedBackgroundColor = '#ffffff';
+    }
     this.properties = this.properties.map(property => [property[0], val.properties.some(value => value === property[0].binding)]);
   }
 
@@ -85,7 +90,7 @@ export class MessageFormComponent implements OnInit {
 
   fontFamilyToFontString = fontFamilyToFontString;
   alignmentToAlignmentString = alignmentToAlignmentString;
-  hasCustomColor: false;
+  hasCustomColor = false;
   selectedFontColor = '#000000';
   selectedBackgroundColor = '#ffffff';
 
