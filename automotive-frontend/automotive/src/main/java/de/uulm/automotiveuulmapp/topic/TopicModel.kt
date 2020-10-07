@@ -14,7 +14,8 @@ data class TopicModel(
     var binding: String,
     var description: String,
     var tags: Array<String>,
-    var subscribed: Boolean
+    var subscribed: Boolean,
+    var disabled: Boolean
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
