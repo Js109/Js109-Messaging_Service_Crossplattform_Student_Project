@@ -49,52 +49,80 @@ class MetricsService @Autowired constructor(
         val filteredMessagesBeforeTimeSpan = messageService.filterMessagesForMetrics(filterBeforeTimeSpan)
         val filteredMessagesAfterTimeSpan = messageService.filterMessagesForMetrics(filterAfterTimeSpan)
 
+        val filteredMessagesAllTime = filteredMessagesBeforeTimeSpan
+                .union(filteredMessagesTimeSpan)
+                .union(filteredMessagesAfterTimeSpan)
+
         return MetricsDTO(
-                filteredMessagesBeforeTimeSpan
+                sentMessagesTotalAllTime = filteredMessagesAllTime
                         .filter { it.isSent == true }
                         .count(),
-                filteredMessagesTimeSpan
+                sentMessagesTotalAtBegin = filteredMessagesBeforeTimeSpan
                         .filter { it.isSent == true }
                         .count(),
-                filteredMessagesBeforeTimeSpan
-                        .union(filteredMessagesTimeSpan)
-                        .union(filteredMessagesAfterTimeSpan)
+                sentMessagesTotalGain = filteredMessagesTimeSpan
+                        .filter { it.isSent == true }
+                        .count(),
+                scheduledMessagesTotalAllTime = filteredMessagesAllTime
                         .filter { it.isSent == false }
                         .count(),
-                50,
-                8,
-                filteredMessagesTimeSpan
+                scheduledMessagesTimeSpan = filteredMessagesTimeSpan
+                        .filter { it.isSent == false }
+                        .count(),
+                subscriberTotalAllTime = 55,
+                subscriberTotalAtBegin = 50,
+                subscriberTotalGainOverTimespan = 8,
+                averageMessageLengthAllTime = filteredMessagesAllTime
                         .map { it.content?.length ?: 0 }
                         .average(),
-                filteredMessagesTimeSpan
+                averageMessageLengthTimeSpan = filteredMessagesTimeSpan
+                        .map { it.content?.length ?: 0 }
+                        .average(),
+                mostActiveSenderAllTime = filteredMessagesAllTime
                         .map { it.sender }
                         .groupingBy { it }
                         .eachCount()
                         .maxBy { it.value }?.key,
-                filteredMessagesTimeSpan
+                mostActiveSenderTimeSpan = filteredMessagesTimeSpan
+                        .map { it.sender }
+                        .groupingBy { it }
+                        .eachCount()
+                        .maxBy { it.value }?.key,
+                mostActiveWeekdayAllTime = filteredMessagesAllTime
                         .map { it.starttime?.dayOfWeek }
                         .groupingBy { it }
                         .eachCount()
                         .maxBy { it.value }?.key,
-                filteredMessagesTimeSpan
+                mostActiveWeekdayTimeSpan = filteredMessagesTimeSpan
+                        .map { it.starttime?.dayOfWeek }
+                        .groupingBy { it }
+                        .eachCount()
+                        .maxBy { it.value }?.key,
+                sentMessagesByTimeOfDayAllTime = filteredMessagesAllTime
                         .filter { it.isSent == true }
                         .map { it.starttime?.hour }
                         .groupingBy { it }
                         .eachCount()
                         .filter { it.key != null } as Map<Int, Int>,
-                filteredMessagesTimeSpan
+                sentMessagesByTimeOfDayTimeSpan = filteredMessagesTimeSpan
+                        .filter { it.isSent == true }
+                        .map { it.starttime?.hour }
+                        .groupingBy { it }
+                        .eachCount()
+                        .filter { it.key != null } as Map<Int, Int>,
+                sentMessagesByDateTimeSpan = filteredMessagesTimeSpan
                         .filter { it.isSent == true }
                         .map { it.starttime?.toLocalDate() }
                         .groupingBy { it }
                         .eachCount()
                         .filter { it.key != null } as Map<LocalDate, Int>,
-                filteredMessagesTimeSpan
+                scheduledMessagesByDateTimeSpan = filteredMessagesTimeSpan
                         .filter { it.isSent == false }
                         .map { it.starttime?.toLocalDate() }
                         .groupingBy { it }
                         .eachCount()
                         .filter { it.key != null } as Map<LocalDate, Int>,
-                mapOf(
+                subscriberGainByDateTimeSpan = mapOf(
                         LocalDate.of(2020, 10, 3) to 5,
                         LocalDate.of(2020, 10, 4) to 5,
                         LocalDate.of(2020, 10, 5) to 6,

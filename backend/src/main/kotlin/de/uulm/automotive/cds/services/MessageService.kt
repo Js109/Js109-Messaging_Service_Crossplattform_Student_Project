@@ -4,6 +4,7 @@ import com.rabbitmq.client.AMQP
 import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.entities.MessageSerializable
 import de.uulm.automotive.cds.entities.TemplateMessage
+import de.uulm.automotive.cds.models.dtos.MessageCompactDTO
 import de.uulm.automotive.cds.models.dtos.MetricsFilterDTO
 import de.uulm.automotive.cds.repositories.MessageRepository
 import org.hibernate.Hibernate
@@ -113,7 +114,7 @@ class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelS
         }
     }
 
-    fun filterMessagesForMetrics(metricsFilter: MetricsFilterDTO): Iterable<Message> =
+    fun filterMessagesForMetrics(metricsFilter: MetricsFilterDTO): Iterable<MessageCompactDTO> =
             messageRepository
                     .findAllFiltered(
                             metricsFilter.topicName,
@@ -124,4 +125,5 @@ class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelS
                                     ?: LocalDate.MAX, LocalTime.MAX)
                     )
                     .filter { it::class.java != TemplateMessage::class.java }
+                    .map { MessageCompactDTO.toDTO(it) }
 }
