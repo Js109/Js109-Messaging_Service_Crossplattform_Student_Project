@@ -2,13 +2,16 @@ package de.uulm.automotiveuulmapp.messages.messageFragment
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.AsyncTask
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
@@ -48,6 +51,14 @@ class MessageAdapter(
 
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
         val message = currentMessages[position]
+
+        message.logoAttachment?.let {
+            if (it.isNotEmpty()) {
+                val logoImage = holder.itemView.findViewById<ImageView>(R.id.message_logo_image)
+                logoImage.setImageBitmap(BitmapFactory.decodeByteArray(it, 0, it.size))
+                holder.itemView.findViewById<CardView>(R.id.message_logo_image_holder).visibility = View.VISIBLE
+            }
+        }
 
         val logo = holder.itemView.findViewById<TextView>(R.id.message_logo_text)
         logo.text = message.sender[0].toString().toUpperCase(Locale.ROOT)

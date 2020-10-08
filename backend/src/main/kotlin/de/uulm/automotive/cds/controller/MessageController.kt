@@ -1,6 +1,7 @@
 package de.uulm.automotive.cds.controller
 
 import de.uulm.automotive.cds.entities.Message
+import de.uulm.automotive.cds.entities.TemplateMessage
 import de.uulm.automotive.cds.models.dtos.MessageCompactDTO
 import de.uulm.automotive.cds.models.dtos.MessageDTO
 import de.uulm.automotive.cds.models.dtos.PropertyDisableDTO
@@ -62,36 +63,44 @@ class MessageController(private val repository: MessageRepository, private val m
         val dateStartTimePeriod = if (startTimePeriod.isNotEmpty()) LocalDate.parse(startTimePeriod, formatter).atTime(0, 0) else null
         val dateEndTimePeriod = if (endTimePeriod.isNotEmpty()) LocalDate.parse(endTimePeriod, formatter).atTime(23, 59) else null
 
-        if (tempSearchString.isNotEmpty() && dateStartTimePeriod != null && dateEndTimePeriod != null && topic.isNullOrEmpty())
+        if (tempSearchString.isNotEmpty() && dateStartTimePeriod != null && dateEndTimePeriod != null && topic.isEmpty())
             return repository.findAllByTitleLikeIgnoreCaseOrSenderLikeIgnoreCaseOrContentLikeIgnoreCaseAndStarttimeBetween(tempSearchString, tempSearchString, tempSearchString, dateStartTimePeriod, dateEndTimePeriod)
+                    .filter { it::class.java != TemplateMessage::class.java }
                     .map { MessageCompactDTO.toDTO(it) }
 
         if (tempSearchString.isNotEmpty() && topic.isNotEmpty() && dateStartTimePeriod == null && dateEndTimePeriod == null)
             return repository.findAllByTitleLikeIgnoreCaseOrSenderLikeIgnoreCaseOrContentLikeIgnoreCaseAndTopic(tempSearchString, tempSearchString, tempSearchString, topic)
+                    .filter { it::class.java != TemplateMessage::class.java }
                     .map { MessageCompactDTO.toDTO(it) }
 
-        if (tempSearchString.isNullOrEmpty() && dateStartTimePeriod != null && dateEndTimePeriod != null && topic.isNotEmpty())
+        if (tempSearchString.isEmpty() && dateStartTimePeriod != null && dateEndTimePeriod != null && topic.isNotEmpty())
             return repository.findAllByStarttimeBetweenAndTopic(dateStartTimePeriod, dateEndTimePeriod, topic)
+                    .filter { it::class.java != TemplateMessage::class.java }
                     .map { MessageCompactDTO.toDTO(it) }
 
         if (tempSearchString.isNotEmpty() && dateStartTimePeriod != null && dateEndTimePeriod != null && topic.isNotEmpty())
             return repository.findAllByTitleLikeIgnoreCaseOrSenderLikeIgnoreCaseOrContentLikeIgnoreCaseAndStarttimeBetweenAndTopic(tempSearchString, tempSearchString, tempSearchString, dateStartTimePeriod, dateEndTimePeriod, topic)
+                    .filter { it::class.java != TemplateMessage::class.java }
                     .map { MessageCompactDTO.toDTO(it) }
 
-        if (tempSearchString.isNotEmpty() && dateStartTimePeriod == null && dateEndTimePeriod == null && topic.isNullOrEmpty())
+        if (tempSearchString.isNotEmpty() && dateStartTimePeriod == null && dateEndTimePeriod == null && topic.isEmpty())
             return repository.findAllByTitleLikeIgnoreCaseOrSenderLikeIgnoreCaseOrContentLikeIgnoreCase(tempSearchString, tempSearchString, tempSearchString)
+                    .filter { it::class.java != TemplateMessage::class.java }
                     .map { MessageCompactDTO.toDTO(it) }
 
-        if (tempSearchString.isNullOrEmpty() && dateStartTimePeriod == null && dateEndTimePeriod == null && topic.isNotEmpty())
+        if (tempSearchString.isEmpty() && dateStartTimePeriod == null && dateEndTimePeriod == null && topic.isNotEmpty())
             return repository.findAllByTopic(topic)
+                    .filter { it::class.java != TemplateMessage::class.java }
                     .map { MessageCompactDTO.toDTO(it) }
 
-        if (tempSearchString.isNullOrEmpty() && dateStartTimePeriod != null && dateEndTimePeriod != null && topic.isEmpty())
+        if (tempSearchString.isEmpty() && dateStartTimePeriod != null && dateEndTimePeriod != null && topic.isEmpty())
             return repository.findAllByStarttimeBetween(dateStartTimePeriod, dateEndTimePeriod)
+                    .filter { it::class.java != TemplateMessage::class.java }
                     .map { MessageCompactDTO.toDTO(it) }
 
-        if (tempSearchString.isNullOrEmpty() && dateEndTimePeriod == null && dateStartTimePeriod == null && topic.isNullOrEmpty())
+        if (tempSearchString.isEmpty() && dateEndTimePeriod == null && dateStartTimePeriod == null && topic.isEmpty())
             return repository.findAll()
+                    .filter { it::class.java != TemplateMessage::class.java }
                     .map { MessageCompactDTO.toDTO(it) }
 
         return emptyList()

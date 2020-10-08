@@ -19,7 +19,6 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:background="@drawable/circle"
             android:gravity="center"
             android:textSize="36sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -30,6 +29,7 @@
                 android:id="@+id/message_logo_text"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:background="@drawable/circle"
                 android:gravity="center"
                 android:text="B"
                 android:textSize="32sp"
@@ -37,6 +37,26 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/message_logo_image_holder"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="invisible"
+                app:cardCornerRadius="22dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="invisible">
+
+                <ImageView
+                    android:id="@+id/message_logo_image"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:srcCompat="@tools:sample/avatars" />
+            </androidx.cardview.widget.CardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -77,6 +97,8 @@
             android:layout_marginBottom="4dp"
             android:text="TextView"
             android:textSize="20sp"
+            android:ellipsize="end"
+            android:maxLines="1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/message_favourite_checkbox"
             app:layout_constraintStart_toEndOf="@+id/logoLayout"

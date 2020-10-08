@@ -7,11 +7,13 @@ import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
 import android.text.Html
+import android.text.Spannable
+import android.text.SpannableString
 import android.text.method.LinkMovementMethod
-import android.text.method.MovementMethod
+import android.text.style.ImageSpan
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.view.textclassifier.TextLinks
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -24,7 +26,7 @@ import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.MarkerOptions
 import de.uulm.automotive.cds.entities.MessageDisplayPropertiesSerializable
 import de.uulm.automotive.cds.entities.MessageSerializable
-import de.uulm.automotive.cds.models.MessageDisplayProperties
+import de.uulm.automotive.cds.models.Alignment
 import de.uulm.automotive.cds.models.getFont
 import de.uulm.automotiveuulmapp.R
 import de.uulm.automotiveuulmapp.messages.messagedb.MessageDatabase
@@ -39,6 +41,8 @@ class MessageContentActivity : AppCompatActivity() {
         const val EXTRA_MESSAGE = "de.uulm.automotiveuulmapp.messages.extra.MESSAGE"
         const val EXTRA_PERSISTED_MESSAGE_ID = "de.uulm.automotiveuulmapp.messages.extra.MESSAGE_ID"
         const val EXTRA_NOTIFICATION_ID = "de.uulm.automotiveuulmapp.messages.extra.NOTIFICATION_ID"
+
+        private const val IMG_TAG = "[img]"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -107,10 +111,17 @@ class MessageContentActivity : AppCompatActivity() {
     private fun setupView(message: MessageSerializable) {
         val titleView = findViewById<TextView>(R.id.messageContentTitleText)
         val messageContentView = findViewById<TextView>(R.id.messageContentText)
+        messageContentView.movementMethod = LinkMovementMethod.getInstance()
+        message.messageDisplayProperties?.alignment?.let {
+            messageContentView.gravity = when(it) {
+                Alignment.LEFT -> Gravity.START
+                Alignment.CENTER -> Gravity.CENTER
+                Alignment.RIGHT -> Gravity.END
+            }
+        }
+        messageContentView.text = createMessageContent(message.messageText, message.links, message.attachment)
 
         titleView.text = message.title
-        messageContentView.text = message.messageText
-        createImageView(message.attachment)
 
         val fontColor: Int? =
             try {
@@ -157,8 +168,8 @@ class MessageContentActivity : AppCompatActivity() {
         // enable persistence button only if message does not come from database
         initializePersistenceButton(intent.hasExtra(EXTRA_MESSAGE), message)
 
-        // clears link list and map view to add new elements
-        clearLinksAndMap()
+        // clears link list, image view and map view to add new elements
+        preclear()
         message.links?.map { messageLink ->
             LinkCategoryIdentifier.identify(messageLink).also {
                 when (it) {
@@ -171,27 +182,46 @@ class MessageContentActivity : AppCompatActivity() {
     }
 
     /**
+     * Creates the content for the message content view from the message text, links and attachment
+     */
+    private fun createMessageContent(messageText: String?, links: Array<URL>?, attachment: ByteArray?): SpannableString? {
+        return messageText?.let { text ->
+            links?.let { links -> createLinkTags(text, links) } ?: text
+        }?.let { text ->
+            val spannableString = SpannableString(Html.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY))
+            var imgIndex = spannableString.indexOf(IMG_TAG, ignoreCase = true)
+            while (imgIndex >= 0) {
+                val imgSpan = ImageSpan(this, BitmapFactory.decodeByteArray(attachment, 0, attachment!!.size))
+                spannableString.setSpan(imgSpan, imgIndex, imgIndex + IMG_TAG.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                imgIndex = spannableString.indexOf("[img]", ignoreCase = true, startIndex = imgIndex + 1)
+            }
+            spannableString
+        }
+    }
+
+    /**
+     * replaces every instance of the form "[text](link#)" with the respective html tag
+     */
+    private fun createLinkTags(messageText: String, links: Array<URL>): String {
+        return messageText.replace("""(?i)\[(?<linkText>[^()\[\]]*)]\(link(?<linkId>\d+)\)""".toRegex()) {
+            val linkText = it.groups[1]?.value
+            val linkId = it.groups[2]?.value?.toInt()
+            if (linkId != null && linkId > 0) {
+                "<a href=${links[linkId - 1]}>$linkText</a>"
+            } else {
+                linkText ?: ""
+            }
+        }.replace("\n", "<br/>")
+    }
+
+    /**
      * Hides content of Map container and removes link list elements
      */
-    private fun clearLinksAndMap() {
+    private fun preclear() {
         findViewById<LinearLayout>(R.id.linkContainer).removeAllViews()
         findViewById<ConstraintLayout>(R.id.message_map_container).visibility = View.GONE
     }
 
-    /**
-     * If image data is not empty decode base64-encoded byte array and set as content of the ImageView.
-     */
-    private fun createImageView(image: ByteArray?) {
-        if (image != null && image.isNotEmpty()) {
-            val bmp =
-                BitmapFactory.decodeByteArray(image, 0, image.size)
-
-            val imageView = findViewById<ImageView>(R.id.messageContentImageView)
-            imageView.setImageBitmap(bmp)
-        } else {
-            findViewById<ImageView>(R.id.messageContentImageView).visibility = View.GONE
-        }
-    }
 
     /**
      * Creates a google maps view from the passed link
@@ -242,7 +272,7 @@ class MessageContentActivity : AppCompatActivity() {
             BROWSER -> {
                 val layout = layoutInflater.inflate(R.layout.message_browser_link, null)
                 layout.findViewById<TextView>(R.id.linkTextField).text =
-                    HtmlCompat.fromHtml("<a href='$link'>$link</a>", Html.FROM_HTML_MODE_LEGACY)
+                    HtmlCompat.fromHtml("<a href='$link'>$link</a>", HtmlCompat.FROM_HTML_MODE_LEGACY)
                 layout.findViewById<TextView>(R.id.linkTextField).movementMethod =
                     LinkMovementMethod.getInstance()
                 layout

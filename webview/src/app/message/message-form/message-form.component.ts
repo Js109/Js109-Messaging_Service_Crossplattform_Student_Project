@@ -10,6 +10,7 @@ import {MatTabChangeEvent} from '@angular/material/tabs';
 import {MatSlideToggleChange} from '@angular/material/slide-toggle';
 import {Moment} from 'moment';
 import * as moment from 'moment';
+import {alignmentToAlignmentString} from '../../models/Alignment';
 
 enum OffsetType {
   Minute, Hour, Day, Week
@@ -86,6 +87,7 @@ export class MessageFormComponent implements OnInit {
   hasColorError = false;
 
   fontFamilyToFontString = fontFamilyToFontString;
+  alignmentToAlignmentString = alignmentToAlignmentString;
   hasCustomColor: false;
   selectedFontColor = '#000000';
   selectedBackgroundColor = '#ffffff';

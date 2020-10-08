@@ -16,6 +16,5 @@ interface MessageRepository : CrudRepository<Message, Long> {
     fun findAllByTitleLikeIgnoreCaseOrSenderLikeIgnoreCaseOrContentLikeIgnoreCaseAndStarttimeBetween(searchString: String, searchStringSender: String, searchStringContent: String, dateStartTimePeriod: LocalDateTime, dateEndTimePeriod: LocalDateTime): Iterable<Message>
     fun findAllByTopic(topic: String): Iterable<Message>
     fun findAllByStarttimeBetween(dateStartTimePeriod: LocalDateTime, dateEndTimePeriod: LocalDateTime): Iterable<Message>
-    fun findAllByOrderByTopicAsc(): Iterable<Message>
     fun findAllByTitleLikeIgnoreCaseOrSenderLikeIgnoreCaseOrContentLikeIgnoreCase(searchString: String, searchStringSender: String, searchStringContent: String): Iterable<Message>
 }

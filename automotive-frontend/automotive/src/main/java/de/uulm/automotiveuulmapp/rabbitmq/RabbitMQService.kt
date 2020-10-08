@@ -3,20 +3,20 @@ package de.uulm.automotiveuulmapp.rabbitmq
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.*
 import android.os.Process.THREAD_PRIORITY_BACKGROUND
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.app.Person
 import com.rabbitmq.client.*
 import de.uulm.automotive.cds.entities.MessageSerializable
 import de.uulm.automotiveuulmapp.R
-import de.uulm.automotiveuulmapp.messages.MessageContentActivity
 import de.uulm.automotiveuulmapp.geofencing.CurrentLocationFetcher
 import de.uulm.automotiveuulmapp.geofencing.LocationDataFencer
 import de.uulm.automotiveuulmapp.locationFavourites.locationFavData.LocationDatabase
+import de.uulm.automotiveuulmapp.messages.MessageContentActivity
 import de.uulm.automotiveuulmapp.messages.MessagePersistenceService
 import de.uulm.automotiveuulmapp.messages.messagedb.MessageDatabase
 import de.uulm.automotiveuulmapp.messages.messagedb.MessageEntity
@@ -246,6 +246,7 @@ class RabbitMQService : Service() {
 
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setLargeIcon(BitmapFactory.decodeByteArray(message.logoAttachment, 0, message.logoAttachment?.size ?: 0))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingShowMessageContentIntent)
             .setCategory(Notification.CATEGORY_CALL)

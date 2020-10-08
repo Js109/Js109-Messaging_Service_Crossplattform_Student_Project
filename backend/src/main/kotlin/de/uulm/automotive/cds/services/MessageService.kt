@@ -3,6 +3,7 @@ package de.uulm.automotive.cds.services
 import com.rabbitmq.client.AMQP
 import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.entities.MessageSerializable
+import de.uulm.automotive.cds.entities.TemplateMessage
 import de.uulm.automotive.cds.models.dtos.MessageDisplayPropertiesDTO
 import de.uulm.automotive.cds.repositories.MessageRepository
 import org.hibernate.Hibernate
@@ -100,6 +101,7 @@ class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelS
     @Transactional
     fun filterCurrentMessages(): List<Message> {
         val messages = messageRepository.findAllByIsSentFalseOrderByStarttimeAsc()
+                .filter { it::class.java != TemplateMessage::class.java }
         return messages.filter { message: Message ->
             val starttime = message.starttime
             starttime == null || starttime < LocalDateTime.now()

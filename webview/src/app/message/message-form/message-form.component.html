@@ -1,17 +1,21 @@
 <h3 class="mt-3 mb-1">Message Content</h3>
 <div class="row mb-3">
   <div class="col-8">
-    <input class="form-control" placeholder="Title"
+    <input class="form-control no-bottom-rounding text-center" placeholder="Title"
            [(ngModel)]="message.title"
-           [ngClass]="{'is-invalid' : hasTitleError}">
+           [ngClass]="{'is-invalid' : hasTitleError}"
+           [style.background]="message.messageDisplayProperties.backgroundColor"
+           [style.color]="message.messageDisplayProperties.fontColor"
+           [style.fontFamily]="fontFamilyToFontString(message.messageDisplayProperties.fontFamily)">
     <div *ngIf="hasTitleError" class="invalid-feedback">Title field is required.</div>
 
-    <textarea class="form-control mt-2 message-content flex-grow-1" placeholder="Content"
+    <textarea class="form-control message-content flex-grow-1 no-top-rounding border-top-0" placeholder="Content"
               [(ngModel)]="message.content"
               [ngClass]="{'is-invalid' : hasContentError}"
               [style.background]="message.messageDisplayProperties.backgroundColor"
               [style.color]="message.messageDisplayProperties.fontColor"
-              [style.fontFamily]="fontFamilyToFontString(message.messageDisplayProperties.fontFamily)"></textarea>
+              [style.fontFamily]="fontFamilyToFontString(message.messageDisplayProperties.fontFamily)"
+              [style.text-align]="alignmentToAlignmentString(message.messageDisplayProperties.messageAlignment)"></textarea>
     <div *ngIf="hasContentError" class="invalid-feedback">Either Content or Files are required.</div>
 
   </div>
@@ -57,6 +61,12 @@
       <div [style.color]="hasCustomColor ? 'black' : 'lightgrey'">Background Color</div>
     </div>
     <div *ngIf="hasColorError" class="text-danger small">Text color and background color are the same!</div>
+    <mat-divider></mat-divider>
+    <mat-button-toggle-group class="mt-2 mb-2" [(ngModel)]="message.messageDisplayProperties.messageAlignment">
+      <mat-button-toggle [value]="0"><mat-icon>format_align_left</mat-icon></mat-button-toggle>
+      <mat-button-toggle [value]="1"><mat-icon>format_align_center</mat-icon></mat-button-toggle>
+      <mat-button-toggle [value]="2"><mat-icon>format_align_right</mat-icon></mat-button-toggle>
+    </mat-button-toggle-group>
     <mat-divider></mat-divider>
     <div class="mt-2">Links:</div>
     <div class="border rounded bg-white mb-2">
