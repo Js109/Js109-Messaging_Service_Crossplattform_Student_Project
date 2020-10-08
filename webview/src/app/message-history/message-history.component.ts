@@ -99,14 +99,14 @@ export class MessageHistoryComponent implements OnInit {
     this.http.get<Message>(environment.backendApiPath + '/message/' + message.id)
       .subscribe(
         retrievedMessage => {
-          const dialogRef = this.dialog.open(EditMessageDialogComponent, {height: '80%', width: '60%'});
+          const dialogRef = this.dialog.open(EditMessageDialogComponent, {height: '90%', width: '60%'});
           dialogRef.componentInstance.message = retrievedMessage;
           dialogRef.afterClosed().subscribe(dialogResult => {
             if (dialogResult.action === 'save') {
               this.http.put(environment.backendApiPath + '/message/' + dialogResult.message.id, dialogResult.message, {}).subscribe(
                 value => {
                   console.log('sent put request to update message with given id');
-                  this.showMessages()
+                  this.showMessages();
                 },
                 error => {
                   console.log(error);
@@ -114,7 +114,8 @@ export class MessageHistoryComponent implements OnInit {
               );
               console.log('save' + dialogResult.message.title);
             } else if (dialogResult.action === 'copy') {
-              console.log('copy' + dialogResult.message.title);
+              // Navigate to /message?messageId={retrievedMessage.id}
+              this.route.navigate(['/message'], {queryParams: {messageId: retrievedMessage.id}});
             }
           });
         },
@@ -122,23 +123,25 @@ export class MessageHistoryComponent implements OnInit {
           console.log(error);
         }
       );
-
   }
 
   viewMessage(message: Message): void {
-    const dialogRef = this.dialog.open(ViewMessageDialogComponent, {height: '80%', width: '60%'});
-
-    dialogRef.componentInstance.message = message;
-    dialogRef.afterClosed().subscribe(dialogResult => {
-      if (dialogResult.action === 'copy') {
-        this.route.navigate(['/message'], {queryParams: {message}});
-        // Navigate to /results?page=1
-        // this.router.navigate(['/results'], { queryParams: { page: 1 } });
-        // this.router.navigate(['/dashboard/registration/unit/addHH', id]);
-        console.log('copy' + dialogResult.message.title);
-      }
-    });
+    this.http.get<Message>(environment.backendApiPath + '/message/' + message.id)
+      .subscribe(
+        retrievedMessage => {
+          const dialogRef = this.dialog.open(ViewMessageDialogComponent, {height: '70%', width: '50%'});
+          dialogRef.componentInstance.message = retrievedMessage;
+          dialogRef.afterClosed().subscribe(dialogResult => {
+              if (dialogResult.action === 'copy') {
+                // Navigate to /message?messageId={retrievedMessage.id}
+                this.route.navigate(['/message'], {queryParams: {messageId: retrievedMessage.id}});
+              }
+            }
+          );
+        },
+        error => {
+          console.log(error);
+        }
+      );
   }
-
-
 }
