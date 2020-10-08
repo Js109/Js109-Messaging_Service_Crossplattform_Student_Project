@@ -5,5 +5,5 @@ export interface MessageDisplayProperties {
   backgroundColor?: string;
   fontColor?: string;
   fontFamily?: FontFamily;
-  messageAlignment?: Alignment;
+  alignment?: Alignment;
 }

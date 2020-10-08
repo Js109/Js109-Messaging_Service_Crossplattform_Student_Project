@@ -15,7 +15,7 @@
               [style.background]="message.messageDisplayProperties.backgroundColor"
               [style.color]="message.messageDisplayProperties.fontColor"
               [style.fontFamily]="fontFamilyToFontString(message.messageDisplayProperties.fontFamily)"
-              [style.text-align]="alignmentToAlignmentString(message.messageDisplayProperties.messageAlignment)"></textarea>
+              [style.text-align]="alignmentToAlignmentString(message.messageDisplayProperties.alignment)"></textarea>
     <div *ngIf="hasContentError" class="invalid-feedback">Either Content or Files are required.</div>
 
   </div>
@@ -62,7 +62,7 @@
     </div>
     <div *ngIf="hasColorError" class="text-danger small">Text color and background color are the same!</div>
     <mat-divider></mat-divider>
-    <mat-button-toggle-group class="mt-2 mb-2" [(ngModel)]="message.messageDisplayProperties.messageAlignment">
+    <mat-button-toggle-group class="mt-2 mb-2" [(ngModel)]="message.messageDisplayProperties.alignment">
       <mat-button-toggle [value]="0"><mat-icon>format_align_left</mat-icon></mat-button-toggle>
       <mat-button-toggle [value]="1"><mat-icon>format_align_center</mat-icon></mat-button-toggle>
       <mat-button-toggle [value]="2"><mat-icon>format_align_right</mat-icon></mat-button-toggle>
