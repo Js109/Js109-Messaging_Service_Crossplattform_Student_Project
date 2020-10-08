@@ -28,7 +28,9 @@
       <h3>Links</h3>
     </div>
     <div *ngIf="message.links != null && message.links.length !== 0" class="col">
-      <h3>{{message.links}}</h3>
+      <div class="h-100 d-flex flex-column">
+      <h3 style="margin-bottom: 3px" *ngFor="let t of message.links">{{t}}</h3>
+      </div>
     </div>
     <div *ngIf="!(message.links != null && message.links.length !== 0)" class="col">
       <h3>No links attached.</h3>

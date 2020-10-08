@@ -99,7 +99,7 @@ export class MessageHistoryComponent implements OnInit {
     this.http.get<Message>(environment.backendApiPath + '/message/' + message.id)
       .subscribe(
         retrievedMessage => {
-          const dialogRef = this.dialog.open(EditMessageDialogComponent, {height: '90%', width: '60%'});
+          const dialogRef = this.dialog.open(EditMessageDialogComponent, {height: '80%', width: '60%'});
           dialogRef.componentInstance.message = retrievedMessage;
           dialogRef.afterClosed().subscribe(dialogResult => {
             if (dialogResult.action === 'save') {
@@ -129,7 +129,7 @@ export class MessageHistoryComponent implements OnInit {
     this.http.get<Message>(environment.backendApiPath + '/message/' + message.id)
       .subscribe(
         retrievedMessage => {
-          const dialogRef = this.dialog.open(ViewMessageDialogComponent, {height: '70%', width: '50%'});
+          const dialogRef = this.dialog.open(ViewMessageDialogComponent, {height: '55%', width: '50%'});
           dialogRef.componentInstance.message = retrievedMessage;
           dialogRef.afterClosed().subscribe(dialogResult => {
               if (dialogResult.action === 'copy') {

@@ -127,7 +127,7 @@
          [value]="stringToMoment(message.starttime)"
          (dateChange)="message.starttime = momentToString($event)"/>
   <ngx-mat-datetime-picker #starttimePicker [showSeconds]="true"></ngx-mat-datetime-picker>
-  <button class="ml-auto  h-100" mat-icon-button aria-label="remove starttime" (click)="clearStarttime()"><mat-icon>clear</mat-icon></button>
+  <button class="ml-auto h-100" mat-icon-button aria-label="remove starttime" (click)="clearStarttime()"><mat-icon>clear</mat-icon></button>
 </div>
 
 <label>Endtime:</label>
