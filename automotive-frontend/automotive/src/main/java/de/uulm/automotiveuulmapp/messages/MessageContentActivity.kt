@@ -206,7 +206,7 @@ class MessageContentActivity : AppCompatActivity() {
         return messageText.replace("""(?i)\[(?<linkText>[^()\[\]]*)]\(link(?<linkId>\d+)\)""".toRegex()) {
             val linkText = it.groups[1]?.value
             val linkId = it.groups[2]?.value?.toInt()
-            if (linkId != null && linkId > 0) {
+            if (linkId != null && linkId > 0 && linkId <= links.size) {
                 "<a href=${links[linkId - 1]}>$linkText</a>"
             } else {
                 linkText ?: ""
