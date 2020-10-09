@@ -15,9 +15,9 @@ interface MessageRepository : CrudRepository<Message, Long> {
             "or (:topicName is not null and m.topic like :topicName) " +
             "or (:propertyName is not null and :propertyName member of m.properties)) " +
             "and (" +
-            "(COALESCE(:dateBegin, null) is null or m.starttime <= :dateBegin) " +
+            "(COALESCE(:dateBegin) is null or :dateBegin <= m.starttime) " + // postgres cannot check for null of a date object, so coalesce is used first to return null
             "and " +
-            "(COALESCE(:dateEnd, null) is null or :dateEnd <= m.starttime)" +
+            "(COALESCE(:dateEnd) is null or m.starttime <= :dateEnd)" +
             ")")
     fun findAllFiltered(
             @Param("topicName") topicName: String?,
