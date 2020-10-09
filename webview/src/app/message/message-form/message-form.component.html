@@ -15,7 +15,7 @@
               [style.background]="message.messageDisplayProperties.backgroundColor"
               [style.color]="message.messageDisplayProperties.fontColor"
               [style.fontFamily]="fontFamilyToFontString(message.messageDisplayProperties.fontFamily)"
-              [style.text-align]="alignmentToAlignmentString(message.messageDisplayProperties.messageAlignment)"></textarea>
+              [style.text-align]="alignmentToAlignmentString(message.messageDisplayProperties.alignment)"></textarea>
     <div *ngIf="hasContentError" class="invalid-feedback">Either Content or Files are required.</div>
 
   </div>
@@ -62,7 +62,7 @@
     </div>
     <div *ngIf="hasColorError" class="text-danger small">Text color and background color are the same!</div>
     <mat-divider></mat-divider>
-    <mat-button-toggle-group class="mt-2 mb-2" [(ngModel)]="message.messageDisplayProperties.messageAlignment">
+    <mat-button-toggle-group class="mt-2 mb-2" [(ngModel)]="message.messageDisplayProperties.alignment">
       <mat-button-toggle [value]="0"><mat-icon>format_align_left</mat-icon></mat-button-toggle>
       <mat-button-toggle [value]="1"><mat-icon>format_align_center</mat-icon></mat-button-toggle>
       <mat-button-toggle [value]="2"><mat-icon>format_align_right</mat-icon></mat-button-toggle>
@@ -131,13 +131,8 @@
 
 <label>Send message at:</label>
 
-<div class="border rounded bg-white mb-2 d-flex">
-  <mat-datepicker-toggle matSuffix [for]="starttimePicker" class="mr-2"></mat-datepicker-toggle>
-  <input readonly [ngxMatDatetimePicker]="starttimePicker" class="bg-transparent border-0 flex-grow-1"
-         [value]="stringToMoment(message.starttime)"
-         (dateChange)="message.starttime = momentToString($event)"/>
-  <ngx-mat-datetime-picker #starttimePicker [showSeconds]="true"></ngx-mat-datetime-picker>
-  <button class="ml-auto h-100" mat-icon-button aria-label="remove starttime" (click)="clearStarttime()"><mat-icon>clear</mat-icon></button>
+<div class="mb-2">
+  <app-elektrobit-date-picker [(date)]="message.starttime"></app-elektrobit-date-picker>
 </div>
 
 <label>Endtime:</label>
