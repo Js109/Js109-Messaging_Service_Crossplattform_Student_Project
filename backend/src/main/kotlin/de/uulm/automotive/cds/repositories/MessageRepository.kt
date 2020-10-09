@@ -11,12 +11,19 @@ import java.time.LocalDateTime
  *
  */
 interface MessageRepository : CrudRepository<Message, Long> {
-    @Query("select m from Message m where ((:topicName is null and :propertyName is null) or (:topicName is not null and m.topic like :topicName) or (:propertyName is not null and :propertyName member of m.properties)) and :dateBegin < m.starttime and m.starttime < :dateEnd")
+    @Query("select m from Message m where ((:topicName is null and :propertyName is null) " +
+            "or (:topicName is not null and m.topic like :topicName) " +
+            "or (:propertyName is not null and :propertyName member of m.properties)) " +
+            "and (" +
+            "(COALESCE(:dateBegin, null) is null or m.starttime <= :dateBegin) " +
+            "and " +
+            "(COALESCE(:dateEnd, null) is null or :dateEnd <= m.starttime)" +
+            ")")
     fun findAllFiltered(
             @Param("topicName") topicName: String?,
             @Param("propertyName") propertyName: String?,
-            @Param("dateBegin") dateBegin: LocalDateTime,
-            @Param("dateEnd") dateEnd: LocalDateTime
+            @Param("dateBegin") dateBegin: LocalDateTime? = null,
+            @Param("dateEnd") dateEnd: LocalDateTime? = null
     ): Iterable<Message>
 
     fun findAllByIsSentFalseOrderByStarttimeAsc(): Iterable<Message>

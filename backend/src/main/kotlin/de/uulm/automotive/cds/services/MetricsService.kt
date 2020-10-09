@@ -36,14 +36,12 @@ class MetricsService @Autowired constructor(
         val filterBeforeTimeSpan = MetricsFilterDTO(
                 metricsFilter.topicName,
                 metricsFilter.propertyName,
-                LocalDate.MIN,
-                metricsFilter.timeSpanBegin
+                timeSpanEnd = metricsFilter.timeSpanBegin
         )
         val filterAfterTimeSpan = MetricsFilterDTO(
                 metricsFilter.topicName,
                 metricsFilter.propertyName,
-                metricsFilter.timeSpanEnd,
-                LocalDate.MAX
+                timeSpanBegin = metricsFilter.timeSpanEnd
         )
         val filteredMessagesTimeSpan = messageService.filterMessagesForMetrics(metricsFilter)
         val filteredMessagesBeforeTimeSpan = messageService.filterMessagesForMetrics(filterBeforeTimeSpan)

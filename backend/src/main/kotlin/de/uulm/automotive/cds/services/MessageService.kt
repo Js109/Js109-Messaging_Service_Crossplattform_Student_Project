@@ -114,15 +114,14 @@ class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelS
         }
     }
 
+    @Transactional
     fun filterMessagesForMetrics(metricsFilter: MetricsFilterDTO): Iterable<MessageCompactDTO> =
             messageRepository
                     .findAllFiltered(
                             metricsFilter.topicName,
                             metricsFilter.propertyName,
-                            LocalDateTime.of(metricsFilter.timeSpanBegin
-                                    ?: LocalDate.MIN, LocalTime.MIN),
-                            LocalDateTime.of(metricsFilter.timeSpanEnd
-                                    ?: LocalDate.MAX, LocalTime.MAX)
+                            metricsFilter.timeSpanBegin?.let {  LocalDateTime.of(it, LocalTime.MIN) },
+                            metricsFilter.timeSpanEnd?.let {  LocalDateTime.of(it, LocalTime.MAX) }
                     )
                     .filter { it::class.java != TemplateMessage::class.java }
                     .map { MessageCompactDTO.toDTO(it) }
