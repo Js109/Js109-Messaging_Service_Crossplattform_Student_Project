@@ -8,8 +8,6 @@ import {LocationData} from '../../models/LocationData';
 import {fontFamilyToFontString} from '../../models/FontFamily';
 import {MatTabChangeEvent} from '@angular/material/tabs';
 import {MatSlideToggleChange} from '@angular/material/slide-toggle';
-import {Moment} from 'moment';
-import * as moment from 'moment';
 import {alignmentToAlignmentString} from '../../models/Alignment';
 
 enum OffsetType {
@@ -62,17 +60,6 @@ export class MessageFormComponent implements OnInit {
     }
     this.properties = this.properties.map(property => [property[0], val.properties.some(value => value === property[0].binding)]);
   }
-
-  /**
-   * Field storing the current date in the date picker calendar to return it in the binding function
-   * to prevent unnecessary rebuilding of the calendar.
-   */
-  currentMoment: Moment;
-  /**
-   * Field for storing the string the current date in the calendar is based on
-   * to detect actual changes in the date.
-   */
-  currentDateString: string;
 
   locationData: LocationData = {radius: 50};
   expirationOffset: number;
@@ -241,10 +228,6 @@ export class MessageFormComponent implements OnInit {
     }
   }
 
-  clearStarttime(): void {
-    this.message.starttime = null;
-  }
-
   setEndtimeFromExpirationOffset(): void {
     if (this.expirationOffsetType != null && this.expirationOffset != null) {
       const currentTime = new Date();
@@ -297,25 +280,4 @@ export class MessageFormComponent implements OnInit {
     this.message.properties = this.properties.filter(value => value[1]).map(value => value[0].binding);
   }
 
-  /**
-   * Function to transform message.starttime to a Moment object before binding it to the calendar.
-   * To prevent constant rebuilding of the calendar the same instance of a Moment object needs to be returned
-   * unless an actual change of message.starttime has occured.
-   * If a new dateString is passed (that is if message.starttime was changed) a new Moment will be created from it and returned.
-   */
-  stringToMoment(dateString: string): Moment {
-    if (this.currentDateString !== dateString || this.currentMoment == null) {
-      this.currentDateString = dateString;
-      this.currentMoment = moment(dateString, 'YYYY-MM-DD[T]HH:mm:ss');
-    }
-    return this.currentMoment;
-  }
-
-  /**
-   * Function that transforms the change event of the calendar into a string to bind it to message.starttime.
-   * @param $event Change event containing the new date of the calendar as a Moment object.
-   */
-  momentToString($event): string {
-    return $event.value.local().format('YYYY-MM-DD[T]HH:mm:ss');
-  }
 }
