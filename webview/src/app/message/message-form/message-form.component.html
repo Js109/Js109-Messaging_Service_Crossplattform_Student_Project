@@ -1,7 +1,7 @@
 <h3 class="mt-3 mb-1">Message Content</h3>
 <div class="row mb-3">
   <div class="col-8">
-    <input class="form-control no-bottom-rounding text-center" placeholder="Title"
+    <input class="form-control no-bottom-rounding text-center" placeholder="Title" style="font-size: 20px"
            [(ngModel)]="message.title"
            [ngClass]="{'is-invalid' : hasTitleError}"
            [style.background]="message.messageDisplayProperties.backgroundColor"
@@ -190,11 +190,11 @@
 </mat-tab-group>
 <div *ngIf="hasTopicPropertiesError" class="invalid-feedback">Either Topics or Properties are required.</div>
 
-<div class="location-boundaries">
-  <a class="btn btn-secondary collapse-button top-height" id="collapseButton"
+<div class="location-boundaries" style="margin-bottom: 5px;">
+  <a class="btn btn-secondary collapse-button top-height" id="collapseButton" style="color: white;"
      role="button" aria-expanded="false" aria-controls="locationCollapse" (click)="locationDataHide()">Location
     boundaries</a>
-  <div [ngClass]="{'collapse' : message.locationData == null}" id="locationCollapse">
+  <div [ngClass]="{'collapse' : message.locationData == null}" id="locationCollapse" style="margin-top: 3px;">
     <div class="row location-form-group">
       <div class="col-sm-4">
         <label for="latTextField">Latitude</label>
