@@ -33,19 +33,37 @@ class MetricsService @Autowired constructor(
     }
 
     fun getMetrics(metricsFilter: MetricsFilterDTO): MetricsDTO {
-        val filterBeforeTimeSpan = MetricsFilterDTO(
-                metricsFilter.topicName,
-                metricsFilter.propertyName,
-                timeSpanEnd = metricsFilter.timeSpanBegin
-        )
-        val filterAfterTimeSpan = MetricsFilterDTO(
-                metricsFilter.topicName,
-                metricsFilter.propertyName,
-                timeSpanBegin = metricsFilter.timeSpanEnd
-        )
+        val filterBeforeTimeSpan =
+                when (metricsFilter.timeSpanBegin) {
+                    null -> null
+                    else -> MetricsFilterDTO(
+                            metricsFilter.topicName,
+                            metricsFilter.propertyName,
+                            timeSpanEnd = metricsFilter.timeSpanBegin
+                    )
+                }
+
+        val filterAfterTimeSpan =
+                when (metricsFilter.timeSpanEnd) {
+                    null -> null
+                    else -> MetricsFilterDTO(
+                            metricsFilter.topicName,
+                            metricsFilter.propertyName,
+                            timeSpanBegin = metricsFilter.timeSpanEnd
+                    )
+                }
+
         val filteredMessagesTimeSpan = messageService.filterMessagesForMetrics(metricsFilter)
-        val filteredMessagesBeforeTimeSpan = messageService.filterMessagesForMetrics(filterBeforeTimeSpan)
-        val filteredMessagesAfterTimeSpan = messageService.filterMessagesForMetrics(filterAfterTimeSpan)
+        val filteredMessagesBeforeTimeSpan =
+                when (filterBeforeTimeSpan) {
+                    null -> listOf()
+                    else -> messageService.filterMessagesForMetrics(filterBeforeTimeSpan)
+                }
+        val filteredMessagesAfterTimeSpan =
+                when (filterAfterTimeSpan) {
+                    null -> listOf()
+                    else -> messageService.filterMessagesForMetrics(filterAfterTimeSpan)
+                }
 
         val filteredMessagesAllTime = filteredMessagesBeforeTimeSpan
                 .union(filteredMessagesTimeSpan)
