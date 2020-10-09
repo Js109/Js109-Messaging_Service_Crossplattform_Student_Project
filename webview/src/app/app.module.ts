@@ -51,6 +51,8 @@ import {ElektrobitDatePickerComponent} from './elektrobit-date-picker/elektrobit
     ViewMessageDialogComponent,
     ElektrobitDatePickerComponent,
     TopicDescriptionDialogComponent,
+    StatisticsComponent,
+    TopicDescriptionDialogComponent,
     StatisticsComponent
   ],
   imports: [
