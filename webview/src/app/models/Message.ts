@@ -1,7 +1,5 @@
 import {LocationData} from './LocationData';
-import {FontFamily} from './FontFamily';
-import {Alignment} from "./Alignment";
-import {MessageDisplayProperties} from "./MessageDisplayProperties";
+import {MessageDisplayProperties} from './MessageDisplayProperties';
 
 export interface Message {
   id?: number;

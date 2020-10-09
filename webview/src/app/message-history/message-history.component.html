@@ -14,18 +14,12 @@
   </div>
 
   <label>Period of time:</label>
-  <div style="display: flex">
-    <input name="starttime_period" class="browser-default custom-select" type="date" style="margin-right: 10px"
-           [(ngModel)]="messageFilter.starttimePeriod" [ngClass]="{'is-invalid' : hasDateRangeError}"/>
-    <div *ngIf="hasDateRangeError" class="invalid-feedback" style="margin-left: 5px">If you select a start date you must
-      also select an end date and vice versa. The start date must also be before the end date.
-    </div>
-
-    <input name="endtime_period" class="browser-default custom-select" type="date"
-           [(ngModel)]="messageFilter.endtimePeriod" [ngClass]="{'is-invalid' : hasDateRangeError}"/>
-    <div *ngIf="hasDateRangeError" class="invalid-feedback" style="margin-left: 15px">If you select a start date you
-      must also select an end date and vice versa. The start date must also be before the end date.
-    </div>
+  <div class="d-flex">
+    <app-elektrobit-date-picker class="flex-grow-1 mb-2" [(date)]="messageFilter.starttimePeriod" [invalid]="hasDateRangeError"></app-elektrobit-date-picker>
+    <app-elektrobit-date-picker class="flex-grow-1" [(date)]="messageFilter.endtimePeriod" [invalid]="hasDateRangeError"></app-elektrobit-date-picker>
+  </div>
+  <div *ngIf="hasDateRangeError" class="mb-2 text-danger small" style="margin-left: 15px">If you select a start date you
+    must also select an end date and vice versa. The start date must also be before the end date.
   </div>
 
   <label for="topic">Topic:</label>
