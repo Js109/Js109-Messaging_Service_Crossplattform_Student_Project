@@ -1,0 +1,25 @@
+<mat-sidenav-container class="h-100">
+  <mat-sidenav-content>
+    <div class="container d-flex flex-column h-100">
+      <h2>Statistics</h2>
+      <div style="display: flex">
+        <input class="browser-default custom-select" type="date" style="margin-right: 10px"
+               [(ngModel)]="metricsFilter.timeSpanBegin"/>
+
+        <input class="browser-default custom-select" type="date"
+               [(ngModel)]="metricsFilter.timeSpanEnd"/>
+      </div>
+
+      <select
+        class="browser-default custom-select mt-2"
+        name="topic" id="topic"
+        [(ngModel)]="metricsFilter.topicName">
+        <option selected></option>
+        <option *ngFor="let t of topics" [ngValue]="t.title">{{t.title}}</option>
+      </select>
+
+      <div echarts [options]="diagramOptions"></div>
+
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
