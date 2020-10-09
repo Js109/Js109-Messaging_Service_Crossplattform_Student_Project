@@ -34,22 +34,20 @@ class MetricsService @Autowired constructor(
 
     fun getMetrics(metricsFilter: MetricsFilterDTO): MetricsDTO {
         val filterBeforeTimeSpan =
-                when (metricsFilter.timeSpanBegin) {
-                    null -> null
-                    else -> MetricsFilterDTO(
+                metricsFilter.timeSpanBegin?.let { timeSpanBegin ->
+                    MetricsFilterDTO(
                             metricsFilter.topicName,
                             metricsFilter.propertyName,
-                            timeSpanEnd = metricsFilter.timeSpanBegin
+                            timeSpanEnd = timeSpanBegin.minusDays(1)
                     )
                 }
 
         val filterAfterTimeSpan =
-                when (metricsFilter.timeSpanEnd) {
-                    null -> null
-                    else -> MetricsFilterDTO(
+                metricsFilter.timeSpanEnd?.let { timeSpanEnd ->
+                    MetricsFilterDTO(
                             metricsFilter.topicName,
                             metricsFilter.propertyName,
-                            timeSpanBegin = metricsFilter.timeSpanEnd
+                            timeSpanBegin = timeSpanEnd.plusDays(1)
                     )
                 }
 
