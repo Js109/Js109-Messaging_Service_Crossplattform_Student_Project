@@ -21,7 +21,6 @@ class AmqpChannelService(
     private val connection: Connection
 
     init {
-
         val factory = ConnectionFactory()
         factory.host = address
         factory.username = username
