@@ -29,6 +29,7 @@ data class TopicModel(
         if (description != other.description) return false
         if (!tags.contentEquals(other.tags)) return false
         if (subscribed != other.subscribed) return false
+        if (disabled != other.disabled) return false
 
         return true
     }
