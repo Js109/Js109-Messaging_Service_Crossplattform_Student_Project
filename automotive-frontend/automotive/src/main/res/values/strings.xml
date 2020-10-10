@@ -59,6 +59,7 @@
 
     <!-- Topic/S view strings -->
     <string name="search_bar_hint">Filter</string>
+    <string name="unsubscribe_dialog_content">This topic has been disabled by the OEM. Once unsubscribed, you cannot subscribe again.\n Do you still want to unsubscribe?</string>
 
     <!-- Main activity strings -->
     <string name="header_bar_message_view_title">Saved Messages</string>
@@ -69,5 +70,9 @@
     <string name="youtube_icon_content_description">Youtube icon</string>
     <string name="browser_icon_content_description">Browser icon</string>
     <string name="image_content_description">Image</string>
+    <string name="message_deletion_dialog_content">Do you really want to delete this message?</string>
 
+    <!-- Dialog Options -->
+    <string name="dialog_confirmation_yes">Yes</string>
+    <string name="dialog_confirmation_no">No</string>
 </resources>
