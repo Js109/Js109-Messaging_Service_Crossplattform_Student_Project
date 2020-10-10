@@ -51,6 +51,7 @@ class TopicFetcherTest {
                 "bind/test",
                 "Description of the first topic",
                 arrayOf("test", "testing"),
+                false,
                 false
             ),
             TopicModel(
@@ -59,6 +60,7 @@ class TopicFetcherTest {
                 "bind/test2",
                 "The second topic has a description too",
                 arrayOf("verify", "assert"),
+                false,
                 false
             )
         )
@@ -79,7 +81,8 @@ class TopicFetcherTest {
                 "bind/test2",
                 "The second topic has a description too",
                 arrayOf("verify", "assert"),
-                true
+                true,
+                false
             ),
             TopicModel(
                 1,
@@ -87,6 +90,7 @@ class TopicFetcherTest {
                 "bind/test",
                 "Description of the first topic",
                 arrayOf("test", "testing"),
+                false,
                 false
             )
         )
@@ -110,6 +114,7 @@ class TopicFetcherTest {
                 "bind/test2",
                 "The second topic has a description too",
                 arrayOf("verify", "assert"),
+                false,
                 false
             )
         )

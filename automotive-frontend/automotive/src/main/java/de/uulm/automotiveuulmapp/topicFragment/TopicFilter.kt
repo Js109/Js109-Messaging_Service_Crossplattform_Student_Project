@@ -11,7 +11,7 @@ object TopicFilter {
      * @param query String that the topics will be filtered by
      * @return List of Topics containing first those that matched by title then those matched by description then those matched by tags.
      */
-    fun filter(topicList: MutableList<TopicModel>, query: String? = null) : List<TopicModel> {
+    fun filter(topicList: List<TopicModel>, query: String? = null) : List<TopicModel> {
         return if (query == null || query.isEmpty()) {
             topicList.sortedBy { !it.subscribed }
         } else {
