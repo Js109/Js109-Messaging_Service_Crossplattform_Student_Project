@@ -32,6 +32,16 @@
   border-top-left-radius: 0;
 }
 
+.no-bottom-rounding {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.no-top-rounding {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
 .image-icon {
   background-size: cover;
   width: 70px;
