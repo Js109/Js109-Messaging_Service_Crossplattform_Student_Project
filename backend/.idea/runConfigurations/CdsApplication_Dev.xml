@@ -4,6 +4,11 @@
     <option name="SPRING_BOOT_MAIN_CLASS" value="de.uulm.automotive.cds.CdsApplication" />
     <option name="ACTIVE_PROFILES" value="dev" />
     <option name="ALTERNATIVE_JRE_PATH" />
+    <envs>
+      <env name="AMQ_BROKER_URL" value="134.60.157.15" />
+      <env name="AMQ_BROKER_USER" value="android_cl" />
+      <env name="AMQ_BROKER_PASS" value="supersecure" />
+    </envs>
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

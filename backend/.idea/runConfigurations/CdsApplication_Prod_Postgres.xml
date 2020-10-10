@@ -5,6 +5,9 @@
     <option name="ACTIVE_PROFILES" value="postgres,prod" />
     <option name="ALTERNATIVE_JRE_PATH" />
     <envs>
+      <env name="AMQ_BROKER_URL" value="134.60.157.15" />
+      <env name="AMQ_BROKER_USER" value="android_cl" />
+      <env name="AMQ_BROKER_PASS" value="supersecure" />
       <env name="DB_SOURCE" value="jdbc:postgresql://localhost:5432/postgres" />
       <env name="DB_USERNAME" value="postgres" />
       <env name="DB_PASSWORD" value="root" />
