@@ -3,12 +3,12 @@
 </button>
 <h2 mat-dialog-title>View Message</h2>
 <mat-dialog-content>
-  <input class="form-control no-bottom-rounding" placeholder="Title" style="margin-bottom: 0; font-size: 20px"
+  <input class="form-control no-bottom-rounding text-center" placeholder="Title" style="margin-bottom: 0; font-size: 20px"
          [(ngModel)]="message.title"
          [style.background]="message.messageDisplayProperties.backgroundColor"
          [style.color]="message.messageDisplayProperties.fontColor"
          [style.fontFamily]="fontFamilyToFontString(message.messageDisplayProperties.fontFamily)" readonly>
-  <textarea class="form-control mt-2 message-content flex-grow-1" placeholder="Content" style="margin-top: 0 !important;"
+  <textarea class="form-control mt-2 message-content flex-grow-1 no-top-rounding" placeholder="Content" style="margin-top: 0 !important; resize: none;"
             [(ngModel)]="message.content"
             [style.background]="message.messageDisplayProperties.backgroundColor"
             [style.color]="message.messageDisplayProperties.fontColor"
