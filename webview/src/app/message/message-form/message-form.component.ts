@@ -50,6 +50,9 @@ export class MessageFormComponent implements OnInit {
   @Input()
   set message(val) {
     this.messageValue = val;
+    if (this.message.messageDisplayProperties == null){
+      this.message.messageDisplayProperties = {};
+    }
     if (val.locationData != null) {
       this.locationData = val.locationData;
     }
@@ -92,7 +95,7 @@ export class MessageFormComponent implements OnInit {
    * Fills the message with all elements from the form and then performs validation on it.
    * If validation is passed the message will be returned otherwise null will be returned.
    * Use this to retrieve the message instead of using binding as this component does not set all values put into the form directly.
-   * @return Message Message containing the information put into the form or null if validation fails.
+   * @return Message containing the information put into the form or null if validation fails.
    */
   retrieveMessage(): Message {
     if (this.validateInputs()) {
