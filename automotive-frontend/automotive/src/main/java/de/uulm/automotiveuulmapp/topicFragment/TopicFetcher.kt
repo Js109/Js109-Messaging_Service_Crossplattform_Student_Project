@@ -29,7 +29,7 @@ class TopicFetcher(private val restCallHelper: RestCallHelper, private val prefe
      * Fetches the topics from the backend asynchronously and stores them in topicList.
      */
     private fun loadTopics() {
-        val url = ApplicationConstants.ENDPOINT_TOPIC
+        val url = ApplicationConstants.ENDPOINT_TOPIC + "?showDisabledTopics=true"
 
         restCallHelper.callRestEndpoint(
             url,
@@ -49,10 +49,13 @@ class TopicFetcher(private val restCallHelper: RestCallHelper, private val prefe
                             element.getString("binding"),
                             element.getString("description"),
                             tags.toTypedArray(),
-                            false
+                            false,
+                            element.getBoolean("disabled")
                         )
                         topic.subscribed = loadTopicIsSubscribed(topic)
-                        topicList.add(topic)
+                        if(!topic.disabled || topic.subscribed) {
+                            topicList.add(topic)
+                        }
                     }
                     onTopicFetched()
                 }
@@ -73,7 +76,7 @@ class TopicFetcher(private val restCallHelper: RestCallHelper, private val prefe
     /**
      *
      */
-    fun getTopics(filter: String = ""): List<TopicModel> {
-        return TopicFilter.filter(topicList, filter)
+    fun getTopics(filter: String = ""): MutableList<TopicModel> {
+        return TopicFilter.filter(topicList, filter).toMutableList()
     }
 }
