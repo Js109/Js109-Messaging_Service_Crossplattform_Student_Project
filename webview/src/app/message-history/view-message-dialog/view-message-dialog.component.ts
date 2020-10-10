@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {fontFamilyToFontString} from '../../models/FontFamily';
+import {alignmentToAlignmentString} from '../../models/Alignment';
 
 @Component({
   selector: 'app-view-message-dialog',
@@ -12,6 +13,7 @@ export class ViewMessageDialogComponent implements OnInit {
 
   message;
   fontFamilyToFontString = fontFamilyToFontString;
+  alignmentToAlignmentString = alignmentToAlignmentString;
 
   ngOnInit(): void {
     if (this.message.messageDisplayProperties == null){
