@@ -29,7 +29,10 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
 
   webview:
-    build: ./webview
+    build:
+      context: ./webview
+      args: 
+        - PUBLIC_BACKEND_URL=${PUBLIC_BACKEND_URL}
     restart: unless-stopped
     ports:
       - 4200:4200
