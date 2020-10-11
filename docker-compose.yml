@@ -6,6 +6,7 @@ services:
     restart: unless-stopped
     depends_on: 
       - db
+      - rabbitmq
     ports:
       - 8085:8080
     environment:
@@ -13,7 +14,9 @@ services:
       - DB_SOURCE=${DB_SOURCE}
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
-
+      - AMQ_BROKER_URL=${AMQ_BROKER_URL}
+      - AMQ_BROKER_USER=${AMQ_BROKER_USER}
+      - AMQ_BROKER_PASS=${AMQ_BROKER_PASS}
   db:
     image: postgres
     restart: unless-stopped
@@ -30,3 +33,12 @@ services:
     restart: unless-stopped
     ports:
       - 4200:4200
+  rabbitmq:
+    build: ./rabbitmq
+    restart: unless-stopped
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_USER=${AMQ_BROKER_USER}
+      - RABBITMQ_PASSWORD=${AMQ_BROKER_PASS}
