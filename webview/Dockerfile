@@ -11,11 +11,7 @@ RUN npm install -g @angular/cli@7.3.9
 
 COPY . /app
 
-#RUN sed -i "s/backendurl/$(echo $PUBLIC_BACKEND_URL | sed 's/\//\\\//g')/" /app/src/environments/environment.prod.ts
-#RUN URL=$(echo $PUBLIC_BACKENDURL | sed 's/\//\\\//g'); sed -i "s/backendurl/$URL/g" /app/src/environments/environment.prod.ts
-
-## working ##
-#RUN sed -i "s/backendurl/teststring/" /app/src/environments/environment.prod.ts
+# sets the PUBLIC_BACKEND_URL from the .env file of the docker-compose.yml 
 RUN sed -i "s|backendurl|${PUBLIC_BACKEND_URL}|g" /app/src/environments/environment.prod.ts
 
 CMD ng serve --prod --host 0.0.0.0
