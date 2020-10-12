@@ -1,8 +1,8 @@
 export enum FontFamily {
-  Roboto,
-  OpenSans,
-  Montserrat,
-  PlayfairDisplay
+  Roboto = 'ROBOT',
+  OpenSans = 'OPEN_SANS',
+  Montserrat = 'MONTSERRAT',
+  PlayfairDisplay = 'PLAYFAIR_DISPLAY'
 
 }
 
