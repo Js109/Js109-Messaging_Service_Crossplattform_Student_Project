@@ -15,11 +15,17 @@
 
   <label>Period of time:</label>
   <div class="d-flex">
-    <app-elektrobit-date-picker-to-date class="flex-grow-1 mb-2" [(date)]="messageFilter.starttimePeriod" [invalid]="hasDateRangeError"></app-elektrobit-date-picker-to-date>
-    <app-elektrobit-date-picker-to-date class="flex-grow-1" [(date)]="messageFilter.endtimePeriod" [invalid]="hasDateRangeError"></app-elektrobit-date-picker-to-date>
+    <app-elektrobit-date-picker-to-date class="flex-grow-1 mb-2" [(date)]="messageFilter.starttimePeriod"
+                                        [invalid]="hasDateRangeError"></app-elektrobit-date-picker-to-date>
+    <app-elektrobit-date-picker-to-date class="flex-grow-1" [(date)]="messageFilter.endtimePeriod"
+                                        [invalid]="hasDateRangeError"></app-elektrobit-date-picker-to-date>
   </div>
-  <div *ngIf="hasDateRangeError" class="mb-2 text-danger small" style="margin-left: 15px">If you select a start date you
-    must also select an end date and vice versa. The start date must also be before the end date.
+  <div *ngIf="hasDateRangeError" class="mb-2 text-danger small" style="margin-left: 15px">The start date must be before
+    the end date.
+  </div>
+  <div *ngIf="hasDatePickerOnlyOnceSelectedError" class="mb-2 text-danger small" style="margin-left: 15px">If you select
+    a start date you
+    must also select an end date and vice versa.
   </div>
 
   <label for="topic">Topic:</label>
