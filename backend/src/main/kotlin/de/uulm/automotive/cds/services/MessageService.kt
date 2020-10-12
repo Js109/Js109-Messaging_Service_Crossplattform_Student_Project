@@ -114,15 +114,36 @@ class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelS
         }
     }
 
+    /**
+     * TODO
+     *
+     * @param topicName
+     * @param propertyName
+     * @param searchString
+     * @param timeSpanBegin
+     * @param timeSpanEnd
+     * @param sender
+     * @param content
+     * @param title
+     * @return
+     */
     @Transactional
-    fun filterMessagesForMetrics(metricsFilter: MetricsFilterDTO): Iterable<MessageCompactDTO> =
+    fun filterMessages(topicName: String? = null, propertyName: String? = null, searchString: String? = null,
+                       timeSpanBegin: LocalDateTime? = null, timeSpanEnd: LocalDateTime? = null,
+                       sender: String? = null, content: String? = null, title: String? = null): Iterable<MessageCompactDTO> =
             messageRepository
                     .findAllFiltered(
-                            metricsFilter.topicName,
-                            metricsFilter.propertyName,
-                            metricsFilter.timeSpanBegin?.let {  LocalDateTime.of(it, LocalTime.MIN) },
-                            metricsFilter.timeSpanEnd?.let {  LocalDateTime.of(it, LocalTime.MAX) }
+                            topicName = if (topicName.isNullOrBlank()) null else topicName,
+                            propertyName = if(propertyName.isNullOrBlank()) null else propertyName,
+                            searchString = searchString?.let {
+                                if (searchString.isNotBlank()) "%$searchString%"  else null
+                            },
+                            dateBegin = timeSpanBegin,
+                            dateEnd = timeSpanEnd,
+                            sender = if (sender.isNullOrBlank()) null else sender,
+                            content = if (content.isNullOrBlank()) null else content,
+                            title = if (title.isNullOrBlank()) null else title
                     )
                     .filter { it::class.java != TemplateMessage::class.java }
-                    .map { MessageCompactDTO.toDTO(it) }
+                    .map {MessageCompactDTO.toDTO(it) }
 }
