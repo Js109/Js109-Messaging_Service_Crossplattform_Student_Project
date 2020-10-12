@@ -1,0 +1,8 @@
+<div class="border rounded bg-white d-flex" [ngClass]="{'border-danger': invalid}">
+  <mat-datepicker-toggle matSuffix [for]="starttimePicker" class="mr-2"></mat-datepicker-toggle>
+  <input readonly [ngxMatDatetimePicker]="starttimePicker" class="bg-transparent border-0 flex-grow-1"
+         [value]="stringToMomentDate(date)"
+         (dateChange)="momentToStringDate($event)"/>
+  <ngx-mat-datetime-picker #starttimePicker [hideTime]="true"></ngx-mat-datetime-picker>
+  <button class="ml-auto  h-100" mat-icon-button aria-label="remove starttime" (click)="clearDate()"><mat-icon>clear</mat-icon></button>
+</div>

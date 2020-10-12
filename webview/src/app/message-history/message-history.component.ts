@@ -11,7 +11,6 @@ import {MatDialog} from '@angular/material/dialog';
 import {EditMessageDialogComponent} from './edit-message-dialog/edit-message-dialog.component';
 import {ViewMessageDialogComponent} from './view-message-dialog/view-message-dialog.component';
 import {Router} from '@angular/router'; // import router from angular router
-import {MessageComponent} from '../message/message.component';
 
 @Component({
   selector: 'app-message-history',
