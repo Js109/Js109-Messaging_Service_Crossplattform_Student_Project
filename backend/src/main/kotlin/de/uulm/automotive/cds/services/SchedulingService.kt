@@ -16,7 +16,7 @@ import java.time.LocalDateTime
  * @property messageService
  */
 @Component
-class SchedulingService(private val messageRepository: MessageRepository, private val tokenRepository: SignUpRepository, private val messageService: MessageService,
+class SchedulingService(private val messageRepository: MessageRepository, private val tokenRepository: SignUpRepository, private val messageService: MessageService, private val metricsService: MetricsService,
                         @Value("\${pruning.interval.seconds:60}000")
                         val removeTokenIntervalInSeconds: Long) {
 
@@ -49,5 +49,10 @@ class SchedulingService(private val messageRepository: MessageRepository, privat
                 tokenRepository.delete(it)
             }
         }
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")
+    fun getAndSaveSubscriberMetricsForCurrentDay() {
+        metricsService.getAndSaveRabbitMQMetrics()
     }
 }

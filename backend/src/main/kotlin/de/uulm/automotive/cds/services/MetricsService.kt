@@ -106,8 +106,6 @@ class MetricsService @Autowired constructor(
                 .union(filteredMessagesTimeSpan)
                 .union(filteredMessagesAfterTimeSpan)
 
-        getSubscriberMetrics()
-
         val subscribersBegin: Int? =
                 metricsFilter.timeSpanBegin
                         ?.let {
@@ -282,14 +280,7 @@ class MetricsService @Autowired constructor(
      * TODO
      *
      */
-    private fun getSubscriberMetrics() =
-            getAndSaveRabbitMQMetrics()
-
-    /**
-     * TODO
-     *
-     */
-    private fun getAndSaveRabbitMQMetrics() {
+    fun getAndSaveRabbitMQMetrics() {
         val response = khttp.get(
                 url = "http://134.60.157.15:8081/api/bindings",
                 auth = BasicAuthorization("guest", "guest")
