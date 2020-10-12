@@ -44,83 +44,170 @@ export class StatisticsComponent implements OnInit {
       .subscribe((topics: Topic[]) => this.topics = topics);
     this.http.get(environment.backendApiPath + '/property', {responseType: 'json'})
       .subscribe((properties: Property[]) => this.properties = properties);
+    this.loadMetrics();
+  }
+
+  loadMetrics(): void {
     this.http.post(environment.backendApiPath + '/metrics', this.metricsFilter, {responseType: 'json'})
       .subscribe((metrics: Metrics) => {
         this.metrics = metrics;
 
-        this.http.get(environment.backendApiPath + '/metrics/topicSubscriptionDistribution', {responseType: 'json'})
-          .subscribe((distribution) => {
-            this.topicDistribution = distribution;
+        this.setupMessageChart();
 
-            const keys = Object.keys(this.metrics.sentMessagesByDateTimeSpan);
-            const keys2 = Object.keys(this.metrics.scheduledMessagesByDateTimeSpan);
+        this.setupSubscriberChart();
 
-            this.sentMessagesOptions = {
-              xAxis: {
-                type: 'time'
-              },
-              yAxis: {
-                type: 'value'
-              },
-              series: [{
-                type: 'bar',
-                data: Object.values(this.metrics.sentMessagesByDateTimeSpan).map((v, i) => [keys[i], v])
-              }, {
-                type: 'bar',
-                data: Object.values(this.metrics.scheduledMessagesByDateTimeSpan).map((v, i) => [keys2[i], v])
-              }]
-            };
+        this.setupTimeChart();
+      });
+    this.http.get(environment.backendApiPath + '/metrics/topicSubscriptionDistribution', {responseType: 'json'})
+      .subscribe((distribution) => {
+        this.topicDistribution = distribution;
 
-            const keys3 = Object.keys(this.metrics.subscriberGainByDateTimeSpan);
-
-            this.subscriberGainOptions = {
-              xAxis: {
-                type: 'time'
-              },
-              yAxis: {
-                type: 'value'
-              },
-              series: [{
-                type: 'bar',
-                date: Object.values(this.metrics.subscriberGainByDateTimeSpan).map((v, i) => [keys3[i], v])
-              }]
-            };
-
-            const hoursInDay = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
-
-            this.messagesByTimeOfDayOptions = {
-              xAxis: {
-                type: 'category',
-                data: hoursInDay
-              },
-              yAxis: {
-                type: 'value'
-              },
-              series: [{
-                type: 'line',
-                data: hoursInDay.map(h => (this.metrics.sentMessagesByTimeOfDayTimeSpan.hasOwnProperty(h)) ? this.metrics.sentMessagesByTimeOfDayTimeSpan[h] / this.metrics.sentMessagesTotalGain : 0)
-              }, {
-                type: 'line',
-                data: hoursInDay.map(h => (this.metrics.sentMessagesByTimeOfDayAllTime.hasOwnProperty(h)) ? this.metrics.sentMessagesByTimeOfDayAllTime[h] / this.metrics.sentMessagesTotalAllTime : 0)
-              }]
-            };
-
-            const topics = Object.keys(this.topicDistribution);
-
-            this.topicsPieOptions = {
-              legend: {
-                data: topics
-              },
-              series: [{
-                type: 'pie',
-                radius: [50, 100],
-                center: ['25%', '50%'],
-                roseType: 'area',
-                data: topics.map(t => this.topicDistribution[t])
-              }]
-            };
-          });
+        this.setupTopicCharts();
       });
   }
 
+  metricsSpanBeginToMillis(value): number {
+    let min = value.min;
+    if (this.metricsFilter.timeSpanBegin != null) {
+      min = Date.parse(this.metricsFilter.timeSpanBegin);
+    }
+    return min - 24 * 60 * 60 * 1000;
+  }
+
+  metricsSpanEndToMillis(value): number {
+    let max = value.max;
+    if (this.metricsFilter.timeSpanEnd != null) {
+      max = Date.parse(this.metricsFilter.timeSpanEnd);
+    }
+    return max + 24 * 60 * 60 * 1000;
+  }
+
+  setupMessageChart(): void {
+    const sentMessages = Object.entries(this.metrics.sentMessagesByDateTimeSpan);
+    const scheduledMessages = Object.entries(this.metrics.scheduledMessagesByDateTimeSpan);
+
+    this.sentMessagesOptions = {
+      xAxis: {
+        type: 'time',
+        min: (value) => {
+          return this.metricsSpanBeginToMillis(value);
+        },
+        max: (value) => {
+          return this.metricsSpanEndToMillis(value);
+        }
+      },
+      yAxis: {
+        type: 'value'
+      },
+      tooltip: {
+        trigger: 'item',
+        formatter: '{b}'
+      },
+      series: [{
+        type: 'bar',
+        barWidth: '90%',
+        data: sentMessages.map(v => ({value: v, name: v[0]}))
+      }, {
+        type: 'bar',
+        barWidth: '90%',
+        data: scheduledMessages.map(v => ({value: v, name: v[0]}))
+      }]
+    };
+  }
+
+  setupSubscriberChart(): void {
+    const subscribers = Object.entries(this.metrics.subscriberGainByDateTimeSpan);
+
+    this.subscriberGainOptions = {
+      xAxis: {
+        type: 'time',
+        min: (value) => {
+          return this.metricsSpanBeginToMillis(value);
+        },
+        max: (value) => {
+          return this.metricsSpanEndToMillis(value);
+        }
+      },
+      yAxis: {
+        type: 'value'
+      },
+      tooltip: {
+        trigger: 'item',
+          formatter: '{b}'
+      },
+      series: [{
+        type: 'bar',
+        barWidth: '90%',
+        data: subscribers.map(v => ({value: v, name: v[0]}))
+      }]
+    };
+  }
+
+  setupTimeChart(): void {
+    const hoursInDay = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+
+    this.messagesByTimeOfDayOptions = {
+      xAxis: {
+        type: 'value',
+        data: hoursInDay,
+        max: 23,
+        min: 0
+      },
+      yAxis: {
+        type: 'value'
+      },
+      legend: {
+        left: 'center',
+        top: 'bottom',
+        data: ['Messages in selected timespan', 'Messages all time']
+      },
+      series: [{
+        type: 'line',
+        name: 'Messages in selected timespan',
+        data: hoursInDay.map(h => [h, (this.metrics.sentMessagesByTimeOfDayTimeSpan.hasOwnProperty(h)) ? this.metrics.sentMessagesByTimeOfDayTimeSpan[h] / this.metrics.sentMessagesTotalGain : 0])
+      }, {
+        type: 'line',
+        name: 'Messages all time',
+        data: hoursInDay.map(h => [h, (this.metrics.sentMessagesByTimeOfDayAllTime.hasOwnProperty(h)) ? this.metrics.sentMessagesByTimeOfDayAllTime[h] / this.metrics.sentMessagesTotalAllTime : 0])
+      }]
+    };
+  }
+
+  setupTopicCharts(): void {
+    const topics = Object.entries(this.topicDistribution).sort((a: [string, number], b: [string, number]) => a[1] - b[1]);
+
+    const top5 = topics.slice(0, 5);
+
+    this.topicsPieOptions = {
+      tooltip: {
+        trigger: 'item',
+        formatter: '{b}: {c} Subscriber'
+      },
+      series: [{
+        type: 'pie',
+        radius: [20, 100],
+        roseType: 'area',
+        data: top5.map(t => ({value: t[1], name: t[0]}))
+      }]
+    };
+
+    this.topicsBarOptions = {
+      xAxis: {
+        type: 'value'
+      },
+      yAxis: {
+        type: 'category',
+        data: topics.map(v => v[0])
+      },
+      tooltip: {
+        trigger: 'item',
+        formatter: '{b}: {c} Subscriber'
+      },
+      series: [{
+        type: 'bar',
+        barWidth: '90%',
+        data: topics.map(v => ({name: v[0], value: v[1]}))
+      }]
+    };
+  }
 }

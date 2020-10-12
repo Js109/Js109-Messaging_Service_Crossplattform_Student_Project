@@ -3,16 +3,17 @@
     <div class="container d-flex flex-column h-100">
       <h2>Statistics</h2>
       <div style="display: flex">
-        <app-elektrobit-date-picker class="flex-grow-1 mb-2" [(date)]="metricsFilter.timeSpanBegin"></app-elektrobit-date-picker>
-        <app-elektrobit-date-picker class="flex-grow-1 mb-2" [(date)]="metricsFilter.timeSpanEnd"></app-elektrobit-date-picker>
+        <app-elektrobit-date-picker class="flex-grow-1 mb-2" [(date)]="metricsFilter.timeSpanBegin" (dateChange)="loadMetrics()"></app-elektrobit-date-picker>
+        <app-elektrobit-date-picker class="flex-grow-1 mb-2" [(date)]="metricsFilter.timeSpanEnd" (dateChange)="loadMetrics()"></app-elektrobit-date-picker>
       </div>
 
       <select
         class="browser-default custom-select mt-2"
         name="topic" id="topic"
-        [(ngModel)]="metricsFilter.topicName">
-        <option selected></option>
-        <option *ngFor="let t of topics" [ngValue]="t.title">{{t.title}}</option>
+        [(ngModel)]="metricsFilter.topicName"
+        (ngModelChange)="loadMetrics()">
+        <option selected [ngValue]="null"></option>
+        <option *ngFor="let t of topics" [ngValue]="t.binding">{{t.title}}</option>
       </select>
 
       <div echarts [options]="sentMessagesOptions"></div>
