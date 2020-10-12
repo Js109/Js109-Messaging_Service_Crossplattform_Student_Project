@@ -140,9 +140,9 @@ class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelS
                             },
                             dateBegin = timeSpanBegin,
                             dateEnd = timeSpanEnd,
-                            sender = if (sender.isNullOrBlank()) null else sender,
-                            content = if (content.isNullOrBlank()) null else content,
-                            title = if (title.isNullOrBlank()) null else title
+                            sender = if (sender.isNullOrBlank()) null else "%$sender%",
+                            content = if (content.isNullOrBlank()) null else "%$content%",
+                            title = if (title.isNullOrBlank()) null else "%$title%"
                     )
                     .filter { it::class.java != TemplateMessage::class.java }
                     .map {MessageCompactDTO.toDTO(it) }
