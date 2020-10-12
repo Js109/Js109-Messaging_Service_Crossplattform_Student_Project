@@ -1,7 +1,7 @@
 export enum Alignment {
-  Left,
-  Center,
-  Right
+  Left = 'LEFT',
+  Center = 'CENTER',
+  Right = 'RIGHT'
 }
 
 export function alignmentToAlignmentString(alignment: Alignment): string {

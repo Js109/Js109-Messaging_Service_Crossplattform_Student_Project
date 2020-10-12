@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
+import de.uulm.automotiveuulmapp.R
 
 /**
  * Created and opened
@@ -18,12 +19,12 @@ class MessageDeletionDialogFragment(
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity.let{
             val builder = AlertDialog.Builder(activity)
-            builder.setMessage("Do you really want to delete this message?")
-                .setPositiveButton("Yes"
+            builder.setMessage(R.string.message_deletion_dialog_content)
+                .setPositiveButton(R.string.dialog_confirmation_yes
                 ) { _, _ ->
                     onConfirm()
                 }
-                .setNegativeButton("No"
+                .setNegativeButton(R.string.dialog_confirmation_no
                 ) { _, _ ->
                     onDeny()
                 }

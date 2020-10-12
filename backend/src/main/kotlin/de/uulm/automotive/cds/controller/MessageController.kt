@@ -173,6 +173,7 @@ class MessageController(private val repository: MessageRepository, private val m
 
         val message = MessageDTO.toEntity(messageDto)
         message.id = id
+        message.isSent = false
 
         return if (messageOld.get().isSent == false) {
             repository.save(message)

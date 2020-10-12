@@ -1,5 +1,7 @@
 package de.uulm.automotiveuulmapp.topicFragment
 
+import android.app.AlertDialog
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Message
 import android.os.Messenger
@@ -31,7 +33,8 @@ class TopicAdapter(
 ) :
     RecyclerView.Adapter<TopicAdapter.TopicViewHolder>() {
 
-    private var currentList = emptyList<TopicModel>()
+    private var currentList: MutableList<TopicModel> = emptyList<TopicModel>().toMutableList()
+    private lateinit var context: Context
 
     private val topicFetcher = TopicFetcher(restCallHelper, preferences) { notifyQueryChanged() }
 
@@ -41,8 +44,9 @@ class TopicAdapter(
      * Inflates the topic card layout to create the views in the RecyclerView.
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopicViewHolder {
+        this.context = parent.context
         val topicCard =
-            LayoutInflater.from(parent.context).inflate(R.layout.topic_card, parent, false)
+            LayoutInflater.from(context).inflate(R.layout.topic_card, parent, false)
         return TopicViewHolder(
             topicCard
         )
@@ -52,22 +56,54 @@ class TopicAdapter(
      * Fills a topic card view with the values of a topic in the current data set.
      */
     override fun onBindViewHolder(holder: TopicViewHolder, position: Int) {
+        val selectedTopic = currentList[position]
         val title = holder.itemView.findViewById<TextView>(R.id.topicCardTitle)
-        title.text = currentList[position].title
+        title.text = selectedTopic.title
 
         val description = holder.itemView.findViewById<TextView>(R.id.topicCardDescription)
-        description.text = currentList[position].description
+        description.text = selectedTopic.description
 
         val switch = holder.itemView.findViewById<Switch>(R.id.topicCardSwitch)
         switch.setOnCheckedChangeListener { _, _ -> }
-        switch.isChecked = currentList[position].subscribed
+        switch.isChecked = selectedTopic.subscribed
         switch.setOnCheckedChangeListener { _, isChecked ->
-            topicCardSwitchChange(currentList[position], isChecked)
+            when (isChecked) {
+                false -> handleUnsubscribe(selectedTopic, switch, position)
+                true -> topicCardSwitchChange(currentList[position], isChecked)
+            }
         }
 
         holder.itemView.setOnClickListener {
             switch.isChecked = !switch.isChecked
         }
+    }
+
+    /**
+     * Handles the unsubscribe envent.
+     * If the passed topic is disabled, triggers a confirmation dialog. If confirmed, unsubscribes
+     * and removes the topic from the list.
+     *
+     * @param selectedTopic Topic which the unsubscribe was called on
+     * @param switch Required to reset switch to its original state when aborted
+     * @param position Position of the element in the list to be able to remove it
+     */
+    private fun handleUnsubscribe(selectedTopic: TopicModel, switch: Switch, position: Int){
+        if(selectedTopic.disabled) {
+            val builder = AlertDialog.Builder(context)
+            builder.setMessage(R.string.unsubscribe_dialog_content)
+                .setNegativeButton(R.string.dialog_confirmation_no
+                ) { _, _ ->
+                    switch.toggle()
+                }
+                .setPositiveButton(R.string.dialog_confirmation_yes
+                ) { _, _ ->
+                    currentList.removeAt(position)
+                    notifyItemRemoved(position)
+                }
+            builder.create().show()
+        }
+
+        topicCardSwitchChange(currentList[position], false)
     }
 
     /**
