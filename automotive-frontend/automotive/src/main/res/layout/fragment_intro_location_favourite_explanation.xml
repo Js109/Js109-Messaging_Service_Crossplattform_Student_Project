@@ -8,14 +8,13 @@
     tools:context=".welcome.IntroFragmentSubscriptionExplanation">
 
     <TextView
-        android:id="@+id/fragment_subscription_explanation_textview1"
+        android:id="@+id/fragment_location_favourites_explanation_textview1"
         android:layout_width="910dp"
         android:layout_height="109dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
         android:gravity="center"
-        android:text="@string/welcome_subscription_explanation_titel"
+        android:text="@string/welcome_location_favourites_explanation_titel"
         android:textColor="@color/white"
         android:textSize="@dimen/heading"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,34 +22,31 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/fragment_subscription_explanation_imageView"
+        android:id="@+id/fragment_location_favourites_explanation_imageView"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/intro_screen_screenshot_border"
+        android:contentDescription="@string/welcome_location_favourites_imageView_description"
+        android:src="@mipmap/location_favourites"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_location_favourites_explanation_textview1" />
+
+    <TextView
+        android:id="@+id/fragment_location_favourites_explanation_textView2"
+        android:layout_width="881dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
-        android:background="@drawable/intro_screen_screenshot_border"
-        android:contentDescription="@string/welcome_imageView_description"
-        android:src="@mipmap/topic_selection"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_subscription_explanation_textview1" />
-
-    <TextView
-        android:id="@+id/fragment_subscription_explanation_textView2"
-        android:layout_width="881dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
         android:gravity="center"
-        android:text="@string/welcome_subscription_explanation_subtitel"
+        android:text="@string/welcome_location_favourites_explanation_subtitel"
         android:textColor="@color/white"
         android:textSize="@dimen/subheading"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_subscription_explanation_imageView"
-        app:layout_constraintVertical_bias="0.12" />
-
+        app:layout_constraintTop_toBottomOf="@+id/fragment_location_favourites_explanation_imageView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

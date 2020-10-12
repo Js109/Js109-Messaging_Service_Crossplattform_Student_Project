@@ -4,14 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/intro_screen_frame_border"
     tools:context=".welcome.IntroFragmentSubscriptionExplanation">
 
     <ImageView
         android:id="@+id/fragment_message_history_explanation_imageView"
-        android:layout_width="786dp"
-        android:layout_height="247dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
+        android:background="@drawable/intro_screen_screenshot_border"
         android:contentDescription="@string/welcome_message_history_imageView_description"
         android:src="@mipmap/message_history"
         app:layout_constraintEnd_toEndOf="parent"
@@ -35,8 +37,9 @@
     <TextView
         android:id="@+id/fragment_message_history_explanation_textView2"
         android:layout_width="881dp"
-        android:layout_height="286dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
         android:gravity="center"
         android:text="@string/welcome_message_history_explanation_subtitel"

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/intro_screen_frame_border"
     tools:context=".welcome.IntroFragmentSubscriptionExplanation">
 
     <TextView
@@ -22,10 +23,11 @@
 
     <ImageView
         android:id="@+id/fragment_notification_explanation_imageView"
-        android:layout_width="786dp"
-        android:layout_height="297dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
+        android:background="@drawable/intro_screen_screenshot_border"
         android:contentDescription="@string/welcome_notification_imageView_description"
         android:src="@mipmap/message_popup"
         app:layout_constraintEnd_toEndOf="parent"

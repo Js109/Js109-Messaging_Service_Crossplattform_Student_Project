@@ -74,6 +74,9 @@
     <string name="welcome_notification_explanation_subtitel">Neue Benachrichtigungen erscheinen als Heads-Up Notification am oberen Bildschirmrand. Die Nachricht kann dort verworfen oder auf dem Gerät abgespeichert werden.</string>
     <string name="welcome_message_history_explanation_titel">Gespeicherte Nachrichten</string>
     <string name="welcome_message_history_imageView_description">Nachrichten-Historie Screenshot</string>
-    <string name="welcome_message_history_explanation_subtitel">Hier werden abgespeicherte Nachrichten gelistet. Nachrichten werden abgespeichert, wenn sie sich auf eine Region beziehen, die der Nutzer als Favorit hinzugefügt hat, oder wenn der Nutzer sie manuell abgespeichert hat.\n\n Nachrichten können durch das Tippen auf das Stern-Symbol als Favoriten markiert werden, um sie leichter wiederzufinden. \nDurch das Tippen auf die Nachricht selbst wird die Nachricht in einer eigenen Ansicht geöffnet</string>
+    <string name="welcome_message_history_explanation_subtitel">Hier werden abgespeicherte Nachrichten gelistet.\n Nachrichten können durch das Tippen auf das Stern-Symbol als Favoriten markiert werden, um sie leichter wiederzufinden. \nDurch das Tippen auf die Nachricht selbst wird die Nachricht in einer eigenen Ansicht geöffnet</string>
+    <string name="welcome_location_favourites_imageView_description">Location favourite screenshot</string>
+    <string name="welcome_location_favourites_explanation_titel">Location Favourites</string>
+    <string name="welcome_location_favourites_explanation_subtitel">Hier können Orte hinzugefügt werden, von welchen positionsabhängige Nachrichten empfangen werden sollen, auch wenn der Nutzer sich gerade nicht dort befindet.\n\n Nachrichten, welche so empfangen werden, werden nicht als Heads-Up Notification dargestellt sondern direkt abgespeichert.</string>
 
 </resources>
