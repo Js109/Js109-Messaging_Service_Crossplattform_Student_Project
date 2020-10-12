@@ -3,6 +3,10 @@ package de.uulm.automotive.cds.models.dtos
 import java.time.DayOfWeek
 import java.time.LocalDate
 
+/**
+ * TODO
+ *
+ */
 class MetricsDTO(
         var sentMessagesTotalAllTime: Int? = null,
         var sentMessagesTotalAtBegin: Int? = null,

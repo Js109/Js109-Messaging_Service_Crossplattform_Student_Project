@@ -3,6 +3,10 @@ package de.uulm.automotive.cds.models.errors
 import de.uulm.automotive.cds.models.BadRequestInfo
 import de.uulm.automotive.cds.models.addErrorGeneric
 
+/**
+ * TODO
+ *
+ */
 class MetricsFilterBadRequestInfo(
         var keyError: String? = null,
         var timeSpanError: String? = null
