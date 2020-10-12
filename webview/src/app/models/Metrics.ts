@@ -13,9 +13,9 @@ export interface Metrics {
   mostActiveSenderTimeSpan: string;
   mostActiveWeekdayAllTime: string;
   mostActiveWeekdayTimeSpan: string;
-  sentMessagesByTimeOfDayAllTime: Map<number, number>;
-  sentMessagesByTimeOfDayTimeSpan: Map<number, number>;
-  sentMessagesByDateTimeSpan: Map<string, number>;
-  scheduledMessagesByDateTimeSpan: Map<string, number>;
-  subscriberGainByDateTimeSpan: Map<string, number>;
+  sentMessagesByTimeOfDayAllTime: any;
+  sentMessagesByTimeOfDayTimeSpan: any;
+  sentMessagesByDateTimeSpan: any;
+  scheduledMessagesByDateTimeSpan: any;
+  subscriberGainByDateTimeSpan: any;
 }
