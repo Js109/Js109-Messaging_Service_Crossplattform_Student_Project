@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 
 /**
  * TODO
@@ -95,16 +97,32 @@ class MetricsService @Autowired constructor(
                     )
                 }
 
-        val filteredMessagesTimeSpan = messageService.filterMessagesForMetrics(metricsFilter)
+        val filteredMessagesTimeSpan = messageService.filterMessages(
+                topicName = metricsFilter.topicName,
+                propertyName = metricsFilter.propertyName,
+                timeSpanBegin = LocalDateTime.of(metricsFilter.timeSpanBegin, LocalTime.MIN),
+                timeSpanEnd = LocalDateTime.of(metricsFilter.timeSpanEnd, LocalTime.MAX)
+
+        )
         val filteredMessagesBeforeTimeSpan =
                 when (filterBeforeTimeSpan) {
                     null -> listOf()
-                    else -> messageService.filterMessagesForMetrics(filterBeforeTimeSpan)
+                    else -> messageService.filterMessages(
+                            topicName = filterBeforeTimeSpan.topicName,
+                            propertyName = filterBeforeTimeSpan.propertyName,
+                            timeSpanBegin = LocalDateTime.of(filterBeforeTimeSpan.timeSpanBegin, LocalTime.MIN),
+                            timeSpanEnd = LocalDateTime.of(filterBeforeTimeSpan.timeSpanEnd, LocalTime.MAX)
+                    )
                 }
         val filteredMessagesAfterTimeSpan =
                 when (filterAfterTimeSpan) {
                     null -> listOf()
-                    else -> messageService.filterMessagesForMetrics(filterAfterTimeSpan)
+                    else -> messageService.filterMessages(
+                            topicName = filterAfterTimeSpan.topicName,
+                            propertyName = filterAfterTimeSpan.propertyName,
+                            timeSpanBegin = LocalDateTime.of(filterAfterTimeSpan.timeSpanBegin, LocalTime.MIN),
+                            timeSpanEnd = LocalDateTime.of(filterAfterTimeSpan.timeSpanEnd, LocalTime.MAX)
+                    )
                 }
 
         val filteredMessagesAllTime = filteredMessagesBeforeTimeSpan

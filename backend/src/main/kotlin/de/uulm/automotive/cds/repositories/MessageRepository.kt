@@ -18,20 +18,26 @@ interface MessageRepository : CrudRepository<Message, Long> {
             "(COALESCE(:dateBegin) is null or :dateBegin <= m.starttime) " + // postgres cannot check for null of a date object, so coalesce is used first to return null
             "and " +
             "(COALESCE(:dateEnd) is null or m.starttime <= :dateEnd)" +
+            "and" +
+            "(:searchString is null or " +
+            "(lower(m.sender) like lower(:searchString) or lower(m.title) like lower(:searchString) or lower(m.content) like lower(:searchString)))" +
+            "and" +
+            "(:sender is null or lower(:sender) like lower(m.sender))" +
+            "and" +
+            "(:content is null or lower(:content) like lower(m.content))" +
+            "and" +
+            "(:title is null or lower(:title) like lower(m.title))" +
             ")")
     fun findAllFiltered(
-            @Param("topicName") topicName: String?,
-            @Param("propertyName") propertyName: String?,
+            @Param("topicName") topicName: String? = null,
+            @Param("propertyName") propertyName: String? = null,
+            @Param("searchString") searchString: String? = null,
+            @Param("sender") sender: String? = null,
+            @Param("content") content: String? = null,
+            @Param("title") title: String? = null,
             @Param("dateBegin") dateBegin: LocalDateTime? = null,
             @Param("dateEnd") dateEnd: LocalDateTime? = null
     ): Iterable<Message>
 
     fun findAllByIsSentFalseOrderByStarttimeAsc(): Iterable<Message>
-    fun findAllByTitleLikeIgnoreCaseOrSenderLikeIgnoreCaseOrContentLikeIgnoreCaseAndStarttimeBetweenAndTopic(searchString: String, searchStringSender: String, searchStringContent: String, dateStartTimePeriod: LocalDateTime, dateEndTimePeriod: LocalDateTime, topic: String): Iterable<Message>
-    fun findAllByStarttimeBetweenAndTopic(dateStartTimePeriod: LocalDateTime, dateEndTimePeriod: LocalDateTime, topic: String): Iterable<Message>
-    fun findAllByTitleLikeIgnoreCaseOrSenderLikeIgnoreCaseOrContentLikeIgnoreCaseAndTopic(searchString: String, searchStringSender: String, searchStringContent: String, topic: String): Iterable<Message>
-    fun findAllByTitleLikeIgnoreCaseOrSenderLikeIgnoreCaseOrContentLikeIgnoreCaseAndStarttimeBetween(searchString: String, searchStringSender: String, searchStringContent: String, dateStartTimePeriod: LocalDateTime, dateEndTimePeriod: LocalDateTime): Iterable<Message>
-    fun findAllByTopic(topic: String): Iterable<Message>
-    fun findAllByStarttimeBetween(dateStartTimePeriod: LocalDateTime, dateEndTimePeriod: LocalDateTime): Iterable<Message>
-    fun findAllByTitleLikeIgnoreCaseOrSenderLikeIgnoreCaseOrContentLikeIgnoreCase(searchString: String, searchStringSender: String, searchStringContent: String): Iterable<Message>
 }
