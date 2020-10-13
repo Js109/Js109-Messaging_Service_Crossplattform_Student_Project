@@ -39,6 +39,7 @@ export class MessageHistoryComponent implements OnInit {
   properties: [Property, boolean][];
   messagesArray = [];
   hasDateRangeError = false;
+  hasDatePickerOnlyOnceSelectedError = false;
   hasTopicPropertiesError = false;
   chosenMessage;
 
@@ -50,10 +51,11 @@ export class MessageHistoryComponent implements OnInit {
   }
 
   validateInputs(): boolean {
-    this.hasDateRangeError = ((this.messageFilter.starttimePeriod === '' && this.messageFilter.endtimePeriod !== '') ||
-      (this.messageFilter.starttimePeriod !== '' && this.messageFilter.endtimePeriod === '') ||
-      new Date(this.messageFilter.starttimePeriod).getTime() > new Date(this.messageFilter.endtimePeriod).getTime());
-    return !(this.hasDateRangeError);
+    this.hasDatePickerOnlyOnceSelectedError = ((this.messageFilter.starttimePeriod === '' && this.messageFilter.endtimePeriod !== '') ||
+      (this.messageFilter.starttimePeriod !== '' && this.messageFilter.endtimePeriod === ''));
+
+    this.hasDateRangeError = new Date(this.messageFilter.starttimePeriod).getTime() > new Date(this.messageFilter.endtimePeriod).getTime();
+    return !(this.hasDateRangeError && this.hasDatePickerOnlyOnceSelectedError);
   }
 
   showMessages(): void {
