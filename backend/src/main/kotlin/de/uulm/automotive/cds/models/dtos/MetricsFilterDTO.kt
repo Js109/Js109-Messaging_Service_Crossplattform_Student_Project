@@ -5,6 +5,10 @@ import de.uulm.automotive.cds.models.errors.MetricsFilterBadRequestInfo
 import de.uulm.automotive.cds.models.errors.addError
 import java.time.LocalDate
 
+/**
+ * TODO
+ *
+ */
 class MetricsFilterDTO(
         var topicName: String? = null,
         var propertyName: String? = null,
