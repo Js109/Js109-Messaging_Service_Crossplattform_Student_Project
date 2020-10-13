@@ -34,8 +34,7 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {StatisticsComponent} from './statistics/statistics.component';
 import {NgxEchartsModule} from 'ngx-echarts';
 import {ElektrobitDatePickerComponent} from './elektrobit-date-picker/elektrobit-date-picker.component';
-import { ElektrobitDatePickerComponent } from './elektrobit-date-picker/elektrobit-date-picker.component';
-import { ElektrobitDatePickerToDateComponent } from './elektrobit-date-picker-to-date/elektrobit-date-picker-to-date.component';
+import {ElektrobitDatePickerToDateComponent} from './elektrobit-date-picker-to-date/elektrobit-date-picker-to-date.component';
 
 @NgModule({
   declarations: [
