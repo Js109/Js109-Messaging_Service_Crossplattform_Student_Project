@@ -9,13 +9,13 @@
            [style.fontFamily]="fontFamilyToFontString(message.messageDisplayProperties.fontFamily)">
     <div *ngIf="hasTitleError" class="invalid-feedback">Title field is required.</div>
 
-    <textarea class="form-control message-content flex-grow-1 no-top-rounding border-top-0" placeholder="Content"
+    <textarea id="contentField" class="form-control message-content flex-grow-1 no-top-rounding border-top-0" placeholder="Content"
               [(ngModel)]="message.content"
               [ngClass]="{'is-invalid' : hasContentError}"
               [style.background]="message.messageDisplayProperties.backgroundColor"
               [style.color]="message.messageDisplayProperties.fontColor"
               [style.fontFamily]="fontFamilyToFontString(message.messageDisplayProperties.fontFamily)"
-              [style.text-align]="alignmentToAlignmentString(message.messageDisplayProperties.alignment)"></textarea>
+              [style.text-align]="alignmentToAlignmentString(message.messageDisplayProperties.alignment)">This is the text.</textarea>
     <div *ngIf="hasContentError" class="invalid-feedback">Either Content or Files are required.</div>
 
   </div>
@@ -63,9 +63,15 @@
     <div *ngIf="hasColorError" class="text-danger small">Text color and background color are the same!</div>
     <mat-divider></mat-divider>
     <mat-button-toggle-group class="mt-2 mb-2" [(ngModel)]="message.messageDisplayProperties.alignment">
-      <mat-button-toggle [value]="alignment.Left"><mat-icon>format_align_left</mat-icon></mat-button-toggle>
-      <mat-button-toggle [value]="alignment.Center"><mat-icon>format_align_center</mat-icon></mat-button-toggle>
-      <mat-button-toggle [value]="alignment.Right"><mat-icon>format_align_right</mat-icon></mat-button-toggle>
+      <mat-button-toggle [value]="alignment.Left">
+        <mat-icon>format_align_left</mat-icon>
+      </mat-button-toggle>
+      <mat-button-toggle [value]="alignment.Center">
+        <mat-icon>format_align_center</mat-icon>
+      </mat-button-toggle>
+      <mat-button-toggle [value]="alignment.Right">
+        <mat-icon>format_align_right</mat-icon>
+      </mat-button-toggle>
     </mat-button-toggle-group>
     <mat-divider></mat-divider>
     <div class="mt-2">Links:</div>
@@ -78,7 +84,10 @@
           <button class="btn bg-white message-url-delete" (click)="removeLink(i)">❌</button>
         </div>
       </ng-container>
-      <button class="btn btn-secondary top-height message-new-url" (click)="addLink()" type="button">
+      <button type="button" class="btn btn-secondary top-height message-new-url" data-toggle="tooltip"
+              data-placement="top"
+              title="[linkdescription](link1) is added to the text if a link is present. The position in the text can be adjusted as desired. The second link looks like [linkdescription](link2) and so on."
+              (click)="addLink()">
         <span>➕</span>
       </button>
     </div>
@@ -89,7 +98,8 @@
     <mat-divider></mat-divider>
 
     <label class="mt-2">Add File:</label>
-    <label *ngIf="message.attachment == null || message.attachment.length === 0" class="btn btn-secondary col mb-0"
+    <label *ngIf="message.attachment == null || message.attachment.length === 0" class="btn btn-secondary col mb-0" data-toggle="tooltip"
+           data-placement="top" title="<img> is added to the text if an image is present. The position in the text can be adjusted as desired."
            [ngClass]="{'is-invalid' : hasContentError}">
       Upload Image<input type="file" name="attachment" class="form-control" hidden
                          (change)="fileSelect($event)">
@@ -146,7 +156,8 @@
     <option [ngValue]="2">Days</option>
     <option [ngValue]="3">Weeks</option>
   </select>
-  <input name="endtime" type="number" class="form-control col no-left-rounding border-left-0" id="endTime" placeholder=""
+  <input name="endtime" type="number" class="form-control col no-left-rounding border-left-0" id="endTime"
+         placeholder=""
          size="10" maxlength="10" [(ngModel)]="expirationOffset" [disabled]="expirationOffsetType == null">
 </div>
 
