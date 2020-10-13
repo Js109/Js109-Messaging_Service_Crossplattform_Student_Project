@@ -61,6 +61,7 @@ class MessageController(private val repository: MessageRepository, private val m
                      @RequestParam content: String? = null, @RequestParam title: String? = null): Iterable<MessageCompactDTO> =
             messageService.filterMessages(
                     topicName = topic,
+                    propertyName = property,
                     searchString = searchString,
                     timeSpanBegin = startTimePeriod?.let {
                         LocalDateTime.of(it, LocalTime.MIN)

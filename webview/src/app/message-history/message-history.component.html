@@ -4,13 +4,32 @@
   <div class="row">
     <div class="col-md-4">
       <div class="input-group">
-        <input class="form-control py-2 border-right-0 border" type="search" value="Search" id="example-search-input"
+        <label for="example-search-input">Search in content, sender and title:</label>
+        <input class="form-control py-2 border-right-0 border" type="search" value="Search complete Message"
+               id="example-search-input"
                [(ngModel)]="messageFilter.searchString">
         <span class="input-group-append">
                     <div class="input-group-text bg-transparent"><i class="fa fa-search"></i></div>
                 </span>
       </div>
     </div>
+  </div>
+
+  <div class="input-group">
+    <label for="search-content">Search content:</label>
+    <input class="form-control py-2 border-right-0 border" type="search" value="Search content" id="search-content"
+           [(ngModel)]="messageFilter.content">
+  </div>
+
+  <div class="input-group">
+    <label for="search-sender">Search sender:</label>
+    <input class="form-control py-2 border-right-0 border" type="search" value="Search content" id="search-sender"
+           [(ngModel)]="messageFilter.sender">
+  </div>
+  <div class="input-group">
+    <label for="search-title">Search title:</label>
+    <input class="form-control py-2 border-right-0 border" type="search" value="Search content" id="search-title"
+           [(ngModel)]="messageFilter.title">
   </div>
 
   <label>Period of time:</label>
@@ -28,16 +47,28 @@
     must also select an end date and vice versa.
   </div>
 
-  <label for="topic">Topic:</label>
-  <select
-    class="browser-default custom-select"
-    name="topic" id="topic"
-    [(ngModel)]="messageFilter.topic"
-    [ngClass]="{'is-invalid' : hasTopicPropertiesError}">
-    <option selected></option>
-    <option *ngFor="let t of topics" [ngValue]="t.binding">{{t.title}}</option>
-  </select>
-  <div *ngIf="hasTopicPropertiesError" class="invalid-feedback">Either Topics or Properties are required.</div>
+  <mat-tab-group mat-stretch-tabs (selectedTabChange)="topicPropertySwitch($event)">
+    <mat-tab label="Topics">
+      <select
+        class="browser-default custom-select"
+        name="topic" id="topic"
+        [(ngModel)]="messageFilter.topic"
+        [ngClass]="{'is-invalid' : hasTopicPropertiesError}">
+        <option selected></option>
+        <option *ngFor="let t of topics" [ngValue]="t.binding">{{t.title}}</option>
+      </select>
+    </mat-tab>
+    <mat-tab label="Properties">
+      <select
+        class="browser-default custom-select"
+        name="topic" id="property"
+        [(ngModel)]="messageFilter.property"
+        [ngClass]="{'is-invalid' : hasTopicPropertiesError}">
+        <option selected></option>
+        <option *ngFor="let p of properties" [ngValue]="p[0].binding">{{p[0].name}}</option>
+      </select>
+    </mat-tab>
+  </mat-tab-group>
 
   <button type="button" class="btn btn-primary" style="margin-top:10px" (click)="showMessages()">Show</button>
 
