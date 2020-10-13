@@ -29,7 +29,7 @@ export class StatisticsComponent implements OnInit {
 
   topics: Topic[];
   properties: Property[];
-  metrics: Metrics;
+  metrics: Metrics = {};
 
   sentMessagesOptions: any;
   subscriberGainOptions: any;
@@ -92,6 +92,8 @@ export class StatisticsComponent implements OnInit {
       },
       xAxis: {
         type: 'time',
+        minInterval: 1000 * 60 * 60 * 24,
+        boundaryGap: true,
         min: (value) => {
           return this.metricsSpanBeginToMillis(value);
         },
@@ -122,12 +124,12 @@ export class StatisticsComponent implements OnInit {
         type: 'bar',
         barWidth: '90%',
         name: 'Sent messages',
-        data: sentMessages.map(v => ({value: v, name: v[0]}))
+        data: sentMessages.map(v => ({value: [Date.parse(v[0]), v[1]], name: v[0]}))
       }, {
         type: 'bar',
         barWidth: '90%',
         name: 'Scheduled messages',
-        data: scheduledMessages.map(v => ({value: v, name: v[0]}))
+        data: scheduledMessages.map(v => ({value: [Date.parse(v[0]), v[1]], name: v[0]}))
       }]
     };
   }
@@ -158,14 +160,9 @@ export class StatisticsComponent implements OnInit {
         type: 'value'
       },
       color: ['#339933', '#3F3F3F', '#00c400', '#646464', '#00EB00', '#c8c8c8'],
-        legend: {
-      left: 'center',
-        top: 'bottom',
-        data: ['Sent messages', 'Scheduled messages']
-    },
       tooltip: {
         trigger: 'item',
-          formatter: '{b}'
+        formatter: '{b}'
       },
       series: [{
         type: 'bar',
