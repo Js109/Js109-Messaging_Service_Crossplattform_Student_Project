@@ -34,10 +34,12 @@ data class TopicDTO(
 
         if (title.isBlank()) {
             errors = errors.addError { it.titleError = "Title can not be blank" }
+        } else if (title.length > 200) {
+            errors = errors.addError { it.titleError = "Title can not contain more than 200 letters" }
         }
 
         if (description.isBlank()) {
-            errors = errors.addError { it.descriptionError =  "Description can not be blank." }
+            errors = errors.addError { it.descriptionError = "Description can not be blank." }
         }
 
         return errors

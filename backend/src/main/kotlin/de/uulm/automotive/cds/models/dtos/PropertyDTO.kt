@@ -31,6 +31,8 @@ data class PropertyDTO(
 
         if (name.isBlank()) {
             errors = errors.addError { it.nameError = "Name can not be blank." }
+        } else if (name.length > 200) {
+            errors = errors.addError { it.nameError = "Name can not contain more than 200 characters." }
         }
 
         return errors
