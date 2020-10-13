@@ -21,7 +21,7 @@
     <string name="welcome_message_history_explanation_subtitel">Hier werden abgespeicherte Nachrichten gelistet.\n Nachrichten können durch das Tippen auf das Stern-Symbol als Favoriten markiert werden, um sie leichter wiederzufinden. \nDurch das Tippen auf die Nachricht selbst wird die Nachricht in einer eigenen Ansicht geöffnet</string>
     <string name="welcome_location_favourites_imageView_description">Location favourite screenshot</string>
     <string name="welcome_location_favourites_explanation_titel">Location Favourites</string>
-    <string name="welcome_location_favourites_explanation_subtitel">Hier können Orte hinzugefügt werden, von welchen positionsabhängige Nachrichten empfangen werden sollen, auch wenn der Nutzer sich gerade nicht dort befindet.\n\n Nachrichten, welche so empfangen werden, werden nicht als Heads-Up Notification dargestellt sondern direkt abgespeichert.</string>
+    <string name="welcome_location_favourites_explanation_subtitel">Hier können Orte hinzugefügt werden, von welchen positionsabhängige Nachrichten empfangen werden, auch wenn der Nutzer sich gerade nicht dort befindet.\n\n Nachrichten, welche so empfangen werden, werden nicht als Heads-Up Notification dargestellt sondern direkt abgespeichert.</string>
     <string name="title_activity_my_custom_app_intro">AppIntro</string>
 
     <!-- Displayed strings -->
