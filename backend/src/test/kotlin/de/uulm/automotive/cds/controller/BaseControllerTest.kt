@@ -5,6 +5,7 @@ import de.uulm.automotive.cds.repositories.*
 import de.uulm.automotive.cds.services.AmqpChannelService
 import de.uulm.automotive.cds.services.MessageService
 import de.uulm.automotive.cds.services.MetricsService
+import de.uulm.automotive.cds.services.SchedulingService
 
 /**
  * A WebMvcTest creates all Controllers defined in the project.

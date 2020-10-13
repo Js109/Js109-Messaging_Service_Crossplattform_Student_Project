@@ -18,22 +18,20 @@ class AmqpChannelService(
         @Value("\${amq.broker.password}") private val password: String
 ) {
 
-    private val connection: Connection
-
-    init {
-        val factory = ConnectionFactory()
-        factory.host = address
-        factory.username = username
-        factory.password = password
-        connection = factory.newConnection()
-    }
-
+    private val connection: Connection? = null
+    private val factory =
+            ConnectionFactory()
+                    .apply {
+                        this.host = address
+                        this.username = username
+                        this.password = password
+                    }
     /**
-     * Opens a new channel to the amqp broke.
+     * Opens a new channel to the amqp broker.
      * When the communication with the broker is done Channel.close() should be called.
      * @return Channel for communication with the amqp broker
      */
-    fun openChannel(): Channel {
-        return connection.createChannel()
-    }
+    fun openChannel(): Channel =
+            (connection ?: factory.newConnection())
+                    .createChannel()
 }
