@@ -15,11 +15,17 @@
 
   <label>Period of time:</label>
   <div class="d-flex">
-    <app-elektrobit-date-picker class="flex-grow-1 mb-2" [(date)]="messageFilter.starttimePeriod" [invalid]="hasDateRangeError"></app-elektrobit-date-picker>
-    <app-elektrobit-date-picker class="flex-grow-1" [(date)]="messageFilter.endtimePeriod" [invalid]="hasDateRangeError"></app-elektrobit-date-picker>
+    <app-elektrobit-date-picker-to-date class="flex-grow-1 mb-2" [(date)]="messageFilter.starttimePeriod"
+                                        [invalid]="hasDateRangeError"></app-elektrobit-date-picker-to-date>
+    <app-elektrobit-date-picker-to-date class="flex-grow-1" [(date)]="messageFilter.endtimePeriod"
+                                        [invalid]="hasDateRangeError"></app-elektrobit-date-picker-to-date>
   </div>
-  <div *ngIf="hasDateRangeError" class="mb-2 text-danger small" style="margin-left: 15px">If you select a start date you
-    must also select an end date and vice versa. The start date must also be before the end date.
+  <div *ngIf="hasDateRangeError" class="mb-2 text-danger small" style="margin-left: 15px">The start date must be before
+    the end date.
+  </div>
+  <div *ngIf="hasDatePickerOnlyOnceSelectedError" class="mb-2 text-danger small" style="margin-left: 15px">If you select
+    a start date you
+    must also select an end date and vice versa.
   </div>
 
   <label for="topic">Topic:</label>
@@ -86,7 +92,7 @@
       <td>{{message.starttime}}</td>
       <td>
         <button *ngIf="!message.isSent" style="margin-left: 35px" class="btn btn-light"
-                (click)="deleteMessage(message.id)">
+                (click)="open(content, message)">
           <svg width="1.8em" height="1.8em" viewBox="0 0 16 16" class="bi bi-trash"
                fill="currentColor"
                xmlns="http://www.w3.org/2000/svg">
@@ -111,5 +117,25 @@
     </tbody>
   </table>
 
+  <ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-title" style="margin-bottom: 0"><strong>Message deletion</strong></h4>
+      <button type="button" class="close" aria-label="Close Button" (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure you want to delete this message?</p>
+      <p>All information of this message are then permanently deleted.
+      </p>
+      <span class="text-danger">This operation can not be undone.</span>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="d('Cross click')">Cancel</button>
+      <button type="button" class="btn btn-danger"
+              (click)="deleteMessage(chosenMessage.id); d('Cross click')">Delete
+      </button>
+    </div>
+  </ng-template>
 </div>
 
