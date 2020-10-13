@@ -4,6 +4,7 @@ import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.repositories.SignUpRepository
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Bean
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
@@ -50,6 +51,13 @@ class SchedulingService(private val messageRepository: MessageRepository, privat
             }
         }
     }
+
+    /**
+     * Should only run once after all dependencies have been loaded.
+     *
+     */
+    @Bean
+    fun scheduleOnce() = getAndSaveSubscriberMetricsForCurrentDay()
 
     @Scheduled(cron = "0 0 0 * * *")
     fun getAndSaveSubscriberMetricsForCurrentDay() {
