@@ -48,6 +48,7 @@ export class MessageHistoryComponent implements OnInit {
   hasDateRangeError = false;
   hasDatePickerOnlyOnceSelectedError = false;
   hasTopicPropertiesError = false;
+  chosenMessage;
 
   ngOnInit(): void {
     this.http.get(environment.backendApiPath + '/topic', {responseType: 'json'})
@@ -169,5 +170,10 @@ export class MessageHistoryComponent implements OnInit {
       this.messageFilter.topic = null;
       this.messageFilter.property =  this.removedProperty;
     }
+  }
+
+  open(content, message): void {
+    this.chosenMessage = message;
+    this.modalService.open(content);
   }
 }
