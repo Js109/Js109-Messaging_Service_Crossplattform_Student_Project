@@ -1,21 +1,19 @@
 package de.uulm.automotive.cds.controller
 
 import de.uulm.automotive.cds.entities.Message
-import de.uulm.automotive.cds.entities.TemplateMessage
 import de.uulm.automotive.cds.models.dtos.MessageCompactDTO
 import de.uulm.automotive.cds.models.dtos.MessageDTO
-import de.uulm.automotive.cds.models.dtos.PropertyDisableDTO
-import de.uulm.automotive.cds.models.dtos.TopicDisableDTO
 import de.uulm.automotive.cds.models.errors.MessageBadRequestInfo
 import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.services.MessageService
+import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.time.LocalTime
 import java.util.*
 import javax.transaction.Transactional
 
@@ -55,56 +53,25 @@ class MessageController(private val repository: MessageRepository, private val m
      */
     @GetMapping
     @Transactional
-    fun showMessages(@RequestParam searchString: String, @RequestParam startTimePeriod: String,
-                     @RequestParam endTimePeriod: String, @RequestParam topic: String): Iterable<MessageCompactDTO> {
-
-        val tempSearchString = if (searchString.isNotEmpty()) "%$searchString%" else ""
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val dateStartTimePeriod = if (startTimePeriod.isNotEmpty()) LocalDate.parse(startTimePeriod, formatter).atTime(0, 0) else null
-        val dateEndTimePeriod = if (endTimePeriod.isNotEmpty()) LocalDate.parse(endTimePeriod, formatter).atTime(23, 59) else null
-
-        if (tempSearchString.isNotEmpty() && dateStartTimePeriod != null && dateEndTimePeriod != null && topic.isEmpty())
-            return repository.findAllByTitleLikeIgnoreCaseOrSenderLikeIgnoreCaseOrContentLikeIgnoreCaseAndStarttimeBetween(tempSearchString, tempSearchString, tempSearchString, dateStartTimePeriod, dateEndTimePeriod)
-                    .filter { it::class.java != TemplateMessage::class.java }
-                    .map { MessageCompactDTO.toDTO(it) }
-
-        if (tempSearchString.isNotEmpty() && topic.isNotEmpty() && dateStartTimePeriod == null && dateEndTimePeriod == null)
-            return repository.findAllByTitleLikeIgnoreCaseOrSenderLikeIgnoreCaseOrContentLikeIgnoreCaseAndTopic(tempSearchString, tempSearchString, tempSearchString, topic)
-                    .filter { it::class.java != TemplateMessage::class.java }
-                    .map { MessageCompactDTO.toDTO(it) }
-
-        if (tempSearchString.isEmpty() && dateStartTimePeriod != null && dateEndTimePeriod != null && topic.isNotEmpty())
-            return repository.findAllByStarttimeBetweenAndTopic(dateStartTimePeriod, dateEndTimePeriod, topic)
-                    .filter { it::class.java != TemplateMessage::class.java }
-                    .map { MessageCompactDTO.toDTO(it) }
-
-        if (tempSearchString.isNotEmpty() && dateStartTimePeriod != null && dateEndTimePeriod != null && topic.isNotEmpty())
-            return repository.findAllByTitleLikeIgnoreCaseOrSenderLikeIgnoreCaseOrContentLikeIgnoreCaseAndStarttimeBetweenAndTopic(tempSearchString, tempSearchString, tempSearchString, dateStartTimePeriod, dateEndTimePeriod, topic)
-                    .filter { it::class.java != TemplateMessage::class.java }
-                    .map { MessageCompactDTO.toDTO(it) }
-
-        if (tempSearchString.isNotEmpty() && dateStartTimePeriod == null && dateEndTimePeriod == null && topic.isEmpty())
-            return repository.findAllByTitleLikeIgnoreCaseOrSenderLikeIgnoreCaseOrContentLikeIgnoreCase(tempSearchString, tempSearchString, tempSearchString)
-                    .filter { it::class.java != TemplateMessage::class.java }
-                    .map { MessageCompactDTO.toDTO(it) }
-
-        if (tempSearchString.isEmpty() && dateStartTimePeriod == null && dateEndTimePeriod == null && topic.isNotEmpty())
-            return repository.findAllByTopic(topic)
-                    .filter { it::class.java != TemplateMessage::class.java }
-                    .map { MessageCompactDTO.toDTO(it) }
-
-        if (tempSearchString.isEmpty() && dateStartTimePeriod != null && dateEndTimePeriod != null && topic.isEmpty())
-            return repository.findAllByStarttimeBetween(dateStartTimePeriod, dateEndTimePeriod)
-                    .filter { it::class.java != TemplateMessage::class.java }
-                    .map { MessageCompactDTO.toDTO(it) }
-
-        if (tempSearchString.isEmpty() && dateEndTimePeriod == null && dateStartTimePeriod == null && topic.isEmpty())
-            return repository.findAll()
-                    .filter { it::class.java != TemplateMessage::class.java }
-                    .map { MessageCompactDTO.toDTO(it) }
-
-        return emptyList()
-    }
+    fun showMessages(@RequestParam searchString: String? = null,
+                     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) startTimePeriod: LocalDate? = null,
+                     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) endTimePeriod: LocalDate? = null,
+                     @RequestParam topic: String? = null,
+                     @RequestParam property: String? = null, @RequestParam sender: String? = null,
+                     @RequestParam content: String? = null, @RequestParam title: String? = null): Iterable<MessageCompactDTO> =
+            messageService.filterMessages(
+                    topicName = topic,
+                    searchString = searchString,
+                    timeSpanBegin = startTimePeriod?.let {
+                        LocalDateTime.of(it, LocalTime.MIN)
+                    },
+                    timeSpanEnd = endTimePeriod?.let {
+                        LocalDateTime.of(it, LocalTime.MAX)
+                    },
+                    sender = sender,
+                    content = content,
+                    title = title
+            )
 
     /**
      * REST-Endpoint for storing a new message.
