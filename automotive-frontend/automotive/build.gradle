@@ -14,6 +14,10 @@ android {
         versionCode 1
         versionName "1.0"
         buildConfigField "String", "BACKEND_URL", '"http://10.0.2.2:8080"'
+        buildConfigField "String", "AMQ_BROKER_URL", '"68fd7a21-267a-45d4-bbd7-d8331d9e2d3f.ul.bw-cloud-instance.org"'
+        buildConfigField "String", "AMQ_BROKER_USERNAME", '"android_cl"'
+        buildConfigField "String", "AMQ_BROKER_PASS", '"supersecure"'
+        buildConfigField "String", "AMQ_BROKER_EXCHANGE", '"amq.topic"'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
