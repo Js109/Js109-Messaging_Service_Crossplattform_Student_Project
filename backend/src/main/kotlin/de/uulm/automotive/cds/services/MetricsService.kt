@@ -12,6 +12,7 @@ import de.uulm.automotive.cds.repositories.SubscriptionsRepository
 import khttp.structures.authorization.BasicAuthorization
 import org.json.JSONObject
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -24,7 +25,11 @@ import java.time.LocalDate
 class MetricsService @Autowired constructor(
         val messageRepository: MessageRepository,
         val messageService: MessageService,
-        val subscriptionsRepository: SubscriptionsRepository
+        val subscriptionsRepository: SubscriptionsRepository,
+        @Value("\${amq.broker.url}") private val address: String,
+        @Value("\${amq.broker.http.port}") private val port: String,
+        @Value("\${amq.broker.username}") private val username: String,
+        @Value("\${amq.broker.password}") private val password: String
 ) {
 
     companion object {
@@ -282,8 +287,8 @@ class MetricsService @Autowired constructor(
      */
     fun getAndSaveRabbitMQMetrics() {
         val response = khttp.get(
-                url = "http://134.60.157.15:8081/api/bindings",
-                auth = BasicAuthorization("guest", "guest")
+                url = "$address:$port/api/bindings",
+                auth = BasicAuthorization(username, password)
         )
 
         val metricsList: MutableList<JSONObject> = mutableListOf()
