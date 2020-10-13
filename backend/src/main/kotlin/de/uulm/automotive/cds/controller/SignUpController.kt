@@ -40,7 +40,7 @@ class SignUpController @Autowired constructor(private val amqpService: AmqpChann
             val headersMap = HashMap<String, Any>()
             headersMap["x-match"] = "any"
             headersMap["id/${id}"] = ""
-            headersMap["device/${info.deviceType}"] = ""
+            headersMap["property/device/${info.deviceType}"] = ""
             channel.queueBind("id/${id}", "amq.headers", "", headersMap)
             channel.close()
 

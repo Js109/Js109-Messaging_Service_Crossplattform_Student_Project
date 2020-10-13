@@ -31,6 +31,9 @@ open class BaseControllerTest {
     protected lateinit var templateRepository: TemplateRepository
 
     @MockkBean
+    protected lateinit var subscriptionsRepository: SubscriptionsRepository
+
+    @MockkBean
     protected lateinit var messageService: MessageService
 
     @MockkBean

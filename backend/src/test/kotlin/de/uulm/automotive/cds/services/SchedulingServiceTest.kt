@@ -17,8 +17,9 @@ internal class SchedulingServiceTest {
 
     private val messageRepository: MessageRepository = mockk()
     private val messageService: MessageService = mockk()
+    private val metricsService: MetricsService = mockk()
     private val tokenRepository: SignUpRepository = mockk()
-    private val schedulingService: SchedulingService = SchedulingService(messageRepository, tokenRepository, messageService, 100)
+    private val schedulingService: SchedulingService = SchedulingService(messageRepository, tokenRepository, messageService, metricsService,100)
 
     private val message = Message(
             1,

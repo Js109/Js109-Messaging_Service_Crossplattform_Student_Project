@@ -15,15 +15,31 @@ import org.springframework.web.bind.annotation.*
  */
 class MetricsController(private val repository: MessageRepository, private val metricsService: MetricsService) {
 
+    /**
+     * TODO
+     *
+     * @return
+     */
     @GetMapping("/topicSubscriptionDistribution")
     fun showTopicSubscriptionDistribution(): Map<String, Int> =
             metricsService.getTopicSubscriptionDistribution()
 
+    /**
+     * TODO
+     *
+     * @return
+     */
     @GetMapping("/propertySubscriptionDistribution")
     fun showPropertySubscriptionDistribution(): Map<String, Int> =
             metricsService.getPropertySubscriptionDistribution()
 
 
+    /**
+     * TODO
+     *
+     * @param metricsFilter
+     * @return
+     */
     @PostMapping
     fun showFilteredMetrics(@RequestBody metricsFilter: MetricsFilterDTO): ResponseEntity<Any> {
         val errors = metricsFilter.getErrors()
