@@ -100,8 +100,14 @@ class MetricsService @Autowired constructor(
         val filteredMessagesTimeSpan = messageService.filterMessages(
                 topicName = metricsFilter.topicName,
                 propertyName = metricsFilter.propertyName,
-                timeSpanBegin = LocalDateTime.of(metricsFilter.timeSpanBegin, LocalTime.MIN),
-                timeSpanEnd = LocalDateTime.of(metricsFilter.timeSpanEnd, LocalTime.MAX)
+                timeSpanBegin = metricsFilter.timeSpanBegin
+                        ?.let {
+                            LocalDateTime.of(it, LocalTime.MIN)
+                        },
+                timeSpanEnd = metricsFilter.timeSpanEnd
+                        ?.let {
+                            LocalDateTime.of(it, LocalTime.MAX)
+                        }
 
         )
         val filteredMessagesBeforeTimeSpan =
@@ -110,8 +116,14 @@ class MetricsService @Autowired constructor(
                     else -> messageService.filterMessages(
                             topicName = filterBeforeTimeSpan.topicName,
                             propertyName = filterBeforeTimeSpan.propertyName,
-                            timeSpanBegin = LocalDateTime.of(filterBeforeTimeSpan.timeSpanBegin, LocalTime.MIN),
-                            timeSpanEnd = LocalDateTime.of(filterBeforeTimeSpan.timeSpanEnd, LocalTime.MAX)
+                            timeSpanBegin = filterBeforeTimeSpan.timeSpanBegin
+                                    ?.let {
+                                        LocalDateTime.of(it, LocalTime.MIN)
+                                    },
+                            timeSpanEnd = filterBeforeTimeSpan.timeSpanEnd
+                                    ?.let {
+                                        LocalDateTime.of(it, LocalTime.MAX)
+                                    }
                     )
                 }
         val filteredMessagesAfterTimeSpan =
@@ -120,8 +132,14 @@ class MetricsService @Autowired constructor(
                     else -> messageService.filterMessages(
                             topicName = filterAfterTimeSpan.topicName,
                             propertyName = filterAfterTimeSpan.propertyName,
-                            timeSpanBegin = LocalDateTime.of(filterAfterTimeSpan.timeSpanBegin, LocalTime.MIN),
-                            timeSpanEnd = LocalDateTime.of(filterAfterTimeSpan.timeSpanEnd, LocalTime.MAX)
+                            timeSpanBegin = filterAfterTimeSpan.timeSpanBegin
+                                    ?.let {
+                                        LocalDateTime.of(it, LocalTime.MIN)
+                                    },
+                            timeSpanEnd = filterAfterTimeSpan.timeSpanEnd
+                                    ?.let {
+                                        LocalDateTime.of(it, LocalTime.MAX)
+                                    }
                     )
                 }
 

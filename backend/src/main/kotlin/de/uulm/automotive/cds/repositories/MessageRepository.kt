@@ -20,13 +20,13 @@ interface MessageRepository : CrudRepository<Message, Long> {
             "(COALESCE(:dateEnd) is null or m.starttime <= :dateEnd)" +
             "and" +
             "(:searchString is null or " +
-            "(lower(m.sender) like lower(:searchString) or lower(m.title) like lower(:searchString) or lower(m.content) like lower(:searchString)))" +
+            "(m.sender like :searchString or m.title like :searchString or m.content like :searchString))" +
             "and" +
-            "(:sender is null or lower(m.sender) like lower(:sender))" +
+            "(:sender is null or m.sender like :sender)" +
             "and" +
-            "(:content is null or lower(m.content) like lower(:content))" +
+            "(:content is null or m.content like :content)" +
             "and" +
-            "(:title is null or lower(m.title) like lower(:title))" +
+            "(:title is null or m.title like :title)" +
             ")")
     fun findAllFiltered(
             @Param("topicName") topicName: String? = null,
