@@ -226,7 +226,13 @@ export class MessageFormComponent implements OnInit {
    * @param imageData image data in base 64
    */
   getDataUrlFromImageByteArray(imageData: string): string {
-    return 'data:image/png;base64,' + imageData;
+    var svgPrefixIndex: number = window.atob(imageData).indexOf("<svg")
+    var filetype = "png"
+    if(svgPrefixIndex != -1){
+      filetype="svg+xml"
+      imageData.substring(svgPrefixIndex, imageData.length)
+    }
+    return 'data:image/' + filetype + ';base64,' + imageData;
   }
 
   locationDataHide(): void {
