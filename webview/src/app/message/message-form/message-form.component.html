@@ -9,13 +9,13 @@
            [style.fontFamily]="fontFamilyToFontString(message.messageDisplayProperties.fontFamily)">
     <div *ngIf="hasTitleError" class="invalid-feedback">Title field is required.</div>
 
-    <textarea id="contentField" class="form-control message-content flex-grow-1 no-top-rounding border-top-0" placeholder="Content"
+    <textarea class="form-control message-content flex-grow-1 no-top-rounding border-top-0" placeholder="Content"
               [(ngModel)]="message.content"
               [ngClass]="{'is-invalid' : hasContentError}"
               [style.background]="message.messageDisplayProperties.backgroundColor"
               [style.color]="message.messageDisplayProperties.fontColor"
               [style.fontFamily]="fontFamilyToFontString(message.messageDisplayProperties.fontFamily)"
-              [style.text-align]="alignmentToAlignmentString(message.messageDisplayProperties.alignment)">This is the text.</textarea>
+              [style.text-align]="alignmentToAlignmentString(message.messageDisplayProperties.alignment)"></textarea>
     <div *ngIf="hasContentError" class="invalid-feedback">Either Content or Files are required.</div>
 
   </div>
