@@ -23,6 +23,12 @@ class WelcomeAppIntro : AppIntro()  {
         addSlide(fragment = IntroFragmentChannelInformation())
         // Welcome Slide Subscription Explanation
         addSlide(fragment = IntroFragmentSubscriptionExplanation())
+        // Welcome Slide Notification Explanation
+        addSlide(IntroFragmentNotificationExplanation())
+        // Welcome Slide Message History Explanation
+        addSlide(IntroFragmentMessageHistoryExplanation())
+        // Welcome Slide Location Favourite Explanation
+        addSlide(IntroFragmentLocationFavouriteExplanation())
     }
 
     // defines what will happen when the user presses "Done"
