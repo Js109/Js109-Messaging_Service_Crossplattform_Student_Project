@@ -57,10 +57,10 @@ tasks.withType<Test> {
     environment("DB_SOURCE", "jdbc:h2:mem:testdb")
     environment("DB_USERNAME", "sa")
     environment("DB_PASSWORD", "")
-    environment("AMQ_BROKER_URL", "68fd7a21-267a-45d4-bbd7-d8331d9e2d3f.ul.bw-cloud-instance.org")
-    environment("AMQ_BROKER_USER", "android_cl")
-    environment("AMQ_BROKER_PASS", "supersecure")
-    environment("AMQ_BROKER_HTTP_PORT", "8081")
+    environment("AMQ_BROKER_URL", "")
+    environment("AMQ_BROKER_USER", "")
+    environment("AMQ_BROKER_PASS", "")
+    environment("AMQ_BROKER_HTTP_PORT", "")
 }
 
 tasks.withType<KotlinCompile> {
