@@ -287,7 +287,7 @@ class MetricsService @Autowired constructor(
      */
     fun getAndSaveRabbitMQMetrics() {
         val response = khttp.get(
-                url = "$address:$port/api/bindings",
+                url = "http://$address:$port/api/bindings",
                 auth = BasicAuthorization(username, password)
         )
 
