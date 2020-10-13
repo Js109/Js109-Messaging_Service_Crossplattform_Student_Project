@@ -60,6 +60,7 @@ tasks.withType<Test> {
     environment("AMQ_BROKER_URL", "68fd7a21-267a-45d4-bbd7-d8331d9e2d3f.ul.bw-cloud-instance.org")
     environment("AMQ_BROKER_USER", "android_cl")
     environment("AMQ_BROKER_PASS", "supersecure")
+    environment("AMQ_BROKER_HTTP_PORT", "8081")
 }
 
 tasks.withType<KotlinCompile> {
