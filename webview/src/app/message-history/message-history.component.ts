@@ -11,7 +11,6 @@ import {MatDialog} from '@angular/material/dialog';
 import {EditMessageDialogComponent} from './edit-message-dialog/edit-message-dialog.component';
 import {ViewMessageDialogComponent} from './view-message-dialog/view-message-dialog.component';
 import {Router} from '@angular/router'; // import router from angular router
-import {MessageComponent} from '../message/message.component';
 
 @Component({
   selector: 'app-message-history',
@@ -41,6 +40,7 @@ export class MessageHistoryComponent implements OnInit {
   messagesArray = [];
   hasDateRangeError = false;
   hasTopicPropertiesError = false;
+  chosenMessage;
 
   ngOnInit(): void {
     this.http.get(environment.backendApiPath + '/topic', {responseType: 'json'})
@@ -143,5 +143,10 @@ export class MessageHistoryComponent implements OnInit {
           console.log(error);
         }
       );
+  }
+
+  open(content, message): void {
+    this.chosenMessage = message;
+    this.modalService.open(content);
   }
 }
