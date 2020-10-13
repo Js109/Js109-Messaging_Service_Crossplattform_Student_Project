@@ -41,9 +41,9 @@ export class MessageHistoryComponent implements OnInit {
   };
 
   topics: Topic[];
-  removedTopic: String;
+  removedTopic: string;
   properties: [Property, boolean][];
-  removedProperty: String;
+  removedProperty: string;
   messagesArray = [];
   hasDateRangeError = false;
   hasDatePickerOnlyOnceSelectedError = false;

@@ -2,9 +2,9 @@ export interface MessageFilter {
   searchString?: string;
   starttimePeriod?: string;
   endtimePeriod?: string;
-  topic?: String;
+  topic?: string;
   sender?: string;
   content?: string;
   title?: string;
-  property?: String;
+  property?: string;
 }
