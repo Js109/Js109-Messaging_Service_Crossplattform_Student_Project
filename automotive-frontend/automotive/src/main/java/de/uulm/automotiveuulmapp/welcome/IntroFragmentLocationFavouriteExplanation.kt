@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import de.uulm.automotiveuulmapp.R
 
 /**
- * A simple [Fragment] subclass as the third Welcome App Introduction slider content.
+ * A simple [Fragment] subclass as the last Welcome App Introduction slider content.
  * Contains an explanation on how to subscribe for topics.
  */
 class IntroFragmentLocationFavouriteExplanation : Fragment() {
