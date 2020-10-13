@@ -32,7 +32,10 @@ export class MessageHistoryComponent implements OnInit {
     searchString: '',
     starttimePeriod: '',
     endtimePeriod: '',
-    topic: ''
+    topic: '',
+    sender: '',
+    content: '',
+    title: ''
   };
 
   topics: Topic[];
@@ -64,7 +67,11 @@ export class MessageHistoryComponent implements OnInit {
         {
           params: new HttpParams().set('searchString', this.messageFilter.searchString)
             .set('startTimePeriod', this.messageFilter.starttimePeriod)
-            .set('endTimePeriod', this.messageFilter.endtimePeriod).set('topic', this.messageFilter.topic)
+            .set('endTimePeriod', this.messageFilter.endtimePeriod)
+            .set('topic', this.messageFilter.topic)
+            .set('content', this.messageFilter.content)
+            .set('sender', this.messageFilter.sender)
+            .set('title', this.messageFilter.title)
         };
 
       this.http.get<Message[]>(environment.backendApiPath + '/message', options)

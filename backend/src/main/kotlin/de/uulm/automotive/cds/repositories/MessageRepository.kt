@@ -22,11 +22,11 @@ interface MessageRepository : CrudRepository<Message, Long> {
             "(:searchString is null or " +
             "(lower(m.sender) like lower(:searchString) or lower(m.title) like lower(:searchString) or lower(m.content) like lower(:searchString)))" +
             "and" +
-            "(:sender is null or lower(:sender) like lower(m.sender))" +
+            "(:sender is null or lower(m.sender) like lower(:sender))" +
             "and" +
-            "(:content is null or lower(:content) like lower(m.content))" +
+            "(:content is null or lower(m.content) like lower(:content))" +
             "and" +
-            "(:title is null or lower(:title) like lower(m.title))" +
+            "(:title is null or lower(m.title) like lower(:title))" +
             ")")
     fun findAllFiltered(
             @Param("topicName") topicName: String? = null,
