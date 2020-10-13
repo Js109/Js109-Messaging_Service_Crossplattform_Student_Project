@@ -61,5 +61,4 @@ export class ElektrobitDatePickerComponent implements OnInit {
     this.date =  $event.value.local().format('YYYY-MM-DD[T]HH:mm:ss');
     this.dateChange.emit(this.date);
   }
-
 }

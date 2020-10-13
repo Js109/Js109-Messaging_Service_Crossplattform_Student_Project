@@ -32,6 +32,7 @@ import {NgxMatDatetimePickerModule} from '@angular-material-components/datetime-
 import {NgxMatMomentModule} from '@angular-material-components/moment-adapter';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import { ElektrobitDatePickerComponent } from './elektrobit-date-picker/elektrobit-date-picker.component';
+import { ElektrobitDatePickerToDateComponent } from './elektrobit-date-picker-to-date/elektrobit-date-picker-to-date.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { ElektrobitDatePickerComponent } from './elektrobit-date-picker/elektrob
     TopicDescriptionDialogComponent,
     EditMessageDialogComponent,
     ViewMessageDialogComponent,
-    ElektrobitDatePickerComponent
+    ElektrobitDatePickerComponent,
+    ElektrobitDatePickerToDateComponent
   ],
   imports: [
     BrowserModule,

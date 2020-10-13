@@ -11,7 +11,6 @@ import {MatDialog} from '@angular/material/dialog';
 import {EditMessageDialogComponent} from './edit-message-dialog/edit-message-dialog.component';
 import {ViewMessageDialogComponent} from './view-message-dialog/view-message-dialog.component';
 import {Router} from '@angular/router'; // import router from angular router
-import {MessageComponent} from '../message/message.component';
 
 @Component({
   selector: 'app-message-history',
@@ -40,6 +39,7 @@ export class MessageHistoryComponent implements OnInit {
   properties: [Property, boolean][];
   messagesArray = [];
   hasDateRangeError = false;
+  hasDatePickerOnlyOnceSelectedError = false;
   hasTopicPropertiesError = false;
 
   ngOnInit(): void {
@@ -50,10 +50,11 @@ export class MessageHistoryComponent implements OnInit {
   }
 
   validateInputs(): boolean {
-    this.hasDateRangeError = ((this.messageFilter.starttimePeriod === '' && this.messageFilter.endtimePeriod !== '') ||
-      (this.messageFilter.starttimePeriod !== '' && this.messageFilter.endtimePeriod === '') ||
-      new Date(this.messageFilter.starttimePeriod).getTime() > new Date(this.messageFilter.endtimePeriod).getTime());
-    return !(this.hasDateRangeError);
+    this.hasDatePickerOnlyOnceSelectedError = ((this.messageFilter.starttimePeriod === '' && this.messageFilter.endtimePeriod !== '') ||
+      (this.messageFilter.starttimePeriod !== '' && this.messageFilter.endtimePeriod === ''));
+
+    this.hasDateRangeError = new Date(this.messageFilter.starttimePeriod).getTime() > new Date(this.messageFilter.endtimePeriod).getTime();
+    return !(this.hasDateRangeError && this.hasDatePickerOnlyOnceSelectedError);
   }
 
   showMessages(): void {
