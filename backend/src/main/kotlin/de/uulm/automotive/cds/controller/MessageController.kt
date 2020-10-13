@@ -6,6 +6,7 @@ import de.uulm.automotive.cds.models.dtos.MessageDTO
 import de.uulm.automotive.cds.models.errors.MessageBadRequestInfo
 import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.services.MessageService
+import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -52,8 +53,10 @@ class MessageController(private val repository: MessageRepository, private val m
      */
     @GetMapping
     @Transactional
-    fun showMessages(@RequestParam searchString: String? = null, @RequestParam startTimePeriod: LocalDate? = null,
-                     @RequestParam endTimePeriod: LocalDate? = null, @RequestParam topic: String? = null,
+    fun showMessages(@RequestParam searchString: String? = null,
+                     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) startTimePeriod: LocalDate? = null,
+                     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) endTimePeriod: LocalDate? = null,
+                     @RequestParam topic: String? = null,
                      @RequestParam property: String? = null, @RequestParam sender: String? = null,
                      @RequestParam content: String? = null, @RequestParam title: String? = null): Iterable<MessageCompactDTO> =
             messageService.filterMessages(
