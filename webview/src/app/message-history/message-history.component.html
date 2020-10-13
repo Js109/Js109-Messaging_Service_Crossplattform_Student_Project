@@ -113,13 +113,13 @@
 
   <ng-template #content let-c="close" let-d="dismiss">
     <div class="modal-header">
-      <h4 class="modal-title" id="modal-title">Message deletion</h4>
+      <h4 class="modal-title" id="modal-title" style="margin-bottom: 0"><strong>Message deletion</strong></h4>
       <button type="button" class="close" aria-label="Close Button" (click)="d('Cross click')">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
     <div class="modal-body">
-      <p><strong>Are you sure you want to delete this message?</strong></p>
+      <p>Are you sure you want to delete this message?</p>
       <p>All information of this message are then permanently deleted.
       </p>
       <span class="text-danger">This operation can not be undone.</span>
