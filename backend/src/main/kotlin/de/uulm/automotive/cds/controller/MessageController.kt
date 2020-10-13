@@ -122,7 +122,7 @@ class MessageController(private val repository: MessageRepository, private val m
         }
         val message = MessageDTO.toEntity(messageDto)
 
-        if (message.starttime == null) {
+        if (message.starttime == null || message.starttime?.isBefore(LocalDateTime.now()) != false) {
             message.starttime = LocalDateTime.now()
             message.isSent = true
             messageService.sendMessage(message)
@@ -173,6 +173,7 @@ class MessageController(private val repository: MessageRepository, private val m
 
         val message = MessageDTO.toEntity(messageDto)
         message.id = id
+        message.isSent = false
 
         return if (messageOld.get().isSent == false) {
             repository.save(message)

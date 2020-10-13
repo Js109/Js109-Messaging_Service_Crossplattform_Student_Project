@@ -6,15 +6,27 @@ import {HttpParams} from '@angular/common/http';
 import {Topic} from '../models/Topic';
 import {Property} from '../models/Property';
 import {MessageFilter} from '../models/MessageFilter';
+import {NgbModalConfig, NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {MatDialog} from '@angular/material/dialog';
+import {EditMessageDialogComponent} from './edit-message-dialog/edit-message-dialog.component';
+import {ViewMessageDialogComponent} from './view-message-dialog/view-message-dialog.component';
+import {Router} from '@angular/router'; // import router from angular router
+import {MessageComponent} from '../message/message.component';
 
 @Component({
   selector: 'app-message-history',
   templateUrl: './message-history.component.html',
+  // add NgbModalConfig and NgbModal to the component providers
+  providers: [NgbModalConfig, NgbModal],
   styleUrls: ['./message-history.component.css']
 })
 export class MessageHistoryComponent implements OnInit {
 
-  constructor(private http: HttpClient, private ngZone: NgZone) {
+  constructor(private http: HttpClient, private ngZone: NgZone, config: NgbModalConfig,
+              private modalService: NgbModal, private dialog: MatDialog, private route: Router) {
+    // customize default values of modals used by this component tree
+    config.backdrop = 'static';
+    config.keyboard = false;
   }
 
   messageFilter: MessageFilter = {
@@ -68,7 +80,7 @@ export class MessageHistoryComponent implements OnInit {
   }
 
   deleteMessage(id: number): void {
-    this.http.delete(environment.backendApiPath + '/message/' + id, ).subscribe(
+    this.http.delete(environment.backendApiPath + '/message/' + id).subscribe(
       value => {
         console.log(`send delete message with ${id}`);
       },
@@ -76,11 +88,60 @@ export class MessageHistoryComponent implements OnInit {
         console.log(error);
       },
       () => {
-        this.ngZone.run( () => {
+        this.ngZone.run(() => {
           this.showMessages();
         });
       }
     );
   }
 
+  editMessage(message: Message): void {
+    this.http.get<Message>(environment.backendApiPath + '/message/' + message.id)
+      .subscribe(
+        retrievedMessage => {
+          const dialogRef = this.dialog.open(EditMessageDialogComponent, {height: '80%', width: '60%'});
+          dialogRef.componentInstance.message = retrievedMessage;
+          dialogRef.afterClosed().subscribe(dialogResult => {
+            if (dialogResult.action === 'save') {
+              this.http.put(environment.backendApiPath + '/message/' + dialogResult.message.id, dialogResult.message, {}).subscribe(
+                value => {
+                  console.log('sent put request to update message with given id');
+                  this.showMessages();
+                },
+                error => {
+                  console.log(error);
+                }
+              );
+              console.log('save' + dialogResult.message.title);
+            } else if (dialogResult.action === 'copy') {
+              // Navigate to /message?messageId={retrievedMessage.id}
+              this.route.navigate(['/message'], {queryParams: {messageId: retrievedMessage.id}});
+            }
+          });
+        },
+        error => {
+          console.log(error);
+        }
+      );
+  }
+
+  viewMessage(message: Message): void {
+    this.http.get<Message>(environment.backendApiPath + '/message/' + message.id)
+      .subscribe(
+        retrievedMessage => {
+          const dialogRef = this.dialog.open(ViewMessageDialogComponent, {height: '55%', width: '50%'});
+          dialogRef.componentInstance.message = retrievedMessage;
+          dialogRef.afterClosed().subscribe(dialogResult => {
+              if (dialogResult.action === 'copy') {
+                // Navigate to /message?messageId={retrievedMessage.id}
+                this.route.navigate(['/message'], {queryParams: {messageId: retrievedMessage.id}});
+              }
+            }
+          );
+        },
+        error => {
+          console.log(error);
+        }
+      );
+  }
 }

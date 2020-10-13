@@ -5,10 +5,10 @@ import {Property} from '../../models/Property';
 import {HttpClient} from '@angular/common/http';
 import {Message} from '../../models/Message';
 import {LocationData} from '../../models/LocationData';
-import {fontFamilyToFontString} from '../../models/FontFamily';
+import {FontFamily, fontFamilyToFontString} from '../../models/FontFamily';
 import {MatTabChangeEvent} from '@angular/material/tabs';
 import {MatSlideToggleChange} from '@angular/material/slide-toggle';
-import {alignmentToAlignmentString} from '../../models/Alignment';
+import {Alignment, alignmentToAlignmentString} from '../../models/Alignment';
 
 enum OffsetType {
   Minute, Hour, Day, Week
@@ -20,6 +20,12 @@ enum OffsetType {
   styleUrls: ['./message-form.component.css']
 })
 export class MessageFormComponent implements OnInit {
+
+  // copying of global enums/functions to local fields for accessing in the template
+  fontFamilyToFontString = fontFamilyToFontString;
+  alignmentToAlignmentString = alignmentToAlignmentString;
+  alignment = Alignment;
+  fontFamily = FontFamily;
 
   constructor(private http: HttpClient) { }
 
@@ -50,6 +56,9 @@ export class MessageFormComponent implements OnInit {
   @Input()
   set message(val) {
     this.messageValue = val;
+    if (this.message.messageDisplayProperties == null){
+      this.message.messageDisplayProperties = {};
+    }
     if (val.locationData != null) {
       this.locationData = val.locationData;
     }
@@ -57,6 +66,8 @@ export class MessageFormComponent implements OnInit {
       this.hasCustomColor = false;
       this.selectedFontColor = '#000000';
       this.selectedBackgroundColor = '#ffffff';
+    } else {
+      this.hasCustomColor = true;
     }
     this.properties = this.properties.map(property => [property[0], val.properties.some(value => value === property[0].binding)]);
   }
@@ -75,8 +86,6 @@ export class MessageFormComponent implements OnInit {
   hasUrlErrors;
   hasColorError = false;
 
-  fontFamilyToFontString = fontFamilyToFontString;
-  alignmentToAlignmentString = alignmentToAlignmentString;
   hasCustomColor = false;
   selectedFontColor = '#000000';
   selectedBackgroundColor = '#ffffff';
@@ -92,7 +101,7 @@ export class MessageFormComponent implements OnInit {
    * Fills the message with all elements from the form and then performs validation on it.
    * If validation is passed the message will be returned otherwise null will be returned.
    * Use this to retrieve the message instead of using binding as this component does not set all values put into the form directly.
-   * @return Message Message containing the information put into the form or null if validation fails.
+   * @return Message containing the information put into the form or null if validation fails.
    */
   retrieveMessage(): Message {
     if (this.validateInputs()) {

@@ -17,6 +17,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   border-top-left-radius: 0;
 }
 
+.no-bottom-rounding {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.no-top-rounding {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
 .elektrobit-green-background {
   background-color: #00EB00;
 }

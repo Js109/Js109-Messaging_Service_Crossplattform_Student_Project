@@ -30,6 +30,8 @@ class TemplateController(private val repository: TemplateRepository){
      */
     @PostMapping
     fun postTemplate(@RequestBody template: TemplateMessage) {
+        template.id = null
+        template.messageDisplayProperties?.id = null
         repository.save(template)
     }
 

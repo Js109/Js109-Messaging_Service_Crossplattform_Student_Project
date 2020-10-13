@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Message} from '../models/Message';
 import {environment} from '../../environments/environment';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-message',
@@ -11,10 +12,11 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 })
 export class MessageComponent implements OnInit {
 
-  constructor(private http: HttpClient, private snackBar: MatSnackBar) {
+  constructor(private http: HttpClient, private snackBar: MatSnackBar, private route: ActivatedRoute) {
   }
 
   showTemplateList = true;
+  loadMessageId;
 
   message: Message = {
     topic: '',
@@ -36,15 +38,21 @@ export class MessageComponent implements OnInit {
     if (message != null) {
       this.http.post(environment.backendApiPath + '/message', message, {}).subscribe(
         value => {
-          this.snackBar.open('Successful Send!', '',  {duration: 1000, });
+          this.snackBar.open('Successful Send!', '', {duration: 1000});
           this.clearMessage();
         },
         error => {
-          this.snackBar.open('Could not send message!', '',  {duration: 1000, panelClass: ['alert', 'alert-danger', 'text-center', 'text-danger']});
+          this.snackBar.open('Could not send message!', '', {
+            duration: 1000,
+            panelClass: ['alert', 'alert-danger', 'text-center', 'text-danger']
+          });
         }
       );
     } else {
-      this.snackBar.open('Some message inputs are invalid!', '',  {duration: 1000, panelClass: ['alert', 'alert-danger', 'text-center', 'text-danger']});
+      this.snackBar.open('Some message inputs are invalid!', '', {
+        duration: 1000,
+        panelClass: ['alert', 'alert-danger', 'text-center', 'text-danger']
+      });
     }
   }
 
@@ -53,10 +61,22 @@ export class MessageComponent implements OnInit {
   }
 
   loadTemplate($event: Message): void {
-     this.message = $event;
+    this.message = $event;
   }
 
   ngOnInit(): void {
+    if (this.route.snapshot.queryParams.messageId != null) {
+      this.loadMessageId = this.route.snapshot.queryParams.messageId;
+      this.http.get<Message>(environment.backendApiPath + '/message/' + this.loadMessageId)
+        .subscribe(
+          retrievedMessage => {
+            this.message = retrievedMessage;
+          },
+          error => {
+            console.log(error);
+          }
+        );
+    }
   }
 
   clearMessage(): void {

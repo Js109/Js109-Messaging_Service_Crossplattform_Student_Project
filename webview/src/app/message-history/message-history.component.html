@@ -5,7 +5,7 @@
     <div class="col-md-4">
       <div class="input-group">
         <input class="form-control py-2 border-right-0 border" type="search" value="Search" id="example-search-input"
-                                                         [(ngModel)]="messageFilter.searchString">
+               [(ngModel)]="messageFilter.searchString">
         <span class="input-group-append">
                     <div class="input-group-text bg-transparent"><i class="fa fa-search"></i></div>
                 </span>
@@ -52,7 +52,7 @@
       <td>{{message.title}}</td>
       <td>{{message.content}}</td>
       <td *ngIf="message.isSent">
-        <button class="btn btn-light" style="margin-left: 35px">
+        <button class="btn btn-light" style="margin-left: 35px" (click)="viewMessage(message)">
           <svg width="1.8em" height="1.8em" viewBox="0 0 16 16" class="bi bi-search"
                fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd"
@@ -69,7 +69,7 @@
         </svg>
       </td>
       <td *ngIf="!message.isSent">
-        <button class="btn btn-light" style="margin-left: 35px">
+        <button class="btn btn-light" style="margin-left: 35px" (click)="editMessage(message)">
           <svg width="1.8em" height="1.8em" viewBox="0 0 16 16" class="bi bi-wrench"
                fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd"
@@ -110,5 +110,6 @@
     </tr>
     </tbody>
   </table>
+
 </div>
 
