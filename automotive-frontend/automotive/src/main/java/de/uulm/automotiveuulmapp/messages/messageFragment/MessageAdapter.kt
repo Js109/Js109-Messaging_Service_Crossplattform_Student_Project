@@ -3,6 +3,7 @@ package de.uulm.automotiveuulmapp.messages.messageFragment
 import android.app.Activity
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.graphics.drawable.PictureDrawable
 import android.os.AsyncTask
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
+import com.caverock.androidsvg.SVG
 import de.uulm.automotiveuulmapp.R
 import de.uulm.automotiveuulmapp.messages.MessageContentActivity
 import de.uulm.automotiveuulmapp.messages.messagedb.MessageDao
@@ -55,7 +57,14 @@ class MessageAdapter(
         message.logoAttachment?.let {
             if (it.isNotEmpty()) {
                 val logoImage = holder.itemView.findViewById<ImageView>(R.id.message_logo_image)
-                logoImage.setImageBitmap(BitmapFactory.decodeByteArray(it, 0, it.size))
+                val logoString = String(it)
+                val svgStringStartIndex = logoString.indexOf("<svg")
+                if( svgStringStartIndex != -1){
+                    val svgDrawable = parseSvg(logoString.substring(svgStringStartIndex))
+                    logoImage.setImageDrawable(svgDrawable)
+                } else {
+                    logoImage.setImageBitmap(BitmapFactory.decodeByteArray(it, 0, it.size))
+                }
                 holder.itemView.findViewById<CardView>(R.id.message_logo_image_holder).visibility = View.VISIBLE
             }
         }
@@ -87,6 +96,17 @@ class MessageAdapter(
             intent.putExtra(MessageContentActivity.EXTRA_PERSISTED_MESSAGE_ID, message.uid)
             startActivity(searchView.context, intent, null)
         }
+    }
+
+    /**
+     * parses svg string to a PictureDrawable
+     *
+     * @param svgString String of svg image
+     * @return SVG as PictureDrawable
+     */
+    private fun parseSvg(svgString: String): PictureDrawable{
+        val svg: SVG = SVG.getFromString(svgString)
+        return PictureDrawable(svg.renderToPicture())
     }
 
     fun removeMessage(position: Int){
