@@ -87,6 +87,9 @@ export class StatisticsComponent implements OnInit {
     const scheduledMessages = Object.entries(this.metrics.scheduledMessagesByDateTimeSpan);
 
     this.sentMessagesOptions = {
+      title: {
+        text: 'Messages per Day'
+      },
       xAxis: {
         type: 'time',
         min: (value) => {
@@ -94,10 +97,22 @@ export class StatisticsComponent implements OnInit {
         },
         max: (value) => {
           return this.metricsSpanEndToMillis(value);
+        },
+        axisLabel: {
+          formatter: (value, index) => {
+            const date = new Date(value);
+            return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+          }
         }
       },
       yAxis: {
         type: 'value'
+      },
+      color: ['#339933', '#3F3F3F', '#00c400', '#646464', '#00EB00', '#c8c8c8'],
+      legend: {
+        left: 'center',
+        top: 'bottom',
+        data: ['Sent messages', 'Scheduled messages']
       },
       tooltip: {
         trigger: 'item',
@@ -106,10 +121,12 @@ export class StatisticsComponent implements OnInit {
       series: [{
         type: 'bar',
         barWidth: '90%',
+        name: 'Sent messages',
         data: sentMessages.map(v => ({value: v, name: v[0]}))
       }, {
         type: 'bar',
         barWidth: '90%',
+        name: 'Scheduled messages',
         data: scheduledMessages.map(v => ({value: v, name: v[0]}))
       }]
     };
@@ -119,18 +136,33 @@ export class StatisticsComponent implements OnInit {
     const subscribers = Object.entries(this.metrics.subscriberGainByDateTimeSpan);
 
     this.subscriberGainOptions = {
+      title: {
+        text: 'Subscribers per Day'
+      },
       xAxis: {
         type: 'time',
-        min: (value) => {
+          min: (value) => {
           return this.metricsSpanBeginToMillis(value);
         },
-        max: (value) => {
+          max: (value) => {
           return this.metricsSpanEndToMillis(value);
+        },
+          axisLabel: {
+          formatter: (value, index) => {
+            const date = new Date(value);
+            return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+          }
         }
       },
       yAxis: {
         type: 'value'
       },
+      color: ['#339933', '#3F3F3F', '#00c400', '#646464', '#00EB00', '#c8c8c8'],
+        legend: {
+      left: 'center',
+        top: 'bottom',
+        data: ['Sent messages', 'Scheduled messages']
+    },
       tooltip: {
         trigger: 'item',
           formatter: '{b}'
@@ -144,32 +176,63 @@ export class StatisticsComponent implements OnInit {
   }
 
   setupTimeChart(): void {
-    const hoursInDay = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+    const hoursInDay = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
+
+    const series = [{
+      type: 'line',
+      name: 'Messages in selected timespan',
+      data: hoursInDay.map(h =>
+        [h,
+          (this.metrics.sentMessagesByTimeOfDayTimeSpan.hasOwnProperty(h % 24))
+            ? this.metrics.sentMessagesByTimeOfDayTimeSpan[h % 24] / this.metrics.sentMessagesTotalGain
+            : 0]
+      )
+    }];
+
+    if (this.metricsFilter.timeSpanBegin != null || this.metricsFilter.timeSpanEnd != null) {
+      series.push(
+        {
+          type: 'line',
+          name: 'Messages all time',
+          data: hoursInDay.map(h =>
+            [h,
+              (this.metrics.sentMessagesByTimeOfDayAllTime.hasOwnProperty(h % 24))
+                ? this.metrics.sentMessagesByTimeOfDayAllTime[h % 24] / this.metrics.sentMessagesTotalAllTime
+                : 0]
+          )
+        }
+      );
+    }
 
     this.messagesByTimeOfDayOptions = {
+      title: {
+        text: 'Messages by Time of Day'
+      },
       xAxis: {
         type: 'value',
         data: hoursInDay,
-        max: 23,
-        min: 0
+        max: 24,
+        min: 0,
+        axisLabel: {
+          formatter: (value, index) => {
+            return value + ':00';
+          }
+        }
       },
       yAxis: {
-        type: 'value'
+        type: 'value',
+        axisLabel: {
+          formatter: (value, index) => (value * 100) + '%'
+        }
       },
+      color: ['#339933', '#3F3F3F', '#00c400', '#646464', '#00EB00', '#c8c8c8'],
       legend: {
         left: 'center',
         top: 'bottom',
-        data: ['Messages in selected timespan', 'Messages all time']
+        data: ['Messages in selected timespan', 'Messages all time'],
+        show: this.metricsFilter.timeSpanBegin != null || this.metricsFilter.timeSpanEnd != null
       },
-      series: [{
-        type: 'line',
-        name: 'Messages in selected timespan',
-        data: hoursInDay.map(h => [h, (this.metrics.sentMessagesByTimeOfDayTimeSpan.hasOwnProperty(h)) ? this.metrics.sentMessagesByTimeOfDayTimeSpan[h] / this.metrics.sentMessagesTotalGain : 0])
-      }, {
-        type: 'line',
-        name: 'Messages all time',
-        data: hoursInDay.map(h => [h, (this.metrics.sentMessagesByTimeOfDayAllTime.hasOwnProperty(h)) ? this.metrics.sentMessagesByTimeOfDayAllTime[h] / this.metrics.sentMessagesTotalAllTime : 0])
-      }]
+      series
     };
   }
 
@@ -183,6 +246,7 @@ export class StatisticsComponent implements OnInit {
         trigger: 'item',
         formatter: '{b}: {c} Subscriber'
       },
+      color: ['#339933', '#3F3F3F', '#00c400', '#646464', '#00EB00', '#c8c8c8'],
       series: [{
         type: 'pie',
         radius: [20, 100],
@@ -199,6 +263,7 @@ export class StatisticsComponent implements OnInit {
         type: 'category',
         data: topics.map(v => v[0])
       },
+      color: ['#339933', '#3F3F3F', '#00c400', '#646464', '#00EB00', '#c8c8c8'],
       tooltip: {
         trigger: 'item',
         formatter: '{b}: {c} Subscriber'
