@@ -11,6 +11,7 @@
       <env name="DB_SOURCE" value="jdbc:postgresql://localhost:5432/postgres" />
       <env name="DB_USERNAME" value="postgres" />
       <env name="DB_PASSWORD" value="root" />
+      <env name="AMQ_BROKER_HTTP_PORT" value="8081" />
     </envs>
     <method v="2">
       <option name="Make" enabled="true" />
