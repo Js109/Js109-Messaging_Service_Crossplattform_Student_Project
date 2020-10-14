@@ -40,6 +40,8 @@ data class TopicDTO(
 
         if (description.isBlank()) {
             errors = errors.addError { it.descriptionError = "Description can not be blank." }
+        } else if (description.length > 255) {
+            errors = errors.addError { it.descriptionError = "Description can not contain more than 255 characters." }
         }
 
         return errors
