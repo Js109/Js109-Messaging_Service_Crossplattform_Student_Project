@@ -73,7 +73,8 @@ data class MessageDTO(
 
         if (!(topic.isNullOrBlank().xor(properties.isNullOrEmpty()))) {
             errors = errors.addError { it.topicError = "Either Topics or Properties are required." }
-        } else if (topic!!.length > 200) {
+        }
+        if (topic != null && topic!!.length > 200) {
             errors = errors.addError { it.topicError = "Topic can not contain more than 200 characters." }
         }
 
