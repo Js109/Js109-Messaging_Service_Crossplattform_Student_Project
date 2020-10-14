@@ -189,18 +189,22 @@ export class MessageFormComponent implements OnInit {
 
   removeLink(pos: number): void {
     this.message.links.splice(pos, 1);
-    this.message.content = this.message.content.replace('[Linkdescription](link' + (this.linkCounter - 1) + ')', '');
+    this.message.content = this.message.content.replace(new RegExp('\\[[^()\\[\\]]*]\\(link' + (pos + 1) + '\\)', 'i'), '');
+    for (let i = pos + 1; i < this.message.links.length + 1; i++) {
+      this.message.content = this.message.content.replace(new RegExp('\\[([^()\\[\\]]*?)]\\(link' + (i + 1) + '\\)', 'i'),
+        '[\$1](link' + i + ')');
+    }
     this.linkCounter -= 1;
   }
 
   fileSelect(event: any): void {
     this.loadFileAsBas64(event.target.files[0],
       result => this.message.attachment = result);
-    this.message.content += '<img>';
+    this.message.content += '[img]';
   }
 
   removeAttachment(): void {
-    this.message.content = this.message.content.replace('<img>', '');
+    this.message.content = this.message.content.replace('[img]', '');
     this.message.attachment = '';
   }
 
