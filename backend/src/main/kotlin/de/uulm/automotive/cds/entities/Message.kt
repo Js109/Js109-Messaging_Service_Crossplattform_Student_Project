@@ -1,6 +1,5 @@
 package de.uulm.automotive.cds.entities
 
-import de.uulm.automotive.cds.models.dtos.MessageDisplayPropertiesDTO
 import java.net.URL
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -25,8 +24,11 @@ import javax.persistence.*
 class Message(
         @Id @GeneratedValue var id: Long? = null,
         var topic: String?,
+        @Column(length = 127)
         var sender: String?,
+        @Column(length = 127)
         var title: String?,
+        @Column(length = 1023)
         var content: String?,
         var starttime: LocalDateTime?,
         var endtime: LocalDateTime?,

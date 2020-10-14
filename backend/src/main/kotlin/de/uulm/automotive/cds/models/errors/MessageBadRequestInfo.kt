@@ -17,6 +17,7 @@ import de.uulm.automotive.cds.models.addErrorGeneric
  */
 class MessageBadRequestInfo(
         var topicError: String? = null,
+        var propertyError: String? = null,
         var senderError: String? = null,
         var titleError: String? = null,
         var contentError: String? = null,
