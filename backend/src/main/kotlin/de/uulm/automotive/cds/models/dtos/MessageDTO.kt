@@ -77,7 +77,7 @@ data class MessageDTO(
 
         if (content.isNullOrEmpty() && (attachment == null || attachment!!.isEmpty())) {
             errors = errors.addError { it.contentError = "Either Content or Files are required." }
-        } else if (content!!.length > 1023) {
+        } else if (content != null && content!!.length > 1023) {
             errors = errors.addError { it.contentError = "Content can not contain more than 1023 characters." }
         }
 
