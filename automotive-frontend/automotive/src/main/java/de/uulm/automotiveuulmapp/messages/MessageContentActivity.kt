@@ -3,6 +3,7 @@ package de.uulm.automotiveuulmapp.messages
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.PictureDrawable
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
@@ -14,12 +15,17 @@ import android.text.style.ImageSpan
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.text.HtmlCompat
+import com.caverock.androidsvg.SVG
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.SupportMapFragment
 import com.google.android.libraries.maps.model.LatLng
@@ -191,12 +197,31 @@ class MessageContentActivity : AppCompatActivity() {
             val spannableString = SpannableString(Html.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY))
             var imgIndex = spannableString.indexOf(IMG_TAG, ignoreCase = true)
             while (imgIndex >= 0) {
-                val imgSpan = ImageSpan(this, BitmapFactory.decodeByteArray(attachment, 0, attachment!!.size))
+                val attachmentString = String(attachment!!)
+                val svgStringStartIndex = attachmentString.indexOf("<svg")
+                // if the the image string contains no svg tag, parse it as a bitmap file
+                // otherwise parse it as an svg file
+                val imgSpan = if( svgStringStartIndex != -1){
+                    ImageSpan(this, parseSvg(attachmentString.substring(svgStringStartIndex)).toBitmap())
+                } else {
+                    ImageSpan(this, BitmapFactory.decodeByteArray(attachment, 0, attachment.size))
+                }
                 spannableString.setSpan(imgSpan, imgIndex, imgIndex + IMG_TAG.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 imgIndex = spannableString.indexOf("[img]", ignoreCase = true, startIndex = imgIndex + 1)
             }
             spannableString
         }
+    }
+
+    /**
+     * parses svg string to a PictureDrawable
+     *
+     * @param svgString String of svg image
+     * @return SVG as PictureDrawable
+     */
+    private fun parseSvg(svgString: String): PictureDrawable {
+        val svg: SVG = SVG.getFromString(svgString)
+        return PictureDrawable(svg.renderToPicture())
     }
 
     /**
