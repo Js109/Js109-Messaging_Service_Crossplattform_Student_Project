@@ -19,6 +19,17 @@ export class ElektrobitDatePickerComponent implements OnInit {
   @Input()
   invalid = false;
 
+  minDateValue: Moment;
+  @Input()
+  set minDate(dateString: string) {
+    this.minDateValue = moment(dateString, 'YYYY-MM-DD');
+    if (this.currentMoment.isBefore(this.minDateValue)) {
+      this.date =  this.minDateValue.local().format('YYYY-MM-DD');
+      this.dateChange.emit(this.date);
+    }
+  }
+
+
   /**
    * Field storing the current date in the date picker calendar to return it in the binding function
    * to prevent unnecessary rebuilding of the calendar.
