@@ -21,6 +21,7 @@ import de.uulm.automotiveuulmapp.messages.MessageContentActivity
 import de.uulm.automotiveuulmapp.messages.MessagePersistenceService
 import de.uulm.automotiveuulmapp.messages.messagedb.MessageDatabase
 import de.uulm.automotiveuulmapp.messages.messagedb.MessageEntity
+import de.uulm.automotiveuulmapp.messages.pruneMessageTags
 import de.uulm.automotiveuulmapp.notifications.DismissNotificationService
 import de.uulm.automotiveuulmapp.topic.TopicChange
 import java.io.ByteArrayInputStream
@@ -247,7 +248,7 @@ class RabbitMQService : Service() {
             .setContentIntent(pendingShowMessageContentIntent)
             .setCategory(Notification.CATEGORY_CALL)
             .setContentTitle(message.title)
-            .setContentText(message.messageText)
+            .setContentText(message.messageText?.pruneMessageTags())
             .addAction(storeAction)
             .addAction(dismissAction)
 

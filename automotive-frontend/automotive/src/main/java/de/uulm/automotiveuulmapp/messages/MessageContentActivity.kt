@@ -207,7 +207,7 @@ class MessageContentActivity : AppCompatActivity() {
                     ImageSpan(this, BitmapFactory.decodeByteArray(attachment, 0, attachment.size))
                 }
                 spannableString.setSpan(imgSpan, imgIndex, imgIndex + IMG_TAG.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                imgIndex = spannableString.indexOf("[img]", ignoreCase = true, startIndex = imgIndex + 1)
+                imgIndex = spannableString.indexOf(IMG_TAG, ignoreCase = true, startIndex = imgIndex + 1)
             }
             spannableString
         }
