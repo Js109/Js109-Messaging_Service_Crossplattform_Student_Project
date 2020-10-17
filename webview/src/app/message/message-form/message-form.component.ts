@@ -21,13 +21,37 @@ enum OffsetType {
 })
 export class MessageFormComponent implements OnInit {
 
+  constructor(private http: HttpClient) {
+  }
+
+  get message(): Message {
+    return this.messageValue;
+  }
+
+  @Input()
+  set message(val) {
+    this.messageValue = val;
+    if (this.message.messageDisplayProperties == null) {
+      this.message.messageDisplayProperties = {};
+    }
+    if (val.locationData != null) {
+      this.locationData = val.locationData;
+    }
+    if (val.messageDisplayProperties.fontColor == null || val.messageDisplayProperties.backgroundColor == null) {
+      this.hasCustomColor = false;
+      this.selectedFontColor = '#000000';
+      this.selectedBackgroundColor = '#ffffff';
+    } else {
+      this.hasCustomColor = true;
+    }
+    this.properties = this.properties.map(property => [property[0], val.properties.some(value => value === property[0].binding)]);
+  }
+
   // copying of global enums/functions to local fields for accessing in the template
   fontFamilyToFontString = fontFamilyToFontString;
   alignmentToAlignmentString = alignmentToAlignmentString;
   alignment = Alignment;
   fontFamily = FontFamily;
-
-  constructor(private http: HttpClient) { }
 
   topics: Topic[];
 
@@ -50,31 +74,11 @@ export class MessageFormComponent implements OnInit {
     locationData: null,
     messageDisplayProperties: {}
   };
-  get message(): Message {
-    return this.messageValue;
-  }
-  @Input()
-  set message(val) {
-    this.messageValue = val;
-    if (this.message.messageDisplayProperties == null){
-      this.message.messageDisplayProperties = {};
-    }
-    if (val.locationData != null) {
-      this.locationData = val.locationData;
-    }
-    if (val.messageDisplayProperties.fontColor == null || val.messageDisplayProperties.backgroundColor == null) {
-      this.hasCustomColor = false;
-      this.selectedFontColor = '#000000';
-      this.selectedBackgroundColor = '#ffffff';
-    } else {
-      this.hasCustomColor = true;
-    }
-    this.properties = this.properties.map(property => [property[0], val.properties.some(value => value === property[0].binding)]);
-  }
 
   locationData: LocationData = {radius: 50};
   expirationOffset: number;
   expirationOffsetType: OffsetType = null;
+  linkCounter = 1;
 
   hasTopicPropertiesError = false;
   hasSenderError = false;
@@ -174,6 +178,8 @@ export class MessageFormComponent implements OnInit {
   }
 
   addLink(): void {
+    this.message.content += '[Linkdescription](link' + this.linkCounter + ')';
+    this.linkCounter += 1;
     this.message.links.push('');
   }
 
@@ -183,14 +189,22 @@ export class MessageFormComponent implements OnInit {
 
   removeLink(pos: number): void {
     this.message.links.splice(pos, 1);
+    this.message.content = this.message.content.replace(new RegExp('\\[[^()\\[\\]]*]\\(link' + (pos + 1) + '\\)', 'i'), '');
+    for (let i = pos + 1; i < this.message.links.length + 1; i++) {
+      this.message.content = this.message.content.replace(new RegExp('\\[([^()\\[\\]]*?)]\\(link' + (i + 1) + '\\)', 'i'),
+        '[\$1](link' + i + ')');
+    }
+    this.linkCounter -= 1;
   }
 
   fileSelect(event: any): void {
     this.loadFileAsBas64(event.target.files[0],
       result => this.message.attachment = result);
+    this.message.content += '[img]';
   }
 
   removeAttachment(): void {
+    this.message.content = this.message.content.replace('[img]', '');
     this.message.attachment = '';
   }
 
@@ -274,7 +288,7 @@ export class MessageFormComponent implements OnInit {
         }
       }
       this.message.endtime = new Date(endTimeInMillis).toISOString();
-    } else{
+    } else {
       this.message.endtime = null;
     }
   }

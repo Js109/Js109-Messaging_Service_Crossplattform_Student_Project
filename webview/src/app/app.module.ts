@@ -33,8 +33,9 @@ import {NgxMatMomentModule} from '@angular-material-components/moment-adapter';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {StatisticsComponent} from './statistics/statistics.component';
 import {NgxEchartsModule} from 'ngx-echarts';
-import {ElektrobitDatePickerComponent} from './elektrobit-date-picker/elektrobit-date-picker.component';
 import {ElektrobitDatePickerToDateComponent} from './elektrobit-date-picker-to-date/elektrobit-date-picker-to-date.component';
+import { ElektrobitDatePickerComponent } from './elektrobit-date-picker/elektrobit-date-picker.component';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -79,6 +80,8 @@ import {ElektrobitDatePickerToDateComponent} from './elektrobit-date-picker-to-d
     NgxMatMomentModule,
     MatIconModule,
     MatButtonToggleModule,
+    MatButtonToggleModule,
+    MatTooltipModule,
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
     })
