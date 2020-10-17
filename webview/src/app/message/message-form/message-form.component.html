@@ -84,9 +84,9 @@
           <button class="btn bg-white message-url-delete" (click)="removeLink(i)">❌</button>
         </div>
       </ng-container>
-      <button type="button" class="btn btn-secondary top-height message-new-url" data-toggle="tooltip"
-              data-placement="top"
-              title="[linkdescription](link1) is added to the text if a link is present. The position in the text can be adjusted as desired. The second link looks like [linkdescription](link2) and so on."
+      <button type="button" class="btn btn-secondary top-height message-new-url"
+              matTooltip="[linkdescription](link1) is added to the text if a link is present. The position in the text can be adjusted as desired. The second link looks like [linkdescription](link2) and so on."
+              aria-label="Button that displays a tooltip and gives the possibility to add links to a message"
               (click)="addLink()">
         <span>➕</span>
       </button>
@@ -98,8 +98,9 @@
     <mat-divider></mat-divider>
 
     <label class="mt-2">Add File:</label>
-    <label *ngIf="message.attachment == null || message.attachment.length === 0" class="btn btn-secondary col mb-0" data-toggle="tooltip"
-           data-placement="top" title="<img> is added to the text if an image is present. The position in the text can be adjusted as desired."
+    <label *ngIf="message.attachment == null || message.attachment.length === 0" class="btn btn-secondary col mb-0"
+           matTooltip="[img] is added to the text if an image is present. The position in the text can be adjusted as desired."
+           aria-label="Button that displays a tooltip and gives the possibility to add an image to a message"
            [ngClass]="{'is-invalid' : hasContentError}">
       Upload Image<input type="file" name="attachment" class="form-control" hidden
                          (change)="fileSelect($event)">
@@ -126,7 +127,9 @@
          [(ngModel)]="message.sender"
          [ngClass]="{'is-invalid' : hasSenderError}">
   <label *ngIf="message.logoAttachment == null || message.logoAttachment.length === 0"
-         class="btn btn-secondary col no-left-rounding mb-0">
+         class="btn btn-secondary col no-left-rounding mb-0"
+         matTooltip="Add a sender image to a message."
+         aria-label="Button that displays a tooltip and gives the possibility to add a sender image to a message">
     Upload Icon<input type="file" name="attachmentIcon" class="form-control" hidden
                       (change)="logoSelect($event)">
   </label>
