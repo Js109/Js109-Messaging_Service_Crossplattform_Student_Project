@@ -5,15 +5,14 @@ import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.entities.MessageSerializable
 import de.uulm.automotive.cds.entities.TemplateMessage
 import de.uulm.automotive.cds.models.dtos.MessageCompactDTO
-import de.uulm.automotive.cds.models.dtos.MetricsFilterDTO
 import de.uulm.automotive.cds.repositories.MessageRepository
 import org.hibernate.Hibernate
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.ZoneId
 
 /**
@@ -26,6 +25,10 @@ import java.time.ZoneId
 
 class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelService, val messageRepository: MessageRepository) {
 
+    companion object {
+        val logger: Logger = LoggerFactory.getLogger(MessageService::class.java)
+    }
+
     /**
      * Publishes a messages to the broker.
      * If the message passed contains properties the topic will be ignored and header exchange will be used.
@@ -34,32 +37,37 @@ class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelS
      */
     fun sendMessage(message: Message) {
         val channel = amqpChannelService.openChannel()
-        val messageSerializable =
-                MessageSerializable(
-                        message.sender!!,
-                        message.title!!,
-                        message.content,
-                        message.attachment,
-                        message.logoAttachment,
-                        message.links?.toTypedArray(),
-                        message.locationData?.serialize(),
-                        message.endtime,
-                        message.messageDisplayProperties?.serialize()
-                )
+        channel?.let {
+            val messageSerializable =
+                    MessageSerializable(
+                            message.sender!!,
+                            message.title!!,
+                            message.content,
+                            message.attachment,
+                            message.logoAttachment,
+                            message.links?.toTypedArray(),
+                            message.locationData?.serialize(),
+                            message.endtime,
+                            message.messageDisplayProperties?.serialize()
+                    )
 
-        val properties = AMQP.BasicProperties.Builder()
-        message.endtime?.millisFromCurrentTime()
-                ?.also { if (it < 0) return }
-                ?.let { addExpirationToProps(properties, it) }
+            val properties = AMQP.BasicProperties.Builder()
+            message.endtime?.millisFromCurrentTime()
+                    ?.also { time -> if (time < 0) return }
+                    ?.let { time -> addExpirationToProps(properties, time) }
 
-        if (message.properties == null || message.properties?.size == 0) {
-            channel.basicPublish("amq.topic", message.topic, properties.build(), messageSerializable.toByteArray())
-        } else {
-            addHeaderProps(properties, message.properties)
-            channel.basicPublish("amq.headers", "", properties.build(), messageSerializable.toByteArray())
+            if (message.properties == null || message.properties?.size == 0) {
+                it.basicPublish("amq.topic", message.topic, properties.build(), messageSerializable.toByteArray())
+            } else {
+                addHeaderProps(properties, message.properties)
+                it.basicPublish("amq.headers", "", properties.build(), messageSerializable.toByteArray())
+            }
+
+            it.close()
         }
-
-        channel.close()
+        if (channel == null) {
+            logger.warn("Could not send message. Could not connect to broker.")
+        }
     }
 
     /**
@@ -134,9 +142,9 @@ class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelS
             messageRepository
                     .findAllFiltered(
                             topicName = if (topicName.isNullOrBlank()) null else topicName,
-                            propertyName = if(propertyName.isNullOrBlank()) null else propertyName,
+                            propertyName = if (propertyName.isNullOrBlank()) null else propertyName,
                             searchString = searchString?.let {
-                                if (searchString.isNotBlank()) "%$searchString%"  else null
+                                if (searchString.isNotBlank()) "%$searchString%" else null
                             },
                             dateBegin = timeSpanBegin,
                             dateEnd = timeSpanEnd,
@@ -145,5 +153,5 @@ class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelS
                             title = if (title.isNullOrBlank()) null else "%$title%"
                     )
                     .filter { it::class.java != TemplateMessage::class.java }
-                    .map {MessageCompactDTO.toDTO(it) }
+                    .map { MessageCompactDTO.toDTO(it) }
 }

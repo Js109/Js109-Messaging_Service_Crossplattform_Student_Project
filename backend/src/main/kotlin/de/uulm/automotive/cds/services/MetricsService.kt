@@ -11,9 +11,12 @@ import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.repositories.SubscriptionsRepository
 import khttp.structures.authorization.BasicAuthorization
 import org.json.JSONObject
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
+import java.net.ConnectException
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -36,6 +39,7 @@ class MetricsService @Autowired constructor(
 
     companion object {
         val mapper: ObjectMapper = ObjectMapper()
+        val logger: Logger = LoggerFactory.getLogger(MetricsService::class.java)
     }
 
     /**
@@ -321,22 +325,27 @@ class MetricsService @Autowired constructor(
      * TODO
      *
      */
-    fun getAndSaveRabbitMQMetrics() {
-        val response = khttp.get(
-                url = "http://$address:$port/api/bindings",
-                auth = BasicAuthorization(username, password)
-        )
+    fun getAndSaveRabbitMQMetrics() =
+        try {
+            val response = khttp.get(
+                    url = "http://$address:$port/api/bindings",
+                    auth = BasicAuthorization(username, password)
+            )
 
-        val metricsList: MutableList<JSONObject> = mutableListOf()
-        response.jsonArray
-                .forEach {
-                    metricsList.add(it as JSONObject)
-                }
+            val metricsList: MutableList<JSONObject> = mutableListOf()
+            response.jsonArray
+                    .forEach {
+                        metricsList.add(it as JSONObject)
+                    }
 
-        savePropertySubscriberForEachProperty(metricsList)
-        saveTopicSubscriberForEachTopic(metricsList)
-        saveTotalSubscriber(metricsList)
-    }
+            savePropertySubscriberForEachProperty(metricsList)
+            saveTopicSubscriberForEachTopic(metricsList)
+            saveTotalSubscriber(metricsList)
+        } catch (exception: ConnectException) {
+            logger.error("Could not connect to Broker.")
+        }
+
+
 
     /**
      * TODO
