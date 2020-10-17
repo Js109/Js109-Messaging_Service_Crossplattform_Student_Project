@@ -37,9 +37,9 @@ internal class SignUpControllerTest(@Autowired val mockMvc: MockMvc): BaseContro
 
         every { signUpRepository.save(any<Token>()) } returns token
         every { amqpChannelService.openChannel() } returns mockk()
-        every { amqpChannelService.openChannel().queueDeclare(any(), any(), any(), any(), any()) } returns mockk()
-        every { amqpChannelService.openChannel().queueBind(any(), any(), any(), any()) } returns mockk()
-        every { amqpChannelService.openChannel().close() } returns mockk()
+        every { amqpChannelService.openChannel()?.queueDeclare(any(), any(), any(), any(), any()) } returns mockk()
+        every { amqpChannelService.openChannel()?.queueBind(any(), any(), any(), any()) } returns mockk()
+        every { amqpChannelService.openChannel()?.close() } returns mockk()
         every { signUpRepository.findBySignUpToken(signUpInfo.signUpToken) } returns null
 
         mockMvc.post("/signup/") {
@@ -60,9 +60,9 @@ internal class SignUpControllerTest(@Autowired val mockMvc: MockMvc): BaseContro
     fun `try multiple sign ups with the same credentials`() {
         every { signUpRepository.save(any<Token>()) } returns token
         every { amqpChannelService.openChannel() } returns mockk()
-        every { amqpChannelService.openChannel().queueDeclare(any(), any(), any(), any(), any()) } returns mockk()
-        every { amqpChannelService.openChannel().queueBind(any(), any(), any(), any()) } returns mockk()
-        every { amqpChannelService.openChannel().close() } returns mockk()
+        every { amqpChannelService.openChannel()?.queueDeclare(any(), any(), any(), any(), any()) } returns mockk()
+        every { amqpChannelService.openChannel()?.queueBind(any(), any(), any(), any()) } returns mockk()
+        every { amqpChannelService.openChannel()?.close() } returns mockk()
         every { signUpRepository.findBySignUpToken(signUpInfo.signUpToken) } returns token
 
         mockMvc.post("/signup/") {

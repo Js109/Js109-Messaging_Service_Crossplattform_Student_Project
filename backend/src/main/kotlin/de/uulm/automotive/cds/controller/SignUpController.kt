@@ -41,7 +41,7 @@ class SignUpController @Autowired constructor(private val amqpService: AmqpChann
             // generate new unique identifier for the client and return it to the client
             val id = UUID.randomUUID()
 
-            val channel = amqpService.openChannel()?.let {
+            amqpService.openChannel()?.let {
                 it.queueDeclare("id/${id}", true, false, false, null)
                 val headersMap = HashMap<String, Any>()
                 headersMap["x-match"] = "any"
