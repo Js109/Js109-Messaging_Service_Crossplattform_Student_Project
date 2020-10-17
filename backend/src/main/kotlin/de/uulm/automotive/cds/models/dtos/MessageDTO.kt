@@ -61,18 +61,33 @@ data class MessageDTO(
 
         if (sender.isNullOrBlank()) {
             errors = errors.addError { it.senderError = "Sender field is required" }
+        } else if (sender!!.length > 127) {
+            errors = errors.addError { it.senderError = "Sender can not contain more than 127 characters." }
         }
 
         if (title.isNullOrBlank()) {
             errors = errors.addError { it.titleError = "Title field is required." }
+        } else if (title!!.length > 127) {
+            errors = errors.addError { it.titleError = "Title can not contain more than 127 characters." }
         }
 
         if (!(topic.isNullOrBlank().xor(properties.isNullOrEmpty()))) {
             errors = errors.addError { it.topicError = "Either Topics or Properties are required." }
         }
+        if (topic != null && topic!!.length > 200) {
+            errors = errors.addError { it.topicError = "Topic can not contain more than 200 characters." }
+        }
+
+        properties?.forEach {
+            if (it.length > 200) {
+                errors = errors.addError { err ->  err.propertyError = "Property can not contain more than 200 characters." }
+            }
+        }
 
         if (content.isNullOrEmpty() && (attachment == null || attachment!!.isEmpty())) {
             errors = errors.addError { it.contentError = "Either Content or Files are required." }
+        } else if (content != null && content!!.length > 1023) {
+            errors = errors.addError { it.contentError = "Content can not contain more than 1023 characters." }
         }
 
         if (!hasValidURLs()) {

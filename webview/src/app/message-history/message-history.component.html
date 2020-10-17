@@ -4,7 +4,9 @@
   <div class="row">
     <div class="col-md-4">
       <div class="input-group">
-        <input class="form-control py-2 border-right-0 border" type="search" value="Search" id="example-search-input"
+        <label for="example-search-input">Search in content, sender and title:</label>
+        <input class="form-control py-2 border-right-0 border" type="search" value="Search complete Message"
+               id="example-search-input"
                [(ngModel)]="messageFilter.searchString">
         <span class="input-group-append">
                     <div class="input-group-text bg-transparent"><i class="fa fa-search"></i></div>
@@ -13,25 +15,60 @@
     </div>
   </div>
 
-  <label>Period of time:</label>
-  <div class="d-flex">
-    <app-elektrobit-date-picker class="flex-grow-1 mb-2" [(date)]="messageFilter.starttimePeriod" [invalid]="hasDateRangeError"></app-elektrobit-date-picker>
-    <app-elektrobit-date-picker class="flex-grow-1" [(date)]="messageFilter.endtimePeriod" [invalid]="hasDateRangeError"></app-elektrobit-date-picker>
-  </div>
-  <div *ngIf="hasDateRangeError" class="mb-2 text-danger small" style="margin-left: 15px">If you select a start date you
-    must also select an end date and vice versa. The start date must also be before the end date.
+  <div class="input-group">
+    <label for="search-content">Search content:</label>
+    <input class="form-control py-2 border-right-0 border" type="search" value="Search content" id="search-content"
+           [(ngModel)]="messageFilter.content">
   </div>
 
-  <label for="topic">Topic:</label>
-  <select
-    class="browser-default custom-select"
-    name="topic" id="topic"
-    [(ngModel)]="messageFilter.topic"
-    [ngClass]="{'is-invalid' : hasTopicPropertiesError}">
-    <option selected></option>
-    <option *ngFor="let t of topics" [ngValue]="t.binding">{{t.title}}</option>
-  </select>
-  <div *ngIf="hasTopicPropertiesError" class="invalid-feedback">Either Topics or Properties are required.</div>
+  <div class="input-group">
+    <label for="search-sender">Search sender:</label>
+    <input class="form-control py-2 border-right-0 border" type="search" value="Search content" id="search-sender"
+           [(ngModel)]="messageFilter.sender">
+  </div>
+  <div class="input-group">
+    <label for="search-title">Search title:</label>
+    <input class="form-control py-2 border-right-0 border" type="search" value="Search content" id="search-title"
+           [(ngModel)]="messageFilter.title">
+  </div>
+
+  <label>Period of time:</label>
+  <div class="d-flex">
+    <app-elektrobit-date-picker-to-date class="flex-grow-1 mb-2" [(date)]="messageFilter.starttimePeriod"
+                                        [invalid]="hasDateRangeError"></app-elektrobit-date-picker-to-date>
+    <app-elektrobit-date-picker-to-date class="flex-grow-1" [(date)]="messageFilter.endtimePeriod"
+                                        [invalid]="hasDateRangeError"></app-elektrobit-date-picker-to-date>
+  </div>
+  <div *ngIf="hasDateRangeError" class="mb-2 text-danger small" style="margin-left: 15px">The start date must be before
+    the end date.
+  </div>
+  <div *ngIf="hasDatePickerOnlyOnceSelectedError" class="mb-2 text-danger small" style="margin-left: 15px">If you select
+    a start date you
+    must also select an end date and vice versa.
+  </div>
+
+  <mat-tab-group mat-stretch-tabs (selectedTabChange)="topicPropertySwitch($event)">
+    <mat-tab label="Topics">
+      <select
+        class="browser-default custom-select"
+        name="topic" id="topic"
+        [(ngModel)]="messageFilter.topic"
+        [ngClass]="{'is-invalid' : hasTopicPropertiesError}">
+        <option selected></option>
+        <option *ngFor="let t of topics" [ngValue]="t.binding">{{t.title}}</option>
+      </select>
+    </mat-tab>
+    <mat-tab label="Properties">
+      <select
+        class="browser-default custom-select"
+        name="topic" id="property"
+        [(ngModel)]="messageFilter.property"
+        [ngClass]="{'is-invalid' : hasTopicPropertiesError}">
+        <option selected></option>
+        <option *ngFor="let p of properties" [ngValue]="p[0].binding">{{p[0].name}}</option>
+      </select>
+    </mat-tab>
+  </mat-tab-group>
 
   <button type="button" class="btn btn-primary" style="margin-top:10px" (click)="showMessages()">Show</button>
 
@@ -86,7 +123,7 @@
       <td>{{message.starttime}}</td>
       <td>
         <button *ngIf="!message.isSent" style="margin-left: 35px" class="btn btn-light"
-                (click)="deleteMessage(message.id)">
+                (click)="open(content, message)">
           <svg width="1.8em" height="1.8em" viewBox="0 0 16 16" class="bi bi-trash"
                fill="currentColor"
                xmlns="http://www.w3.org/2000/svg">
@@ -111,5 +148,25 @@
     </tbody>
   </table>
 
+  <ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-title" style="margin-bottom: 0"><strong>Message deletion</strong></h4>
+      <button type="button" class="close" aria-label="Close Button" (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure you want to delete this message?</p>
+      <p>All information of this message are then permanently deleted.
+      </p>
+      <span class="text-danger">This operation can not be undone.</span>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="d('Cross click')">Cancel</button>
+      <button type="button" class="btn btn-danger"
+              (click)="deleteMessage(chosenMessage.id); d('Cross click')">Delete
+      </button>
+    </div>
+  </ng-template>
 </div>
 

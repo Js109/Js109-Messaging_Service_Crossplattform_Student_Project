@@ -4,6 +4,7 @@ package de.uulm.automotive.cds.services
 import com.rabbitmq.client.Channel
 import com.rabbitmq.client.Connection
 import com.rabbitmq.client.ConnectionFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 /**
@@ -11,24 +12,26 @@ import org.springframework.stereotype.Component
  * Other components can use this one to communicate with the broker.
  */
 @Component
-class AmqpChannelService() {
+class AmqpChannelService(
+        @Value("\${amq.broker.url}") private val address: String,
+        @Value("\${amq.broker.username}") private val username: String,
+        @Value("\${amq.broker.password}") private val password: String
+) {
 
-    private val connection: Connection
-
-    init {
-        val factory = ConnectionFactory()
-        factory.host = "134.60.157.15"
-        factory.username = "android_cl"
-        factory.password = "supersecure"
-        connection = factory.newConnection()
-    }
-
+    private val connection: Connection? = null
+    private val factory =
+            ConnectionFactory()
+                    .apply {
+                        this.host = address
+                        this.username = username
+                        this.password = password
+                    }
     /**
-     * Opens a new channel to the amqp broke.
+     * Opens a new channel to the amqp broker.
      * When the communication with the broker is done Channel.close() should be called.
      * @return Channel for communication with the amqp broker
      */
-    fun openChannel(): Channel {
-        return connection.createChannel()
-    }
+    fun openChannel(): Channel =
+            (connection ?: factory.newConnection())
+                    .createChannel()
 }

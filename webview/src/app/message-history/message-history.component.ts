@@ -10,8 +10,8 @@ import {NgbModalConfig, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {MatDialog} from '@angular/material/dialog';
 import {EditMessageDialogComponent} from './edit-message-dialog/edit-message-dialog.component';
 import {ViewMessageDialogComponent} from './view-message-dialog/view-message-dialog.component';
-import {Router} from '@angular/router'; // import router from angular router
-import {MessageComponent} from '../message/message.component';
+import {Router} from '@angular/router';
+import {MatTabChangeEvent} from "@angular/material/tabs"; // import router from angular router
 
 @Component({
   selector: 'app-message-history',
@@ -33,14 +33,22 @@ export class MessageHistoryComponent implements OnInit {
     searchString: '',
     starttimePeriod: '',
     endtimePeriod: '',
-    topic: ''
+    topic: '',
+    sender: '',
+    content: '',
+    title: '',
+    property: ''
   };
 
   topics: Topic[];
+  removedTopic: string;
   properties: [Property, boolean][];
+  removedProperty: string;
   messagesArray = [];
   hasDateRangeError = false;
+  hasDatePickerOnlyOnceSelectedError = false;
   hasTopicPropertiesError = false;
+  chosenMessage;
 
   ngOnInit(): void {
     this.http.get(environment.backendApiPath + '/topic', {responseType: 'json'})
@@ -50,10 +58,11 @@ export class MessageHistoryComponent implements OnInit {
   }
 
   validateInputs(): boolean {
-    this.hasDateRangeError = ((this.messageFilter.starttimePeriod === '' && this.messageFilter.endtimePeriod !== '') ||
-      (this.messageFilter.starttimePeriod !== '' && this.messageFilter.endtimePeriod === '') ||
-      new Date(this.messageFilter.starttimePeriod).getTime() > new Date(this.messageFilter.endtimePeriod).getTime());
-    return !(this.hasDateRangeError);
+    this.hasDatePickerOnlyOnceSelectedError = ((this.messageFilter.starttimePeriod === '' && this.messageFilter.endtimePeriod !== '') ||
+      (this.messageFilter.starttimePeriod !== '' && this.messageFilter.endtimePeriod === ''));
+
+    this.hasDateRangeError = new Date(this.messageFilter.starttimePeriod).getTime() > new Date(this.messageFilter.endtimePeriod).getTime();
+    return !(this.hasDateRangeError && this.hasDatePickerOnlyOnceSelectedError);
   }
 
   showMessages(): void {
@@ -63,7 +72,12 @@ export class MessageHistoryComponent implements OnInit {
         {
           params: new HttpParams().set('searchString', this.messageFilter.searchString)
             .set('startTimePeriod', this.messageFilter.starttimePeriod)
-            .set('endTimePeriod', this.messageFilter.endtimePeriod).set('topic', this.messageFilter.topic)
+            .set('endTimePeriod', this.messageFilter.endtimePeriod)
+            .set('topic', this.messageFilter.topic)
+            .set('content', this.messageFilter.content)
+            .set('sender', this.messageFilter.sender)
+            .set('title', this.messageFilter.title)
+            .set('property', this.messageFilter.property)
         };
 
       this.http.get<Message[]>(environment.backendApiPath + '/message', options)
@@ -143,5 +157,23 @@ export class MessageHistoryComponent implements OnInit {
           console.log(error);
         }
       );
+  }
+
+  topicPropertySwitch($event: MatTabChangeEvent): void {
+    if ($event.index === 0) {
+      this.removedProperty = this.messageFilter.property;
+      this.messageFilter.property = null;
+      this.messageFilter.topic = this.removedTopic;
+    }
+    if ($event.index === 1) {
+      this.removedTopic = this.messageFilter.topic;
+      this.messageFilter.topic = null;
+      this.messageFilter.property =  this.removedProperty;
+    }
+  }
+
+  open(content, message): void {
+    this.chosenMessage = message;
+    this.modalService.open(content);
   }
 }

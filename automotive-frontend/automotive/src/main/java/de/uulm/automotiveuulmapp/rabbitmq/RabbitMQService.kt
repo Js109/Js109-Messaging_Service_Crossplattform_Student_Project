@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.rabbitmq.client.*
 import de.uulm.automotive.cds.entities.MessageSerializable
+import de.uulm.automotiveuulmapp.ApplicationConstants.*
 import de.uulm.automotiveuulmapp.R
 import de.uulm.automotiveuulmapp.geofencing.CurrentLocationFetcher
 import de.uulm.automotiveuulmapp.geofencing.LocationDataFencer
@@ -33,11 +34,6 @@ class RabbitMQService : Service() {
     // used to store constants
     companion object {
         const val CHANNEL_ID = "123"
-
-        const val AMQ_HOST = "134.60.157.15"
-        const val AMQ_USER = "android_cl"
-        const val AMQ_PASSWORD = "supersecure"
-        const val EXCHANGE_NAME = "amq.topic"
 
         const val MSG_INIT_AMQP = 0
         const val MSG_CHANGE_TOPICS = 1
@@ -271,10 +267,10 @@ class RabbitMQService : Service() {
         val c = channel
         when {
             topicChange.active -> {
-                c.queueBind(queueName, EXCHANGE_NAME, topicChange.name)
+                c.queueBind(queueName, AMQ_EXCHANGE_NAME, topicChange.name)
             }
             !topicChange.active -> {
-                c.queueUnbind(queueName, EXCHANGE_NAME, topicChange.name)
+                c.queueUnbind(queueName, AMQ_EXCHANGE_NAME, topicChange.name)
             }
         }
     }

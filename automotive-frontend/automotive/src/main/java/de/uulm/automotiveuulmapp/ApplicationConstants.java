@@ -23,4 +23,9 @@ public abstract class ApplicationConstants {
     private static String APPLICATION_URL = BuildConfig.BACKEND_URL;
     public static final String ENDPOINT_SIGNUP = APPLICATION_URL + "/signup/";
     public static final String ENDPOINT_TOPIC = APPLICATION_URL + "/topic";
+
+    public static final String AMQ_HOST = BuildConfig.AMQ_BROKER_URL;
+    public static final String AMQ_USER = BuildConfig.AMQ_BROKER_USERNAME;
+    public static final String AMQ_PASSWORD = BuildConfig.AMQ_BROKER_PASS;
+    public static final String AMQ_EXCHANGE_NAME = BuildConfig.AMQ_BROKER_EXCHANGE;
 }
