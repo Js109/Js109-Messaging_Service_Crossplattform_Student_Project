@@ -37,7 +37,8 @@
     <app-elektrobit-date-picker class="flex-grow-1 mb-2" [(date)]="messageFilter.starttimePeriod"
                                 [invalid]="hasDateRangeError"></app-elektrobit-date-picker>
     <app-elektrobit-date-picker class="flex-grow-1" [(date)]="messageFilter.endtimePeriod"
-                                [invalid]="hasDateRangeError"></app-elektrobit-date-picker>
+                                [invalid]="hasDateRangeError"
+                                [minDate]="messageFilter.starttimePeriod"></app-elektrobit-date-picker>
   </div>
   <div *ngIf="hasDateRangeError" class="mb-2 text-danger small" style="margin-left: 15px">The start date must be before
     the end date.

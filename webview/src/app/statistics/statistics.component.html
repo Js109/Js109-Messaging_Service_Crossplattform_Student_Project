@@ -20,7 +20,7 @@
       <h3 class="mt-2 mb-0">Restrict Time Span:</h3>
       <div style="display: flex">
         <app-elektrobit-date-picker class="flex-grow-1 mb-2" [(date)]="metricsFilter.timeSpanBegin" (dateChange)="loadMetrics()"></app-elektrobit-date-picker>
-        <app-elektrobit-date-picker class="flex-grow-1 mb-2" [(date)]="metricsFilter.timeSpanEnd" (dateChange)="loadMetrics()"></app-elektrobit-date-picker>
+        <app-elektrobit-date-picker class="flex-grow-1 mb-2" [(date)]="metricsFilter.timeSpanEnd" (dateChange)="loadMetrics()" [minDate]="metricsFilter.timeSpanBegin"></app-elektrobit-date-picker>
       </div>
 
       <h3 class="mt-2 mb-0">Restrict to Topic:</h3>

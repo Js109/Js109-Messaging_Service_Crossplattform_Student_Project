@@ -2,7 +2,8 @@
   <mat-datepicker-toggle matSuffix [for]="starttimePicker" class="mr-2"></mat-datepicker-toggle>
   <input readonly [matDatepicker]="starttimePicker" class="bg-transparent border-0 flex-grow-1"
          [value]="stringToMomentDate(date)"
-         (dateChange)="momentToStringDate($event)"/>
+         (dateChange)="momentToStringDate($event)"
+         [min]="minDateValue"/>
   <mat-datepicker #starttimePicker></mat-datepicker>
   <button class="ml-auto  h-100" mat-icon-button aria-label="remove starttime" (click)="clearDate()"><mat-icon>clear</mat-icon></button>
 </div>
