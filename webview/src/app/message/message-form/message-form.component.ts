@@ -44,6 +44,7 @@ export class MessageFormComponent implements OnInit {
     } else {
       this.hasCustomColor = true;
     }
+    this.expirationFromMessage();
     this.properties = this.properties.map(property => [property[0], val.properties.some(value => value === property[0].binding)]);
   }
 
@@ -260,8 +261,9 @@ export class MessageFormComponent implements OnInit {
   setEndtimeFromExpirationOffset(): void {
     if (this.expirationOffsetType != null && this.expirationOffset != null) {
       const currentTime = new Date();
+      const startTime = new Date(Date.parse(this.message.starttime));
       const referenceTime = (this.message.starttime != null && this.message.starttime.length !== 0)
-        ? new Date(new Date(this.message.starttime).getTime() - currentTime.getTimezoneOffset() * 60 * 1000)
+        ? new Date(startTime.getTime() - startTime.getTimezoneOffset() * 60 * 1000)
         : new Date(currentTime.getTime() - currentTime.getTimezoneOffset() * 60 * 1000);
       const referenceTimeInMillis = referenceTime.getTime();
       let endTimeInMillis = null;
@@ -293,6 +295,32 @@ export class MessageFormComponent implements OnInit {
     }
   }
 
+  expirationFromMessage(): void {
+    if (this.message.starttime != null && this.message.endtime != null
+      && this.message.starttime.length !== 0 && this.message.endtime.length !== 0) {
+      const millis = Date.parse(this.message.endtime) - Date.parse(this.message.starttime);
+
+      const millisInAMinute = 60 * 1000;
+      const millisInAnHour = 60 * millisInAMinute;
+      const millisInADay = 24 * millisInAnHour;
+      const millisInAWeek = 7 * millisInADay;
+
+      if (millis % millisInAWeek === 0) {
+        this.expirationOffsetType = OffsetType.Week;
+        this.expirationOffset = millis / millisInAWeek;
+      } else if (millis % millisInADay === 0) {
+        this.expirationOffsetType = OffsetType.Day;
+        this.expirationOffset = millis / millisInADay;
+      } else if (millis % millisInAnHour === 0) {
+        this.expirationOffsetType = OffsetType.Hour;
+        this.expirationOffset = millis / millisInAnHour;
+      } else if (millis % millisInAMinute === 0) {
+        this.expirationOffsetType = OffsetType.Minute;
+        this.expirationOffset = millis / millisInAMinute;
+      }
+    }
+  }
+
   topicPropertySwitch($event: MatTabChangeEvent): void {
     if ($event.index === 0) {
       this.message.properties = [];
@@ -308,5 +336,4 @@ export class MessageFormComponent implements OnInit {
   propertiesSelect(): void {
     this.message.properties = this.properties.filter(value => value[1]).map(value => value[0].binding);
   }
-
 }

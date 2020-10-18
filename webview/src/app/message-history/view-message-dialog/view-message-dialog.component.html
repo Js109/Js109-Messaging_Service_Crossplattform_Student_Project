@@ -79,12 +79,12 @@
 
   <div class="row">
     <div class="col-3">
-      <h3>Topic</h3>
+      <h3>Expiration</h3>
     </div>
-    <div *ngIf="message.endtime != null && message.endtime.length !== 0" class="col">
-      <h3>{{message.endtime}}</h3>
+    <div *ngIf="expirationString.length !== 0" class="col">
+      <h3>{{expirationString}}</h3>
     </div>
-    <div *ngIf="!(message.endtime != null && message.endtime.length !== 0)" class="col">
+    <div *ngIf="expirationString.length === 0" class="col">
       <h3>No expiration selected.</h3>
     </div>
   </div>
