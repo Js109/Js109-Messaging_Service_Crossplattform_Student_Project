@@ -227,7 +227,8 @@ internal class MessageControllerTest(@Autowired val mockMvc: MockMvc) : BaseCont
     @Test
     fun `update complete Message`() {
         every { messageRepository.save(any<Message>()) } returns getMessage()
-        every { messageRepository.findById(any<Long>()) } returns Optional.of(getMessage()) // returns Optional.of(Empty)
+        every { messageRepository.findById(any<Long>()) } returns Optional.of(getMessage())
+        every { messageService.sendMessage(any()) } returns Unit
 
         mockMvc.put("/message/1") {
             accept = MediaType.APPLICATION_JSON
