@@ -4,18 +4,24 @@
       <h2 class="mt-2">Statistics</h2>
       <mat-divider></mat-divider>
 
-      <h2 class="mt-2 mb-2">Topics by Popularity</h2>
-      <select
-        class="browser-default custom-select"
-        [(ngModel)]="showTop5">
-        <option [ngValue]="true">Top 5 Topics</option>
-        <option [ngValue]="false">All Topics</option>
-      </select>
+      <ng-container *ngIf="topicCount > 0">
+        <h2 class="mt-2 mb-2">Topics by Popularity</h2>
+        <select
+          class="browser-default custom-select"
+          [(ngModel)]="showProportionChart">
+          <option [ngValue]="true">Topics by Proportion</option>
+          <option [ngValue]="false">List of all Topics</option>
+        </select>
 
-      <div *ngIf="showTop5" echarts [options]="topicsPieOptions"></div>
-      <div *ngIf="!showTop5" echarts [options]="topicsBarOptions"></div>
+        <input *ngIf="showProportionChart" type="range" min="1" [max]="topicCount" class="slider mt-2" id="radiusRange" name="radius"
+               [(ngModel)]="proportionTopicsCount" (ngModelChange)="setupTopicCharts()">
+        <div *ngIf="showProportionChart" echarts [options]="topicsPieOptions"></div>
+        <div *ngIf="!showProportionChart" echarts [options]="topicsBarOptions"></div>
 
-      <mat-divider></mat-divider>
+        <mat-divider></mat-divider>
+      </ng-container>
+
+      <h2 class="mt-2">Time based Statistics</h2>
 
       <h3 class="mt-2 mb-0">Restrict Time Span:</h3>
       <div style="display: flex">
@@ -33,17 +39,17 @@
         <option *ngFor="let t of topics" [ngValue]="t.binding">{{t.title}}</option>
       </select>
       <div style="display: flex;">
-        <h3 *ngIf="metrics.sentMessagesTotalGain" class="col">Sent Message: {{metrics.sentMessagesTotalGain}}</h3>
-        <h3 *ngIf="metrics.mostActiveWeekdayTimeSpan" class="col">Most active day: {{metrics.mostActiveWeekdayTimeSpan.toLowerCase()}}</h3>
+        <h3 *ngIf="metrics.sentMessagesTotalGain" class="col"><strong>Sent Message:</strong> {{metrics.sentMessagesTotalGain}}</h3>
+        <h3 *ngIf="metrics.mostActiveWeekdayTimeSpan" class="col"><strong>Most active day:</strong> {{metrics.mostActiveWeekdayTimeSpan.toLowerCase()}}</h3>
       </div>
       <div style="display: flex;">
-        <h3 *ngIf="metrics.mostActiveSenderTimeSpan" class="col">Most active sender: {{metrics.mostActiveSenderTimeSpan}}</h3>
-        <h3 *ngIf="metrics.subscriberTotalGainOverTimespan" class="col">Overall Subscriber Gain: {{metrics.subscriberTotalGainOverTimespan}}</h3>
+        <h3 *ngIf="metrics.mostActiveSenderTimeSpan" class="col"><strong>Most active sender:</strong> {{metrics.mostActiveSenderTimeSpan}}</h3>
+        <h3 *ngIf="metrics.subscriberTotalGainOverTimespan" class="col"><strong>Overall Subscriber Gain:</strong> {{metrics.subscriberTotalGainOverTimespan}}</h3>
       </div>
 
-      <div echarts [options]="sentMessagesOptions"></div>
+      <div *ngIf="hasMessageDates" echarts [options]="sentMessagesOptions"></div>
       <div echarts [options]="messagesByTimeOfDayOptions"></div>
-      <div echarts [options]="subscriberGainOptions"></div>
+      <div *ngIf="hasSubscriberDates" echarts [options]="subscriberGainOptions"></div>
 
     </div>
   </mat-sidenav-content>
