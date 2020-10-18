@@ -39,12 +39,12 @@
         <option *ngFor="let t of topics" [ngValue]="t.binding">{{t.title}}</option>
       </select>
       <div style="display: flex;">
-        <h3 *ngIf="metrics.sentMessagesTotalGain" class="col">Sent Message: {{metrics.sentMessagesTotalGain}}</h3>
-        <h3 *ngIf="metrics.mostActiveWeekdayTimeSpan" class="col">Most active day: {{metrics.mostActiveWeekdayTimeSpan.toLowerCase()}}</h3>
+        <h3 *ngIf="metrics.sentMessagesTotalGain" class="col"><strong>Sent Message:</strong> {{metrics.sentMessagesTotalGain}}</h3>
+        <h3 *ngIf="metrics.mostActiveWeekdayTimeSpan" class="col"><strong>Most active day:</strong> {{metrics.mostActiveWeekdayTimeSpan.toLowerCase()}}</h3>
       </div>
       <div style="display: flex;">
-        <h3 *ngIf="metrics.mostActiveSenderTimeSpan" class="col">Most active sender: {{metrics.mostActiveSenderTimeSpan}}</h3>
-        <h3 *ngIf="metrics.subscriberTotalGainOverTimespan" class="col">Overall Subscriber Gain: {{metrics.subscriberTotalGainOverTimespan}}</h3>
+        <h3 *ngIf="metrics.mostActiveSenderTimeSpan" class="col"><strong>Most active sender:</strong> {{metrics.mostActiveSenderTimeSpan}}</h3>
+        <h3 *ngIf="metrics.subscriberTotalGainOverTimespan" class="col"><strong>Overall Subscriber Gain:</strong> {{metrics.subscriberTotalGainOverTimespan}}</h3>
       </div>
 
       <div *ngIf="hasMessageDates" echarts [options]="sentMessagesOptions"></div>
