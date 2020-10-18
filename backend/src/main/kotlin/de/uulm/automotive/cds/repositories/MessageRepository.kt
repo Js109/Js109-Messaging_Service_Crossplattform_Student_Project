@@ -19,24 +19,25 @@ interface MessageRepository : CrudRepository<Message, Long> {
             "and " +
             "(COALESCE(:dateEnd) is null or m.starttime <= :dateEnd)" +
             "and" +
-            "(:searchString is null or " +
-            "(m.sender like :searchString or m.title like :searchString or m.content like :searchString))" +
+            "(:searchString = :emptyString or " +
+            "(m.sender like lower('%' || :searchString || '%') or m.title like lower('%' || :searchString || '%') or m.content like lower('%' || :searchString  || '%')))" +
             "and" +
-            "(:sender is null or m.sender like :sender)" +
+            "(:sender = :emptyString or lower(m.sender) like lower('%' || :sender || '%'))" +
             "and" +
-            "(:content is null or m.content like :content)" +
+            "(:content = :emptyString or lower(m.content) like lower('%' || :content || '%'))" +
             "and" +
-            "(:title is null or m.title like :title)" +
+            "(:title = :emptyString or lower(m.title) like lower('%' || :title || '%'))" +
             ")")
     fun findAllFiltered(
             @Param("topicName") topicName: String? = null,
             @Param("propertyName") propertyName: String? = null,
-            @Param("searchString") searchString: String? = null,
-            @Param("sender") sender: String? = null,
-            @Param("content") content: String? = null,
-            @Param("title") title: String? = null,
+            @Param("searchString") searchString: String = "",
+            @Param("sender") sender: String = "",
+            @Param("content") content: String = "",
+            @Param("title") title: String = "",
             @Param("dateBegin") dateBegin: LocalDateTime? = null,
-            @Param("dateEnd") dateEnd: LocalDateTime? = null
+            @Param("dateEnd") dateEnd: LocalDateTime? = null,
+            @Param("emptyString") emptyString: String = ""
     ): Iterable<Message>
 
     fun findAllByIsSentFalseOrderByStarttimeAsc(): Iterable<Message>
