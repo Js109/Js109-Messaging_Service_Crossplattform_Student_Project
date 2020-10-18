@@ -20,6 +20,8 @@ export class ElektrobitDateTimePickerComponent implements OnInit {
   @Input()
   invalid = false;
 
+  currentDate = moment();
+
   /**
    * Field storing the current date in the date picker calendar to return it in the binding function
    * to prevent unnecessary rebuilding of the calendar.
