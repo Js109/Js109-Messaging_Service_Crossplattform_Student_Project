@@ -180,12 +180,12 @@ export class MessageHistoryComponent implements OnInit {
   topicPropertySwitch($event: MatTabChangeEvent): void {
     if ($event.index === 0) {
       this.removedProperty = this.messageFilter.property;
-      this.messageFilter.property = null;
+      this.messageFilter.property = '';
       this.messageFilter.topic = this.removedTopic;
     }
     if ($event.index === 1) {
       this.removedTopic = this.messageFilter.topic;
-      this.messageFilter.topic = null;
+      this.messageFilter.topic = '';
       this.messageFilter.property = this.removedProperty;
     }
   }
