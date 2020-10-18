@@ -37,6 +37,7 @@ import {NgxEchartsModule} from 'ngx-echarts';
 import {ElektrobitDateTimePickerComponent} from './elektrobit-date-time-picker/elektrobit-date-time-picker.component';
 import {ElektrobitDatePickerComponent} from './elektrobit-date-picker/elektrobit-date-picker.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -84,6 +85,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     MatButtonToggleModule,
     MatButtonToggleModule,
     MatTooltipModule,
+    NgbModule,
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
     })

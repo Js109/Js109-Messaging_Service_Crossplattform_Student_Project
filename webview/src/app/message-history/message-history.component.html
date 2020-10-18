@@ -16,48 +16,56 @@
     </div>
   </div>
 
-  <div class="row" style="margin-top: 10px">
-    <div class="col-1">
-      <div class="input-group">
-        <label for="search-content">Content:</label>
+  <p>
+    <button type="button" class="btn btn-outline-primary" (click)="isCollapsed = !isCollapsed" style="margin-top: 10px"
+            [attr.aria-expanded]="!isCollapsed" aria-controls="collapseSearchFields">
+      Show advanced search options
+    </button>
+  </p>
+  <div id="collapseSearchFields" [ngbCollapse]="isCollapsed">
+    <div class="row" style="margin-top: 10px">
+      <div class="col-1">
+        <div class="input-group">
+          <label for="search-content">Content:</label>
+        </div>
+      </div>
+      <div class="col-4">
+        <input class="form-control py-2 border" type="search" value="Search content"
+               id="search-content"
+               [(ngModel)]="messageFilter.content">
+      </div>
+      <div class="col">
       </div>
     </div>
-    <div class="col-4">
-      <input class="form-control py-2 border" type="search" value="Search content"
-             id="search-content"
-             [(ngModel)]="messageFilter.content">
-    </div>
-    <div class="col">
-    </div>
-  </div>
 
-  <div class="row" style="margin-top: 10px">
-    <div class="col-1">
-      <div class="input-group">
-        <label for="search-content">Sender:</label>
+    <div class="row" style="margin-top: 10px">
+      <div class="col-1">
+        <div class="input-group">
+          <label for="search-content">Sender:</label>
+        </div>
+      </div>
+      <div class="col-4">
+        <input class="form-control py-2 border" type="search" value="Search sender"
+               id="search-sender"
+               [(ngModel)]="messageFilter.sender">
+      </div>
+      <div class="col">
       </div>
     </div>
-    <div class="col-4">
-      <input class="form-control py-2 border" type="search" value="Search sender"
-             id="search-sender"
-             [(ngModel)]="messageFilter.sender">
-    </div>
-    <div class="col">
-    </div>
-  </div>
 
-  <div class="row" style="margin-top: 10px; margin-bottom: 10px">
-    <div class="col-1">
-      <div class="input-group">
-        <label for="search-content">Title:</label>
+    <div class="row" style="margin-top: 10px; margin-bottom: 10px">
+      <div class="col-1">
+        <div class="input-group">
+          <label for="search-content">Title:</label>
+        </div>
       </div>
-    </div>
-    <div class="col-4">
-      <input class="form-control py-2 border" type="search" value="Search title"
-             id="search-title"
-             [(ngModel)]="messageFilter.title">
-    </div>
-    <div class="col">
+      <div class="col-4">
+        <input class="form-control py-2 border" type="search" value="Search title"
+               id="search-title"
+               [(ngModel)]="messageFilter.title">
+      </div>
+      <div class="col">
+      </div>
     </div>
   </div>
 
