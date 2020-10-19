@@ -21,6 +21,7 @@ import de.uulm.automotiveuulmapp.R
 import de.uulm.automotiveuulmapp.messages.MessageContentActivity
 import de.uulm.automotiveuulmapp.messages.messagedb.MessageDao
 import de.uulm.automotiveuulmapp.messages.messagedb.MessageEntity
+import de.uulm.automotiveuulmapp.messages.pruneMessageTags
 import java.util.*
 
 class MessageAdapter(
@@ -76,7 +77,7 @@ class MessageAdapter(
         title.text = message.title
 
         val content = holder.itemView.findViewById<TextView>(R.id.message_content_text)
-        content.text = message.messageText
+        content.text = message.messageText?.pruneMessageTags()
 
         val readSymbol = holder.itemView.findViewById<TextView>(R.id.readSymbol)
         readSymbol.visibility = if (message.read) View.GONE else View.VISIBLE
