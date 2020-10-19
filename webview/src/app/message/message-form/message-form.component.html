@@ -1,7 +1,7 @@
 <h3 class="mt-3 mb-1">Message Content</h3>
 <div class="row mb-3">
   <div class="col-8">
-    <input class="form-control no-bottom-rounding text-center" placeholder="Title" style="font-size: 20px"
+    <input class="form-control no-bottom-rounding text-center" placeholder="Title" style="font-size: 20px" maxlength="127"
            [(ngModel)]="message.title"
            [ngClass]="{'is-invalid' : hasTitleError}"
            [style.background]="message.messageDisplayProperties.backgroundColor"
@@ -9,7 +9,7 @@
            [style.fontFamily]="fontFamilyToFontString(message.messageDisplayProperties.fontFamily)">
     <div *ngIf="hasTitleError" class="invalid-feedback">Title field is required.</div>
 
-    <textarea class="form-control message-content flex-grow-1 no-top-rounding border-top-0" placeholder="Content"
+    <textarea class="form-control message-content flex-grow-1 no-top-rounding border-top-0" placeholder="Content" maxlength="1023"
               [(ngModel)]="message.content"
               [ngClass]="{'is-invalid' : hasContentError}"
               [style.background]="message.messageDisplayProperties.backgroundColor"
@@ -122,7 +122,7 @@
 
 <label for="sender">Sender:</label>
 <div style="display: flex">
-  <input class="form-control col-10 no-right-rounding" name="sender"
+  <input class="form-control col-10 no-right-rounding" name="sender" maxlength="127"
          id="sender" placeholder="Sender"
          [(ngModel)]="message.sender"
          [ngClass]="{'is-invalid' : hasSenderError}">
