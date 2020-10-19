@@ -56,13 +56,13 @@ internal class MessageServiceTest {
 
     @Test
     fun `send messages`() {
-        every { amqpChannelService.openChannel().basicPublish(any(), any(), any(), any()) } returns mockk()
-        every { amqpChannelService.openChannel().close() } returns mockk()
+        every { amqpChannelService.openChannel()?.basicPublish(any(), any(), any(), any()) } returns mockk()
+        every { amqpChannelService.openChannel()?.close() } returns mockk()
 
         messageService.sendMessage(message2)
         messageService.sendMessage(message)
 
-        verify(exactly = 2) { amqpChannelService.openChannel().basicPublish(any(), any(), any(), any()) }
+        verify(exactly = 2) { amqpChannelService.openChannel()?.basicPublish(any(), any(), any(), any()) }
     }
 
     @Test
