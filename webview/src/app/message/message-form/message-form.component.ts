@@ -21,13 +21,38 @@ enum OffsetType {
 })
 export class MessageFormComponent implements OnInit {
 
+  constructor(private http: HttpClient) {
+  }
+
+  get message(): Message {
+    return this.messageValue;
+  }
+
+  @Input()
+  set message(val) {
+    this.messageValue = val;
+    if (this.message.messageDisplayProperties == null) {
+      this.message.messageDisplayProperties = {};
+    }
+    if (val.locationData != null) {
+      this.locationData = val.locationData;
+    }
+    if (val.messageDisplayProperties.fontColor == null || val.messageDisplayProperties.backgroundColor == null) {
+      this.hasCustomColor = false;
+      this.selectedFontColor = '#000000';
+      this.selectedBackgroundColor = '#ffffff';
+    } else {
+      this.hasCustomColor = true;
+    }
+    this.expirationFromMessage();
+    this.properties = this.properties.map(property => [property[0], val.properties.some(value => value === property[0].binding)]);
+  }
+
   // copying of global enums/functions to local fields for accessing in the template
   fontFamilyToFontString = fontFamilyToFontString;
   alignmentToAlignmentString = alignmentToAlignmentString;
   alignment = Alignment;
   fontFamily = FontFamily;
-
-  constructor(private http: HttpClient) { }
 
   topics: Topic[];
 
@@ -50,31 +75,11 @@ export class MessageFormComponent implements OnInit {
     locationData: null,
     messageDisplayProperties: {}
   };
-  get message(): Message {
-    return this.messageValue;
-  }
-  @Input()
-  set message(val) {
-    this.messageValue = val;
-    if (this.message.messageDisplayProperties == null){
-      this.message.messageDisplayProperties = {};
-    }
-    if (val.locationData != null) {
-      this.locationData = val.locationData;
-    }
-    if (val.messageDisplayProperties.fontColor == null || val.messageDisplayProperties.backgroundColor == null) {
-      this.hasCustomColor = false;
-      this.selectedFontColor = '#000000';
-      this.selectedBackgroundColor = '#ffffff';
-    } else {
-      this.hasCustomColor = true;
-    }
-    this.properties = this.properties.map(property => [property[0], val.properties.some(value => value === property[0].binding)]);
-  }
 
   locationData: LocationData = {radius: 50};
   expirationOffset: number;
   expirationOffsetType: OffsetType = null;
+  linkCounter = 1;
 
   hasTopicPropertiesError = false;
   hasSenderError = false;
@@ -174,6 +179,8 @@ export class MessageFormComponent implements OnInit {
   }
 
   addLink(): void {
+    this.message.content += '[Linkdescription](link' + this.linkCounter + ')';
+    this.linkCounter += 1;
     this.message.links.push('');
   }
 
@@ -183,14 +190,22 @@ export class MessageFormComponent implements OnInit {
 
   removeLink(pos: number): void {
     this.message.links.splice(pos, 1);
+    this.message.content = this.message.content.replace(new RegExp('\\[[^()\\[\\]]*]\\(link' + (pos + 1) + '\\)', 'i'), '');
+    for (let i = pos + 1; i < this.message.links.length + 1; i++) {
+      this.message.content = this.message.content.replace(new RegExp('\\[([^()\\[\\]]*?)]\\(link' + (i + 1) + '\\)', 'i'),
+        '[\$1](link' + i + ')');
+    }
+    this.linkCounter -= 1;
   }
 
   fileSelect(event: any): void {
     this.loadFileAsBas64(event.target.files[0],
       result => this.message.attachment = result);
+    this.message.content += '[img]';
   }
 
   removeAttachment(): void {
+    this.message.content = this.message.content.replace('[img]', '');
     this.message.attachment = '';
   }
 
@@ -246,8 +261,9 @@ export class MessageFormComponent implements OnInit {
   setEndtimeFromExpirationOffset(): void {
     if (this.expirationOffsetType != null && this.expirationOffset != null) {
       const currentTime = new Date();
+      const startTime = new Date(Date.parse(this.message.starttime));
       const referenceTime = (this.message.starttime != null && this.message.starttime.length !== 0)
-        ? new Date(new Date(this.message.starttime).getTime() - currentTime.getTimezoneOffset() * 60 * 1000)
+        ? new Date(startTime.getTime() - startTime.getTimezoneOffset() * 60 * 1000)
         : new Date(currentTime.getTime() - currentTime.getTimezoneOffset() * 60 * 1000);
       const referenceTimeInMillis = referenceTime.getTime();
       let endTimeInMillis = null;
@@ -274,8 +290,34 @@ export class MessageFormComponent implements OnInit {
         }
       }
       this.message.endtime = new Date(endTimeInMillis).toISOString();
-    } else{
+    } else {
       this.message.endtime = null;
+    }
+  }
+
+  expirationFromMessage(): void {
+    if (this.message.starttime != null && this.message.endtime != null
+      && this.message.starttime.length !== 0 && this.message.endtime.length !== 0) {
+      const millis = Date.parse(this.message.endtime) - Date.parse(this.message.starttime);
+
+      const millisInAMinute = 60 * 1000;
+      const millisInAnHour = 60 * millisInAMinute;
+      const millisInADay = 24 * millisInAnHour;
+      const millisInAWeek = 7 * millisInADay;
+
+      if (millis % millisInAWeek === 0) {
+        this.expirationOffsetType = OffsetType.Week;
+        this.expirationOffset = millis / millisInAWeek;
+      } else if (millis % millisInADay === 0) {
+        this.expirationOffsetType = OffsetType.Day;
+        this.expirationOffset = millis / millisInADay;
+      } else if (millis % millisInAnHour === 0) {
+        this.expirationOffsetType = OffsetType.Hour;
+        this.expirationOffset = millis / millisInAnHour;
+      } else if (millis % millisInAMinute === 0) {
+        this.expirationOffsetType = OffsetType.Minute;
+        this.expirationOffset = millis / millisInAMinute;
+      }
     }
   }
 
@@ -294,5 +336,4 @@ export class MessageFormComponent implements OnInit {
   propertiesSelect(): void {
     this.message.properties = this.properties.filter(value => value[1]).map(value => value[0].binding);
   }
-
 }

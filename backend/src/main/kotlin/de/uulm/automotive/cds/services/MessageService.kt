@@ -143,14 +143,12 @@ class MessageService @Autowired constructor(val amqpChannelService: AmqpChannelS
                     .findAllFiltered(
                             topicName = if (topicName.isNullOrBlank()) null else topicName,
                             propertyName = if (propertyName.isNullOrBlank()) null else propertyName,
-                            searchString = searchString?.let {
-                                if (searchString.isNotBlank()) "%$searchString%" else null
-                            },
+                            searchString = if (searchString.isNullOrBlank()) "" else searchString,
                             dateBegin = timeSpanBegin,
                             dateEnd = timeSpanEnd,
-                            sender = if (sender.isNullOrBlank()) null else "%$sender%",
-                            content = if (content.isNullOrBlank()) null else "%$content%",
-                            title = if (title.isNullOrBlank()) null else "%$title%"
+                            sender = if (sender.isNullOrBlank()) "" else sender,
+                            content = if (content.isNullOrBlank()) "" else content,
+                            title = if (title.isNullOrBlank()) "" else title
                     )
                     .filter { it::class.java != TemplateMessage::class.java }
                     .map { MessageCompactDTO.toDTO(it) }

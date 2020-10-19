@@ -14,7 +14,7 @@ android {
         versionCode 1
         versionName "1.0"
         buildConfigField "String", "BACKEND_URL", '"http://10.0.2.2:8080"'
-        buildConfigField "String", "AMQ_BROKER_URL", '"68fd7a21-267a-45d4-bbd7-d8331d9e2d3f.ul.bw-cloud-instance.org"'
+        buildConfigField "String", "AMQ_BROKER_URL", '"10.0.2.2"'
         buildConfigField "String", "AMQ_BROKER_USERNAME", '"android_cl"'
         buildConfigField "String", "AMQ_BROKER_PASS", '"supersecure"'
         buildConfigField "String", "AMQ_BROKER_EXCHANGE", '"amq.topic"'
@@ -40,22 +40,23 @@ android {
     // Specifies one flavor dimension.
     flavorDimensions "version"
     productFlavors {
+        // flavor for developing with a locally running backend server and amqp broker
         localBackend {
-            // Assigns this product flavor to the "version" flavor dimension.
-            // If you are using only one dimension, this property is optional,
-            // and the plugin automatically assigns all the module's flavors to
-            // that dimension.
             dimension "version"
             applicationIdSuffix ".localbackend"
             versionNameSuffix "-localbackend"
             getIsDefault().set(true)
         }
+        // flavor for remote backend/broker
+        // Set BACKEND_URL and AMQ_BROKER_URL to the respective addresses.
+        // Take notice that BACKEND_URL needs to include the port while AMQ_BORKER_URL does not.
+        // Also keep in mind that AMQ_BORKER_URL is not a http address and thus should not include 'http://' as a protocol.
         globalBackend {
             dimension "version"
             applicationIdSuffix ".globalbackend"
             versionNameSuffix "-globalbackend"
-            // set BACKEND_URL in
-            buildConfigField "String", "BACKEND_URL", '"https://elbitbackend.schuster.domains"'
+            buildConfigField "String", "BACKEND_URL", '"http://domain.for.remote.backend"'
+            buildConfigField "String", "AMQ_BROKER_URL", '"domain.for.remote.broker"'
         }
     }
 

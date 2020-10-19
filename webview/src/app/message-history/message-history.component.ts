@@ -11,7 +11,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {EditMessageDialogComponent} from './edit-message-dialog/edit-message-dialog.component';
 import {ViewMessageDialogComponent} from './view-message-dialog/view-message-dialog.component';
 import {Router} from '@angular/router';
-import {MatTabChangeEvent} from "@angular/material/tabs"; // import router from angular router
+import {MatTabChangeEvent} from '@angular/material/tabs'; // import router from angular router
 
 @Component({
   selector: 'app-message-history',
@@ -46,7 +46,7 @@ export class MessageHistoryComponent implements OnInit {
   removedProperty: string;
   messagesArray = [];
   hasDateRangeError = false;
-  hasDatePickerOnlyOnceSelectedError = false;
+  isDateValidationNeeded = false;
   hasTopicPropertiesError = false;
   chosenMessage;
 
@@ -58,11 +58,13 @@ export class MessageHistoryComponent implements OnInit {
   }
 
   validateInputs(): boolean {
-    this.hasDatePickerOnlyOnceSelectedError = ((this.messageFilter.starttimePeriod === '' && this.messageFilter.endtimePeriod !== '') ||
-      (this.messageFilter.starttimePeriod !== '' && this.messageFilter.endtimePeriod === ''));
+    this.isDateValidationNeeded = (this.messageFilter.endtimePeriod !== '' && this.messageFilter.starttimePeriod !== '');
 
-    this.hasDateRangeError = new Date(this.messageFilter.starttimePeriod).getTime() > new Date(this.messageFilter.endtimePeriod).getTime();
-    return !(this.hasDateRangeError && this.hasDatePickerOnlyOnceSelectedError);
+    if (this.isDateValidationNeeded === true) {
+      this.hasDateRangeError =
+        new Date(this.messageFilter.starttimePeriod).getTime() > new Date(this.messageFilter.endtimePeriod).getTime();
+    }
+    return !(this.hasDateRangeError);
   }
 
   showMessages(): void {
@@ -168,7 +170,7 @@ export class MessageHistoryComponent implements OnInit {
     if ($event.index === 1) {
       this.removedTopic = this.messageFilter.topic;
       this.messageFilter.topic = null;
-      this.messageFilter.property =  this.removedProperty;
+      this.messageFilter.property = this.removedProperty;
     }
   }
 

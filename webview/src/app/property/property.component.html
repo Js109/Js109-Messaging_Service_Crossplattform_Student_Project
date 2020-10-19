@@ -5,7 +5,7 @@
 
       <div style="display: flex" class="mb-4">
         <input class="form-control col-9 no-right-rounding" name="name"
-               id="name" placeholder="Property Name"
+               id="name" placeholder="Property Name" maxlength="200"
                [(ngModel)]="property.name">
         <button type="button" class="btn btn-primary col no-left-rounding" (click)="createProperty()">Submit</button>
       </div>

@@ -144,6 +144,11 @@ class MessageController(private val repository: MessageRepository, private val m
         message.isSent = false
 
         return if (messageOld.get().isSent == false) {
+            if (message.starttime == null || message.starttime?.isBefore(LocalDateTime.now()) != false) {
+                message.starttime = LocalDateTime.now()
+                message.isSent = true
+                messageService.sendMessage(message)
+            }
             repository.save(message)
             ResponseEntity.status(HttpStatus.OK).build()
         } else ResponseEntity.status(HttpStatus.LOCKED).build()

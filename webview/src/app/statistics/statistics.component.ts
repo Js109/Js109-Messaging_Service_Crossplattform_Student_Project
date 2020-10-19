@@ -37,7 +37,13 @@ export class StatisticsComponent implements OnInit {
   topicsPieOptions: any;
   topicsBarOptions: any;
 
-  showTop5 = true;
+  topicCount = 0;
+
+  showProportionChart = true;
+  proportionTopicsCount = 5;
+
+  hasMessageDates = true;
+  hasSubscriberDates = true;
 
   ngOnInit(): void {
     this.http.get(environment.backendApiPath + '/topic', {responseType: 'json'})
@@ -66,49 +72,92 @@ export class StatisticsComponent implements OnInit {
       });
   }
 
-  metricsSpanBeginToMillis(value): number {
-    let min = value.min;
+  /**
+   * Creates a string array containing all dates between the start date and end date.
+   * If the respective fields are set in metricsFilter those values will be used instead.
+   * One day is added to the beginning and end of the range of dates.
+   * @param startDate Date at which the array should start. Is ignored if metricsFilter.timeSpanBegin is set.
+   * @param endDate Date at which the array should end. Is ignored if metricsFilter.timeSpanEnd is set.
+   */
+  private createListOfDates(startDate: number, endDate: number): string[] {
     if (this.metricsFilter.timeSpanBegin != null) {
-      min = Date.parse(this.metricsFilter.timeSpanBegin);
+      startDate = Date.parse(this.metricsFilter.timeSpanBegin);
     }
-    return min - 24 * 60 * 60 * 1000;
+    if (this.metricsFilter.timeSpanEnd != null) {
+      endDate = Date.parse(this.metricsFilter.timeSpanEnd);
+    }
+
+    const millisInADay = 1000 * 60 * 60 * 24;
+    startDate = startDate - millisInADay;
+    endDate = endDate + millisInADay;
+
+    const dates = [];
+
+    for (let i = startDate; i <= endDate; i = i + millisInADay) {
+      dates.push(i);
+    }
+
+    return dates.map(v => {
+      return new Date(v).toISOString().slice(0, 10);
+    });
   }
 
-  metricsSpanEndToMillis(value): number {
-    let max = value.max;
-    if (this.metricsFilter.timeSpanEnd != null) {
-      max = Date.parse(this.metricsFilter.timeSpanEnd);
+  /**
+   * Finds the smallest/largest date in the sentMessages and scheduledMessages array and calls createListOfDates with those values.
+   */
+  private createMessageDateList(sentMessages: [string, number][], scheduledMessages: [string, number][]): string[] {
+    if (sentMessages.length === 0 && scheduledMessages.length === 0) {
+      return [];
     }
-    return max + 24 * 60 * 60 * 1000;
+
+    const sentDates = sentMessages
+      .map(value => Date.parse(value[0]))
+      .sort((a, b) => a - b);
+    const scheduledDates = scheduledMessages
+      .map(value => Date.parse(value[0]))
+      .sort((a, b) => a - b);
+
+    let startDate;
+    let endDate;
+
+    if (sentDates.length !== 0) {
+      startDate = sentDates[0];
+      endDate = sentDates[sentDates.length - 1];
+    }
+
+    if (scheduledDates.length !== 0) {
+      if (scheduledDates[0] < startDate) {
+        startDate = scheduledDates[0];
+      }
+      if (scheduledDates[scheduledDates.length - 1] > endDate) {
+        endDate = scheduledDates[scheduledDates.length - 1];
+      }
+    }
+
+    return this.createListOfDates(startDate, endDate);
   }
 
   setupMessageChart(): void {
-    const sentMessages = Object.entries(this.metrics.sentMessagesByDateTimeSpan);
-    const scheduledMessages = Object.entries(this.metrics.scheduledMessagesByDateTimeSpan);
+    const sentMessages = Object.entries(this.metrics.sentMessagesByDateTimeSpan) as [string, number][];
+    const scheduledMessages = Object.entries(this.metrics.scheduledMessagesByDateTimeSpan) as [string, number][];
+
+    const dates = this.createMessageDateList(sentMessages, scheduledMessages);
+
+    this.hasMessageDates = dates.length !== 0;
 
     this.sentMessagesOptions = {
       title: {
         text: 'Messages per Day'
       },
       xAxis: {
-        type: 'time',
-        minInterval: 1000 * 60 * 60 * 24,
-        boundaryGap: true,
-        min: (value) => {
-          return this.metricsSpanBeginToMillis(value);
-        },
-        max: (value) => {
-          return this.metricsSpanEndToMillis(value);
-        },
-        axisLabel: {
-          formatter: (value, index) => {
-            const date = new Date(value);
-            return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
-          }
-        }
+        type: 'category',
+        data: dates,
+        min: dates[0],
+        max: dates[dates.length - 1]
       },
       yAxis: {
-        type: 'value'
+        type: 'value',
+        minInterval: 1
       },
       color: ['#339933', '#3F3F3F', '#00c400', '#646464', '#00EB00', '#c8c8c8'],
       legend: {
@@ -118,56 +167,67 @@ export class StatisticsComponent implements OnInit {
       },
       tooltip: {
         trigger: 'item',
-        formatter: '{b}'
+        formatter: '{c} Messages'
       },
       series: [{
         type: 'bar',
         barWidth: '90%',
         name: 'Sent messages',
-        data: sentMessages.map(v => ({value: [Date.parse(v[0]), v[1]], name: v[0]}))
+        data: sentMessages
       }, {
         type: 'bar',
         barWidth: '90%',
         name: 'Scheduled messages',
-        data: scheduledMessages.map(v => ({value: [Date.parse(v[0]), v[1]], name: v[0]}))
-      }]
+        data: scheduledMessages
+      }
+      ]
     };
   }
 
+  /**
+   * Finds the smallest/largest date in subscribers and calls createListOfDates with those values.
+   */
+  private createSubscriberDateList(subscribers: [string, number][]): string[] {
+    if (subscribers.length === 0) {
+      return [];
+    }
+
+    const subscriberDates = subscribers
+      .map(v => Date.parse(v[0]))
+      .sort((a, b) => a - b);
+    return this.createListOfDates(subscriberDates[0], subscriberDates[subscriberDates.length - 1]);
+  }
+
   setupSubscriberChart(): void {
-    const subscribers = Object.entries(this.metrics.subscriberGainByDateTimeSpan);
+    const subscribers = Object.entries(this.metrics.subscriberGainByDateTimeSpan) as [string, number][];
+
+    const dates = this.createSubscriberDateList(subscribers);
+
+    this.hasSubscriberDates = dates.length !== 0;
 
     this.subscriberGainOptions = {
       title: {
         text: 'Subscribers per Day'
       },
       xAxis: {
-        type: 'time',
-          min: (value) => {
-          return this.metricsSpanBeginToMillis(value);
-        },
-          max: (value) => {
-          return this.metricsSpanEndToMillis(value);
-        },
-          axisLabel: {
-          formatter: (value, index) => {
-            const date = new Date(value);
-            return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
-          }
-        }
+        type: 'category',
+        data: dates,
+        min: dates[0],
+        max: dates[dates.length - 1]
       },
       yAxis: {
-        type: 'value'
+        type: 'value',
+        minInterval: 1
       },
       color: ['#339933', '#3F3F3F', '#00c400', '#646464', '#00EB00', '#c8c8c8'],
       tooltip: {
         trigger: 'item',
-        formatter: '{b}'
+        formatter: '{c} Subscribers'
       },
       series: [{
         type: 'bar',
         barWidth: '90%',
-        data: subscribers.map(v => ({value: v, name: v[0]}))
+        data: subscribers
       }]
     };
   }
@@ -234,9 +294,10 @@ export class StatisticsComponent implements OnInit {
   }
 
   setupTopicCharts(): void {
-    const topics = Object.entries(this.topicDistribution).sort((a: [string, number], b: [string, number]) => a[1] - b[1]);
+    const topics = Object.entries(this.topicDistribution).sort((a: [string, number], b: [string, number]) => b[1] - a[1]);
 
-    const top5 = topics.slice(0, 5);
+    this.topicCount = topics.length;
+    const topicPicks = topics.slice(0, this.proportionTopicsCount);
 
     this.topicsPieOptions = {
       tooltip: {
@@ -248,7 +309,7 @@ export class StatisticsComponent implements OnInit {
         type: 'pie',
         radius: [20, 100],
         roseType: 'area',
-        data: top5.map(t => ({value: t[1], name: t[0]}))
+        data: topicPicks.map(t => ({value: t[1], name: t[0]}))
       }]
     };
 
@@ -258,7 +319,8 @@ export class StatisticsComponent implements OnInit {
       },
       yAxis: {
         type: 'category',
-        data: topics.map(v => v[0])
+        data: topics.map(v => v[0]),
+        inverse: true
       },
       color: ['#339933', '#3F3F3F', '#00c400', '#646464', '#00EB00', '#c8c8c8'],
       tooltip: {

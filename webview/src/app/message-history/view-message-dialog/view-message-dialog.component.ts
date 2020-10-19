@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {fontFamilyToFontString} from '../../models/FontFamily';
 import {alignmentToAlignmentString} from '../../models/Alignment';
+import {Message} from '../../models/Message';
 
 @Component({
   selector: 'app-view-message-dialog',
@@ -11,13 +12,44 @@ export class ViewMessageDialogComponent implements OnInit {
 
   constructor() { }
 
-  message;
+  messageVal;
+  get message(): Message {
+    return this.messageVal;
+  }
+  set message(message: Message) {
+    this.messageVal = message;
+    this.expirationFromMessage();
+  }
   fontFamilyToFontString = fontFamilyToFontString;
   alignmentToAlignmentString = alignmentToAlignmentString;
+
+  expirationString = '';
 
   ngOnInit(): void {
     if (this.message.messageDisplayProperties == null){
       this.message.messageDisplayProperties = {};
+    }
+  }
+
+  expirationFromMessage(): void {
+    if (this.message.starttime != null && this.message.endtime != null
+      && this.message.starttime.length !== 0 && this.message.endtime.length !== 0) {
+      const millis = Date.parse(this.message.endtime) - Date.parse(this.message.starttime);
+
+      const millisInAMinute = 60 * 1000;
+      const millisInAnHour = 60 * millisInAMinute;
+      const millisInADay = 24 * millisInAnHour;
+      const millisInAWeek = 7 * millisInADay;
+
+      if (millis % millisInAWeek === 0) {
+        this.expirationString = (millis / millisInAWeek) + ' Weeks';
+      } else if (millis % millisInADay === 0) {
+        this.expirationString = (millis / millisInAWeek) + ' Days';
+      } else if (millis % millisInAnHour === 0) {
+        this.expirationString = (millis / millisInAnHour) + ' Hours';
+      } else if (millis % millisInAMinute === 0) {
+        this.expirationString = (millis / millisInAMinute) + ' Minutes';
+      }
     }
   }
 

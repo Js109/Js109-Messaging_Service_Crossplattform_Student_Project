@@ -30,11 +30,13 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {NgxMatDatetimePickerModule} from '@angular-material-components/datetime-picker';
 import {NgxMatMomentModule} from '@angular-material-components/moment-adapter';
+import {MatMomentDateModule} from '@angular/material-moment-adapter';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {StatisticsComponent} from './statistics/statistics.component';
 import {NgxEchartsModule} from 'ngx-echarts';
+import {ElektrobitDateTimePickerComponent} from './elektrobit-date-time-picker/elektrobit-date-time-picker.component';
 import {ElektrobitDatePickerComponent} from './elektrobit-date-picker/elektrobit-date-picker.component';
-import {ElektrobitDatePickerToDateComponent} from './elektrobit-date-picker-to-date/elektrobit-date-picker-to-date.component';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -50,8 +52,8 @@ import {ElektrobitDatePickerToDateComponent} from './elektrobit-date-picker-to-d
     TopicDescriptionDialogComponent,
     EditMessageDialogComponent,
     ViewMessageDialogComponent,
+    ElektrobitDateTimePickerComponent,
     ElektrobitDatePickerComponent,
-    ElektrobitDatePickerToDateComponent,
     TopicDescriptionDialogComponent,
     StatisticsComponent,
     TopicDescriptionDialogComponent,
@@ -77,8 +79,11 @@ import {ElektrobitDatePickerToDateComponent} from './elektrobit-date-picker-to-d
     MatDatepickerModule,
     NgxMatDatetimePickerModule,
     NgxMatMomentModule,
+    MatMomentDateModule,
     MatIconModule,
     MatButtonToggleModule,
+    MatButtonToggleModule,
+    MatTooltipModule,
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
     })
