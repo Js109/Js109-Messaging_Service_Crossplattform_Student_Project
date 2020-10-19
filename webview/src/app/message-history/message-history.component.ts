@@ -10,8 +10,8 @@ import {NgbModalConfig, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {MatDialog} from '@angular/material/dialog';
 import {EditMessageDialogComponent} from './edit-message-dialog/edit-message-dialog.component';
 import {ViewMessageDialogComponent} from './view-message-dialog/view-message-dialog.component';
-import {Router} from '@angular/router';
-import {MatTabChangeEvent} from '@angular/material/tabs'; // import router from angular router
+import {Router} from '@angular/router'; // import router from angular router
+import {MatTabChangeEvent} from '@angular/material/tabs';
 
 @Component({
   selector: 'app-message-history',
@@ -49,6 +49,10 @@ export class MessageHistoryComponent implements OnInit {
   isDateValidationNeeded = false;
   hasTopicPropertiesError = false;
   chosenMessage;
+  isCollapsed = true;
+  tempContent;
+  tempSender;
+  tempTitle;
 
   ngOnInit(): void {
     this.http.get(environment.backendApiPath + '/topic', {responseType: 'json'})
@@ -69,6 +73,13 @@ export class MessageHistoryComponent implements OnInit {
 
   showMessages(): void {
     if (this.validateInputs()) {
+
+      if (this.isCollapsed === true){
+        this.tempContent = this.messageFilter.content;
+        this.tempSender = this.messageFilter.sender;
+        this.tempTitle = this.messageFilter.title;
+        this.messageFilter.content = ''; this.messageFilter.sender = ''; this.messageFilter.title = '';
+      }
       // Add safe, URL encoded search parameter if there is a search term
       const options =
         {
@@ -92,6 +103,11 @@ export class MessageHistoryComponent implements OnInit {
             console.log(error);
           }
         );
+      if (this.isCollapsed === true) {
+        this.messageFilter.content = this.tempContent;
+        this.messageFilter.sender = this.tempSender;
+        this.messageFilter.title = this.tempTitle;
+      }
     }
   }
 
