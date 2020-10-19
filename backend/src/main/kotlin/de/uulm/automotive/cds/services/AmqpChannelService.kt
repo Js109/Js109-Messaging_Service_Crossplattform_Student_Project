@@ -22,9 +22,9 @@ class AmqpChannelService(
     private val factory =
             ConnectionFactory()
                     .apply {
-                        this.host = address
-                        this.username = username
-                        this.password = password
+                        this.host = this@AmqpChannelService.address
+                        this.username = this@AmqpChannelService.username
+                        this.password = this@AmqpChannelService.password
                     }
     /**
      * Opens a new channel to the amqp broker.
