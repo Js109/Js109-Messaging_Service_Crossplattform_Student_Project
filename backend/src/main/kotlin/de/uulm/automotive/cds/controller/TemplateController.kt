@@ -32,6 +32,7 @@ class TemplateController(private val repository: TemplateRepository){
     fun postTemplate(@RequestBody template: TemplateMessage) {
         template.id = null
         template.messageDisplayProperties?.id = null
+        template.locationData?.id = null
         repository.save(template)
     }
 
