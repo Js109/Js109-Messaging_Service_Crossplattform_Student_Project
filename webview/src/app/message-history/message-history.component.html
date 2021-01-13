@@ -1,0 +1,213 @@
+<div class="container">
+  <h2>Message History</h2>
+
+  <label>Search:</label>
+  <div class="row">
+    <div class="col-5">
+      <div class="input-group">
+        <input class="form-control py-2 border-right-0 border" type="search" value="Search complete message"
+               placeholder="overall search in messages"
+               id="overall-search-input"
+               [(ngModel)]="messageFilter.searchString">
+        <span class="input-group-append">
+                    <div class="input-group-text bg-transparent"><i class="fa fa-search"></i></div>
+                </span>
+      </div>
+    </div>
+  </div>
+
+  <p>
+    <button type="button" class="btn btn-outline-primary" (click)="isCollapsed = !isCollapsed" style="margin-top: 10px"
+            [attr.aria-expanded]="!isCollapsed" aria-controls="collapseSearchFields">
+      Show advanced search options
+    </button>
+  </p>
+  <div id="collapseSearchFields" [ngbCollapse]="isCollapsed">
+    <div class="row" style="margin-top: 10px">
+      <div class="col-1">
+        <div class="input-group">
+          <label for="search-content">Content:</label>
+        </div>
+      </div>
+      <div class="col-4">
+        <input class="form-control py-2 border" type="search" value="Search content"
+               id="search-content"
+               [(ngModel)]="messageFilter.content">
+      </div>
+      <div class="col">
+      </div>
+    </div>
+
+    <div class="row" style="margin-top: 10px">
+      <div class="col-1">
+        <div class="input-group">
+          <label for="search-content">Sender:</label>
+        </div>
+      </div>
+      <div class="col-4">
+        <input class="form-control py-2 border" type="search" value="Search sender"
+               id="search-sender"
+               [(ngModel)]="messageFilter.sender">
+      </div>
+      <div class="col">
+      </div>
+    </div>
+
+    <div class="row" style="margin-top: 10px; margin-bottom: 10px">
+      <div class="col-1">
+        <div class="input-group">
+          <label for="search-content">Title:</label>
+        </div>
+      </div>
+      <div class="col-4">
+        <input class="form-control py-2 border" type="search" value="Search title"
+               id="search-title"
+               [(ngModel)]="messageFilter.title">
+      </div>
+      <div class="col">
+      </div>
+    </div>
+  </div>
+
+  <label>Period of time:</label>
+  <div class="d-flex">
+    <app-elektrobit-date-picker class="flex-grow-1 mb-2" [(date)]="messageFilter.starttimePeriod"
+                                [invalid]="hasDateRangeError"></app-elektrobit-date-picker>
+    <app-elektrobit-date-picker class="flex-grow-1" [(date)]="messageFilter.endtimePeriod"
+                                [invalid]="hasDateRangeError"
+                                [minDate]="messageFilter.starttimePeriod"></app-elektrobit-date-picker>
+  </div>
+  <div *ngIf="hasDateRangeError" class="mb-2 text-danger small" style="margin-left: 15px">The start date must be before
+    the end date.
+  </div>
+
+  <mat-tab-group mat-stretch-tabs (selectedTabChange)="topicPropertySwitch($event)">
+    <mat-tab label="Topics">
+      <select
+        class="browser-default custom-select"
+        name="topic" id="topic"
+        [(ngModel)]="messageFilter.topic"
+        [ngClass]="{'is-invalid' : hasTopicPropertiesError}">
+        <option selected [ngValue]="''"></option>
+        <option *ngFor="let t of topics" [ngValue]="t.binding">{{t.title}}</option>
+      </select>
+    </mat-tab>
+    <mat-tab label="Properties">
+      <select
+        class="browser-default custom-select"
+        name="topic" id="property"
+        [(ngModel)]="messageFilter.property"
+        [ngClass]="{'is-invalid' : hasTopicPropertiesError}">
+        <option selected [ngValue]="''"></option>
+        <option *ngFor="let p of properties" [ngValue]="p[0].binding">{{p[0].name}}</option>
+      </select>
+    </mat-tab>
+  </mat-tab-group>
+
+  <button type="button" class="btn btn-primary" style="margin-top:10px" (click)="showMessages()">Show</button>
+
+  <table class="table table-bordered" style="margin-top: 10px">
+    <thead>
+    <tr>
+      <th scope="col">Sender</th>
+      <th scope="col">Titel</th>
+      <th scope="col">Inhalt</th>
+      <th scope="col">gesendet?</th>
+      <th scope="col">Datum</th>
+      <th scope="col">Löschen</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let message of messagesArray">
+      <td>{{message.sender}}</td>
+      <td>{{message.title}}</td>
+      <td>{{message.content}}</td>
+      <td *ngIf="message.isSent">
+        <div class="d-flex justify-content-around align-items-center">
+          <button class="btn btn-light" (click)="viewMessage(message)">
+            <svg width="1.8em" height="1.8em" viewBox="0 0 16 16" class="bi bi-search"
+                 fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                    d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z"/>
+              <path fill-rule="evenodd"
+                    d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/>
+            </svg>
+          </button>
+          <svg width="1.8em" height="1.8em" viewBox="0 0 16 16"
+               class="bi bi-check-circle elektrobit-green" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+            <path fill-rule="evenodd"
+                  d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.236.236 0 0 1 .02-.022z"/>
+          </svg>
+        </div>
+      </td>
+      <td *ngIf="!message.isSent">
+        <div class="d-flex justify-content-around align-items-center">
+          <button class="btn btn-light" (click)="editMessage(message)">
+            <svg width="1.8em" height="1.8em" viewBox="0 0 16 16" class="bi bi-wrench"
+                 fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                    d="M.102 2.223A3.004 3.004 0 0 0 3.78 5.897l6.341 6.252A3.003 3.003 0 0 0 13 16a3 3 0 1 0-.851-5.878L5.897 3.781A3.004 3.004 0 0 0 2.223.1l2.141 2.142L4 4l-1.757.364L.102 2.223zm13.37 9.019L13 11l-.471.242-.529.026-.287.445-.445.287-.026.529L11 13l.242.471.026.529.445.287.287.445.529.026L13 15l.471-.242.529-.026.287-.445.445-.287.026-.529L15 13l-.242-.471-.026-.529-.445-.287-.287-.445-.529-.026z"/>
+            </svg>
+          </button>
+          <svg width="1.8em" height="1.8em" viewBox="0 0 16 16"
+               class="bi bi-arrow-right-circle"
+               fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+            <path fill-rule="evenodd"
+                  d="M4 8a.5.5 0 0 0 .5.5h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5A.5.5 0 0 0 4 8z"/>
+          </svg>
+        </div>
+      </td>
+      <td>{{message.starttime}}</td>
+      <td>
+        <div class="d-flex justify-content-around align-items-center">
+          <button *ngIf="!message.isSent" class="btn btn-light"
+                  (click)="open(content, message)">
+            <svg width="1.8em" height="1.8em" viewBox="0 0 16 16" class="bi bi-trash"
+                 fill="currentColor"
+                 xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+              <path fill-rule="evenodd"
+                    d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+            </svg>
+          </button>
+          <button *ngIf="message.isSent" style="color: lightgrey" class="btn btn-disabled" disabled>
+            <svg width="1.8em" height="1.8em" viewBox="0 0 16 16" class="bi bi-trash"
+                 fill="currentColor"
+                 xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+              <path fill-rule="evenodd"
+                    d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+            </svg>
+          </button>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-title" style="margin-bottom: 0"><strong>Message deletion</strong></h4>
+      <button type="button" class="close" aria-label="Close Button" (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure you want to delete this message?</p>
+      <p>All information of this message are then permanently deleted.
+      </p>
+      <span class="text-danger">This operation can not be undone.</span>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="d('Cross click')">Cancel</button>
+      <button type="button" class="btn btn-danger"
+              (click)="deleteMessage(chosenMessage.id); d('Cross click')">Delete
+      </button>
+    </div>
+  </ng-template>
+</div>
+

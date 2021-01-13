@@ -1,64 +1,95 @@
 package de.uulm.automotiveuulmapp
 
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
-import android.widget.VideoView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import de.uulm.automotiveuulmapp.welcome.WelcomeAppIntro
+import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import de.uulm.automotiveuulmapp.messages.messageFragment.MessageFragment
+import de.uulm.automotiveuulmapp.locationFavourites.LocationFavouritesFragment
+import de.uulm.automotiveuulmapp.messages.messagedb.MessageDatabase
+import de.uulm.automotiveuulmapp.topicFragment.TopicFragment
 
-/**
- * This is the MainActivity, which is the starting point of the application.
- * The onCreate() method is called first.
- * On the first Startup a Welcome Introduction is shown to the user controlled through
- * SharedPreferences 'isFirstRun' which will be set after the first run.
- */
-class MainActivity : AppCompatActivity() {
-    private val TIME_OUT = 4000
+class MainActivity : AppCompatActivity(){
+    companion object {
+        const val REQUEST_LOCATION_PERMISSIONS_CODE = 1
+    }
+
+    lateinit var hasNewMessagesLiveData: LiveData<Int>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_welcome_video)
+        setContentView(R.layout.main_activity)
+        val navBar = findViewById<BottomNavigationView>(R.id.bottomNavigationBar)
+        setHeadBar(R.string.header_bar_subscription_title)
+        loadFragment(TopicFragment())
 
-        // read the value of SharedPreferences with the name of PREFERENCE
-        val isFirstRun =
-            getSharedPreferences("FIRSTRUN", Context.MODE_PRIVATE)
-                .getBoolean("isFirstRun", true)
-
-        if (isFirstRun) {
-            // start the Introvideo from local storage
-            val view = findViewById<VideoView>(R.id.welcome_videoView)
-            val path = "android.resource://" + packageName + "/" + R.raw.video_file
-            view.setVideoURI(Uri.parse(path))
-            view.start()
-
-            // go to the next Activity after 4 seconds, when the video is played
-            Handler().postDelayed({
-                val i = Intent(this@MainActivity, WelcomeAppIntro::class.java)
-                startActivity(i)
-                finish()
-            }, TIME_OUT.toLong())
-        } else {
-            // start the Introvideo from local storage
-            val view = findViewById<VideoView>(R.id.welcome_videoView)
-            val path = "android.resource://" + packageName + "/" + R.raw.video_file
-            view.setVideoURI(Uri.parse(path))
-            view.start()
-
-            // go to the next Activity after 4 seconds, when the video is played
-            Handler().postDelayed({
-                // play the Video as starting point
-                val i = Intent(this@MainActivity, SubscribeActivity::class.java)
-                startActivity(i)
-                finish()
-            }, TIME_OUT.toLong())
+        navBar.setOnNavigationItemSelectedListener{item ->
+            var titleResourceId: Int? = null
+            val fragment = when(item.itemId) {
+                R.id.nav_item_messages -> {
+                    titleResourceId = R.string.header_bar_message_view_title
+                    MessageFragment()
+                }
+                R.id.nav_item_locations -> {
+                    titleResourceId = R.string.header_bar_location_favourites_title
+                    LocationFavouritesFragment()
+                }
+                R.id.nav_item_subscriptions -> {
+                    titleResourceId = R.string.header_bar_subscription_title
+                    TopicFragment()
+                }
+                else -> {
+                    null
+                }
+            }
+            setHeadBar(titleResourceId!!)
+            loadFragment(fragment)
         }
 
-        // set isFirstRun to false because it already started for the first time
-        getSharedPreferences("FIRSTRUN", Context.MODE_PRIVATE).edit()
-            .putBoolean("isFirstRun", false).commit()
+        navBar.setOnNavigationItemReselectedListener {
+            //do nothing when reselected
+        }
+
+        hasNewMessagesLiveData = MessageDatabase.getDaoInstance(this).newMessageCount()
+        hasNewMessagesLiveData.observeForever { count ->
+            val newMessagesSymbol = findViewById<TextView>(R.id.newMessagesSymbol)
+            newMessagesSymbol.visibility = if (count > 0) View.VISIBLE else View.INVISIBLE
+        }
+
+        if (ActivityCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION),
+                REQUEST_LOCATION_PERMISSIONS_CODE
+            )
+        }
+    }
+
+    private fun setHeadBar(title: Int) {
+        findViewById<Toolbar>(R.id.header_bar).setTitle(title)
+    }
+
+    private fun loadFragment(fragment: Fragment?): Boolean {
+        //switching fragment
+        if (fragment != null) {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commit()
+            return true
+        }
+        return false
     }
 }

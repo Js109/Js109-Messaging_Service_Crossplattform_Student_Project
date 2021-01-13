@@ -1,0 +1,11 @@
+<h2>Templates</h2>
+<mat-selection-list [multiple]="false" [(ngModel)]="selectedTemplate">
+  <mat-list-option *ngFor="let t of templates" [value]="t">{{t.templateName}}</mat-list-option>
+</mat-selection-list>
+<div class="row justify-content-around">
+  <button type="button" class="btn btn-primary col-4" (click)="selectTemplate()">Select</button>
+  <button type="button" class="btn btn-danger col-4" (click)="deleteTemplate()">Delete</button>
+</div>
+<div class="row justify-content-center">
+  <button type="button" class="btn btn-primary col-10" style="margin-top: 10px" (click)="saveTemplate()">Add new Template</button>
+</div>

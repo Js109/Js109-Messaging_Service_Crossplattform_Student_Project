@@ -3,6 +3,7 @@ package de.uulm.automotiveuulmapp.rabbitmq
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.*
 import android.os.Process.THREAD_PRIORITY_BACKGROUND
 import android.util.Log
@@ -11,12 +12,22 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.rabbitmq.client.*
 import de.uulm.automotive.cds.entities.MessageSerializable
-import de.uulm.automotiveuulmapp.MessageContentActivity
+import de.uulm.automotiveuulmapp.ApplicationConstants.*
 import de.uulm.automotiveuulmapp.R
+import de.uulm.automotiveuulmapp.geofencing.CurrentLocationFetcher
+import de.uulm.automotiveuulmapp.geofencing.LocationDataFencer
+import de.uulm.automotiveuulmapp.locationFavourites.locationFavData.LocationDatabase
+import de.uulm.automotiveuulmapp.messages.MessageContentActivity
+import de.uulm.automotiveuulmapp.messages.MessagePersistenceService
+import de.uulm.automotiveuulmapp.messages.messagedb.MessageDatabase
+import de.uulm.automotiveuulmapp.messages.messagedb.MessageEntity
+import de.uulm.automotiveuulmapp.messages.pruneMessageTags
+import de.uulm.automotiveuulmapp.notifications.DismissNotificationService
 import de.uulm.automotiveuulmapp.topic.TopicChange
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.io.ObjectInputStream
+import java.time.ZoneId
 import kotlin.random.Random.Default.nextInt
 
 class RabbitMQService : Service() {
@@ -24,11 +35,6 @@ class RabbitMQService : Service() {
     // used to store constants
     companion object {
         const val CHANNEL_ID = "123"
-
-        const val AMQ_HOST = "134.60.157.15"
-        const val AMQ_USER = "android_cl"
-        const val AMQ_PASSWORD = "supersecure"
-        const val EXCHANGE_NAME = "amq.topic"
 
         const val MSG_INIT_AMQP = 0
         const val MSG_CHANGE_TOPICS = 1
@@ -39,6 +45,7 @@ class RabbitMQService : Service() {
     private lateinit var channel: Channel
     private lateinit var queueName: String
 
+    private var locationFencer: LocationDataFencer? = null
 
     /**
      * Handler that receives messages from the thread
@@ -77,6 +84,11 @@ class RabbitMQService : Service() {
             serviceLooper = looper
             serviceHandler = ServiceHandler(looper)
         }
+
+        locationFencer = LocationDataFencer(
+            CurrentLocationFetcher(applicationContext),
+            LocationDatabase.getDatabaseInstance(applicationContext)
+        )
 
         createNotificationChannel()
     }
@@ -125,12 +137,40 @@ class RabbitMQService : Service() {
         val deliverCallback =
             DeliverCallback { _: String?, delivery: Delivery ->
                 val message = convertByteArrayToMessage(delivery.body)
-                notify(message)
+                // return if endtime in past
+                message.endtime?.let {
+                    it.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                        .minus(System.currentTimeMillis())
+                        .takeIf { timeDiff -> timeDiff < 0 }
+                        ?.let { return@DeliverCallback }
+                }
+                // if no location data or if current location is in location data show as heads up notification else store message if a stored location is in range of the location data
+                if (message.locationData == null || locationFencer?.currentPositionFencing(message.locationData) == true) {
+                    notify(message)
+                } else if (locationFencer?.storedLocationsFencing(message.locationData) == true) {
+                    MessageDatabase.getDaoInstance(this).insert(
+                        MessageEntity(
+                            null,
+                            message.sender,
+                            message.title,
+                            message.messageText,
+                            message.attachment,
+                            message.logoAttachment,
+                            message.links,
+                            false,
+                            false,
+                            message.messageDisplayProperties?.fontColor,
+                            message.messageDisplayProperties?.backgroundColor,
+                            message.messageDisplayProperties?.fontFamily,
+                            message.messageDisplayProperties?.alignment
+                        )
+                    )
+                }
             }
 
         Log.d("AMQP", " [*] Waiting for messages. To exit press CTRL+C")
         // start subscription on queue
-        channel.basicConsume(queueName, true, deliverCallback, CancelCallback {  })
+        channel.basicConsume(queueName, true, deliverCallback, CancelCallback { })
     }
 
     /**
@@ -159,21 +199,61 @@ class RabbitMQService : Service() {
      * @param message Message which should be displayed in the notification
      */
     private fun notify(message: MessageSerializable) {
-        val intent = Intent(this, MessageContentActivity::class.java)
-        intent.putExtra("message", message)
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle(message.title)
-            .setContentText(message.messageText)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingIntent)
-            .setCategory(Notification.CATEGORY_CALL)
-
+        // notificationId is a unique int for each notification that you must define
         val notificationId = nextInt()
 
+        val showMessageContentIntent = Intent(this, MessageContentActivity::class.java)
+        showMessageContentIntent.putExtra(MessageContentActivity.EXTRA_MESSAGE, message)
+        showMessageContentIntent.putExtra(MessageContentActivity.EXTRA_NOTIFICATION_ID, notificationId)
+
+
+        val pendingShowMessageContentIntent: PendingIntent =
+            PendingIntent.getActivity(
+                this,
+                1,
+                showMessageContentIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+
+        val storeMessageIntent = PendingIntent.getService(
+            this,
+            0,
+            MessagePersistenceService.generateNotificationPersistIntent(this, message, notificationId),
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val storeAction = NotificationCompat.Action.Builder(
+            android.R.drawable.ic_menu_save,
+            "Save",
+            storeMessageIntent
+        ).build()
+
+        val dismissMessageIntent = PendingIntent.getService(
+            this,
+            0,
+            DismissNotificationService.generateDismissNotificationIntent(this, notificationId),
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val dismissAction = NotificationCompat.Action.Builder(
+            android.R.drawable.ic_delete,
+            "Dismiss",
+            dismissMessageIntent
+        ).build()
+
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setLargeIcon(BitmapFactory.decodeByteArray(message.logoAttachment, 0, message.logoAttachment?.size ?: 0))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingShowMessageContentIntent)
+            .setCategory(Notification.CATEGORY_CALL)
+            .setContentTitle(message.title)
+            .setContentText(message.messageText?.pruneMessageTags())
+            .addAction(storeAction)
+            .addAction(dismissAction)
+
+
         with(NotificationManagerCompat.from(this)) {
-            // notificationId is a unique int for each notification that you must define
             notify(notificationId, builder.build())
         }
         Log.d("Notification", "Notification should be shown")
@@ -184,19 +264,19 @@ class RabbitMQService : Service() {
      *
      * @param topicChange Whether the subscription should be changed to active or inactive
      */
-    fun changeSubscription(topicChange: TopicChange){
+    fun changeSubscription(topicChange: TopicChange) {
         val c = channel
         when {
             topicChange.active -> {
-                c.queueBind(queueName, EXCHANGE_NAME, topicChange.name)
+                c.queueBind(queueName, AMQ_EXCHANGE_NAME, topicChange.name)
             }
             !topicChange.active -> {
-                c.queueUnbind(queueName, EXCHANGE_NAME, topicChange.name)
+                c.queueUnbind(queueName, AMQ_EXCHANGE_NAME, topicChange.name)
             }
         }
     }
 
-    fun convertByteArrayToMessage(byteArray: ByteArray): MessageSerializable {
+    private fun convertByteArrayToMessage(byteArray: ByteArray): MessageSerializable {
         val bis = ByteArrayInputStream(byteArray)
         try {
             val input = ObjectInputStream(bis)

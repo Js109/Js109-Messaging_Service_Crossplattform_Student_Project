@@ -1,0 +1,59 @@
+.message-panel {
+  height: 100%;
+}
+
+.top-height {
+  margin-top: 10px
+}
+
+.color-select {
+  width: 30px;
+  height: 30px;
+}
+
+.message-content {
+  min-height: 400px;
+  resize: none;
+}
+
+.message-url {
+  font-size: 10pt;
+}
+
+.message-url-delete {
+  width: 35px;
+  height: 30px;
+  font-size: 9pt;
+}
+
+.message-new-url {
+  height: 30px;
+  width: 100%;
+  font-size: 9pt;
+}
+
+.no-right-rounding {
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.no-left-rounding {
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}
+
+.no-bottom-rounding {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.no-top-rounding {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+
+.image-icon {
+  background-size: cover;
+  width: 35px;
+}

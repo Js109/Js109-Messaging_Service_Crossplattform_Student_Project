@@ -13,18 +13,75 @@
     <string name="welcome_subscription_explanation_titel">Für Channelregistrierungen setzen Sie entsprechende Switches auf aktiv!</string>
     <string name="welcome_subscription_explanation_subtitel">Der OEM behält es sich vor Sie auch ohne Abonnement gelegentlich zu informieren. Insbesondere versorgt er Sie auch in Krisensituationen mit Informationen.</string>
     <string name="welcome_imageView_description">An imageView to show how a subscripted topic should look like</string>
+    <string name="welcome_notification_explanation_titel">Heads-Up Notifications</string>
+    <string name="welcome_notification_imageView_description">Heads-Up Notification</string>
+    <string name="welcome_notification_explanation_subtitel">Neue Benachrichtigungen erscheinen als Heads-Up Notification am oberen Bildschirmrand. Die Nachricht kann dort verworfen oder auf dem Gerät abgespeichert werden.</string>
+    <string name="welcome_message_history_explanation_titel">Gespeicherte Nachrichten</string>
+    <string name="welcome_message_history_imageView_description">Nachrichten-Historie Screenshot</string>
+    <string name="welcome_message_history_explanation_subtitel">Hier werden abgespeicherte Nachrichten gelistet.\n Nachrichten können durch das Tippen auf das Stern-Symbol als Favoriten markiert werden, um sie leichter wiederzufinden. \nDurch das Tippen auf die Nachricht selbst wird die Nachricht in einer eigenen Ansicht geöffnet</string>
+    <string name="welcome_location_favourites_imageView_description">Location favourite screenshot</string>
+    <string name="welcome_location_favourites_explanation_titel">Location Favourites</string>
+    <string name="welcome_location_favourites_explanation_subtitel">Hier können Orte hinzugefügt werden, von welchen positionsabhängige Nachrichten empfangen werden, auch wenn der Nutzer sich gerade nicht dort befindet.\n\n Nachrichten, welche so empfangen werden, werden nicht als Heads-Up Notification dargestellt sondern direkt abgespeichert.</string>
     <string name="title_activity_my_custom_app_intro">AppIntro</string>
 
     <!-- Displayed strings -->
     <string name="topic_selection_heading">Wählen Sie Themen aus, über die Sie informiert werden möchten</string>
     <string name="notification_msg_title">Message from Queue</string>
     <string name="service_start_toast">Service starting</string>
-    <string name="image_content_description">Image</string>
     <string name="oem_topic_card_titel">Herstellerinhalte</string>
     <string name="oem_topic_card_description">Informationen und Nachrichten des Herstellers</string>
     <string name="oem_unsubsrice_impossible_message">Herstellerinformationen können nicht deabonniert werden</string>
 
     <!-- Message view strings -->
     <string name="close_message_view">close</string>
+    <string name="persist_message">Save Message</string>
 
+    <!-- Message Deletion Overlay Strings -->
+    <string name="swipe_hint">Swipe left to delete a message</string>
+    <string name="close_overlay_hint">Tap anywhere to continue</string>
+    <string name="swipe_direction_icon_description">Swipe direction left</string>
+    <string name="tap_icon_description">Tap screen</string>
+
+    <!-- Navigation view Strings-->
+    <string name="message_nav_item">Saved Messages</string>
+    <string name="location_nav_item">Location Favorites</string>
+    <string name="subscription_nav_item">Subscriptions</string>
+
+    <!-- Location view strings -->
+    <string name="location_name_label">Location Name</string>
+    <string name="address_label">Address</string>
+    <string name="location_not_accessible_error">Error: Location could not be read!</string>
+    <string name="location_permission_missing_error">Error: Check location permissions!</string>
+    <string name="device_location_button">Get device location button</string>
+    <string name="save_location_favourite_button">Save location favourite button</string>
+    <string name="location_name_field_hint">Location favourite name</string>
+    <string name="location_address_field_hint">Location address string</string>
+    <string name="marker_icon_description">Marker icon</string>
+    <string name="delete_location_button">Delete location button</string>
+    <string name="add_location_button">Add new location button</string>
+    <string name="location_fav_name_missing">Please enter a name for this location favourite</string>
+    <string name="location_fav_location_missing">Please enter a correct location</string>
+
+    <string name="location_deletion_dialogue_title">Delete location favourite</string>
+    <string name="location_deletion_dialogue_question">Do you really want to delete this location?</string>
+    <string name="title_activity_help_overlay">HelpOverlay</string>
+
+    <!-- Topic/S view strings -->
+    <string name="search_bar_hint">Filter</string>
+    <string name="unsubscribe_dialog_content">This topic has been disabled by the OEM. Once unsubscribed, you cannot subscribe again.\n Do you still want to unsubscribe?</string>
+
+    <!-- Main activity strings -->
+    <string name="header_bar_message_view_title">Saved Messages</string>
+    <string name="header_bar_location_favourites_title">Location Favourites</string>
+    <string name="header_bar_subscription_title">Topic Subscriptions</string>
+
+    <!-- Message content activity strings -->
+    <string name="youtube_icon_content_description">Youtube icon</string>
+    <string name="browser_icon_content_description">Browser icon</string>
+    <string name="image_content_description">Image</string>
+    <string name="message_deletion_dialog_content">Do you really want to delete this message?</string>
+
+    <!-- Dialog Options -->
+    <string name="dialog_confirmation_yes">Yes</string>
+    <string name="dialog_confirmation_no">No</string>
 </resources>

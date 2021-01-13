@@ -15,6 +15,7 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
@@ -26,15 +27,24 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation(group = "org.modelmapper", name = "modelmapper", version = "2.3.8")
+    implementation(group = "khttp", name = "khttp", version = "1.0.0")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("com.h2database:h2")
     runtimeOnly("org.postgresql:postgresql")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+        exclude(module = "junit")
+        exclude(module = "mockito-core")
     }
     testImplementation("org.springframework.amqp:spring-rabbit-test")
     testImplementation("org.awaitility:awaitility")
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation("com.ninja-squad:springmockk:1.1.3")
 }
+
+
 
 allOpen {
     annotation("javax.persistence.Entity")
@@ -47,6 +57,10 @@ tasks.withType<Test> {
     environment("DB_SOURCE", "jdbc:h2:mem:testdb")
     environment("DB_USERNAME", "sa")
     environment("DB_PASSWORD", "")
+    environment("AMQ_BROKER_URL", "")
+    environment("AMQ_BROKER_USER", "")
+    environment("AMQ_BROKER_PASS", "")
+    environment("AMQ_BROKER_HTTP_PORT", "")
 }
 
 tasks.withType<KotlinCompile> {

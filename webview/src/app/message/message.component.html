@@ -1,0 +1,18 @@
+<mat-sidenav-container autosize class="message-panel">
+  <mat-sidenav mode="side" opened="true" class="template-panel">
+    <app-template-load (templateSelected)="loadTemplate($event)" [currentMessage]="message"></app-template-load>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <div class="container">
+      <h2>Publish Message</h2>
+
+      <mat-divider></mat-divider>
+
+      <app-message-form [message]="message" #messageFormComponent></app-message-form>
+
+      <button type="button" class="btn btn-success top-height" (click)="sendMessage(messageFormComponent.retrieveMessage())">Submit</button>
+      <button type="button" class="btn btn-danger top-height" style="margin-left: 10px" (click)="clearMessage()">Clear
+      </button>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

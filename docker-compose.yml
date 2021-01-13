@@ -1,0 +1,48 @@
+version: "2"
+services:
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on: 
+      - db
+      - rabbitmq
+    ports:
+      - 8080:8080
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - DB_SOURCE=${DB_SOURCE}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - AMQ_BROKER_URL=${AMQ_BROKER_URL}
+      - AMQ_BROKER_HTTP_PORT=${AMQ_BROKER_HTTP_PORT}
+      - AMQ_BROKER_USER=${AMQ_BROKER_USER}
+      - AMQ_BROKER_PASS=${AMQ_BROKER_PASS}
+  db:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+
+  webview:
+    build:
+      context: ./webview
+      args: 
+        - PUBLIC_BACKEND_URL=${PUBLIC_BACKEND_URL}
+    restart: unless-stopped
+    ports:
+      - 80:4200
+  rabbitmq:
+    build: ./rabbitmq
+    restart: unless-stopped
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_USER=${AMQ_BROKER_USER}
+      - RABBITMQ_PASSWORD=${AMQ_BROKER_PASS}

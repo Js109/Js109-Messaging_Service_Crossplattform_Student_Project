@@ -9,5 +9,7 @@ import org.springframework.data.repository.CrudRepository
  *
  */
 interface TopicRepository : CrudRepository<Topic, Long> {
-    fun findAllByOrderByTitleAsc(): Iterable<Topic>
+    fun findAllByOrderByTitleAscIdAsc(): Iterable<Topic>
+    fun findAllByDisabledOrderByTitleAscIdAsc(disabled: Boolean): Iterable<Topic>
+    fun findByTitle(name: String): Topic?
 }

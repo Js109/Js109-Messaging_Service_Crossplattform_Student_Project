@@ -1,126 +1,923 @@
-swagger: "2.0"
+openapi: 3.0.1
 info:
-  description: "This is the backend application with the APIs of the Automotive App"
-  version: "1.0.0"
-  title: "Android Automotive Backend Documentation"
-  termsOfService: "http://swagger.io/terms/"
+  title: Android Automotive Backend Documentation
+  description: This is the backend application with the APIs of the Automotive App
+  termsOfService: http://swagger.io/terms/
   license:
-    name: "Apache 2.0"
-    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "localhost:8080"
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/
 tags:
-  - name: "Administration - OEM-Web Frontend"
-    description: "Any operations possible as oem (via the web UI)"
-  - name: "Client - Android Automotive Application"
-    description: "Any operations possible as client (Android Automotive UI)"
-schemes:
-  - "http"
+  - name: Administration - OEM-Web Frontend
+    description: Any operations possible as oem (via the web UI)
+  - name: Client - Android Automotive Application
+    description: Any operations possible as client (Android Automotive UI)
 paths:
   /topic:
     get:
       tags:
-        - "Administration - OEM-Web Frontend"
-        - "Client - Android Automotive Application"
-      summary: "Retrieve all existing topics for Notifications."
-      description: "Retrieve all possible topics which messages can be published to or clients can subscribe to."
-      produces:
-        - "application/json"
-      responses:
-        "200":
-          description: "OK"
+        - Administration - OEM-Web Frontend
+        - Client - Android Automotive Application
+      summary: Retrieve all existing topics for Notifications.
+      description: Retrieve all possible topics which messages can be published to
+        or clients can subscribe to.
+      parameters:
+        - name: showDisabledTopics
+          in: query
+          description: Allows to fetch topics which have been disabled
+          required: false
           schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Topic"
-        "400":
-          description: "Bad Request"
-        "404":
-          description: "Not Found"
+            type: boolean
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Topic'
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Not Found
+          content: {}
     post:
       tags:
-        - "Client - Android Automotive Application"
-      summary: "Store new topic for the Notifications."
-      description: "Stores the topic given in the body. If the id is left out one will be generated."
-      produces:
-        - "application/json"
+        - Administration - OEM-Web Frontend
+      summary: Store new topic for the Notifications.
+      description: Stores the topic given in the body. If the id is left out one will
+        be generated.
+      requestBody:
+        description: new topic to be stored
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/TopicDTO'
+        required: true
+      responses:
+        200:
+          description: Successful Operation
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+        422:
+          description: Unprocessable Entity
+          content: {}
+      x-codegen-request-body-name: body
+  /topic/{topicId}:
+    patch:
+      tags:
+        - Administration - OEM-Web Frontend
+      summary: Allows update of topic description
+      description: Updates a topic description, if the topic exists and it is not
+        disabled
       parameters:
-        - in: "body"
-          name: "body"
-          description: "Client-Id which should subscribe to topic"
+        - name: topicId
+          in: path
+          description: Id of the topic to get updated
           required: true
           schema:
-            $ref: "#/definitions/Topic"
+            type: number
+      requestBody:
+        description: Object with the updated description String
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/TopicUpdateDTO'
+        required: true
       responses:
-        "200":
-          description: "successful operation"
-        "400":
-          description: "Bad Request"
-        "404":
-          description: "Not Found"
+        200:
+          description: Topic successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Topic'
+        404:
+          description: Topic not found
+          content: {}
+        423:
+          description: The topic has been deactivated and cannot be changed anymore
+          content: {}
+      x-codegen-request-body-name: TopicUpdateDTO
+    put:
+      tags:
+        - Administration - OEM-Web Frontend
+      summary: Allows disabling and enabling of topics
+      description: The topic can be disabled to prevent further posting of messages to it.
+      parameters:
+        - name: topicId
+          in: path
+          description: Id of the topic to get enabled/disabled
+          required: true
+          schema:
+            type: number
+      requestBody:
+        description: Object with the new status of the topic
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/TopicDisableDTO'
+        required: true
+      responses:
+        200:
+          description: Topic successfully updated
+          content: {}
+        404:
+          description: Topic not found
+          content: {}
   /signup:
     post:
       tags:
-        - "Client - Android Automotive Application"
-      summary: "SignUp a new Client"
-      description: "Signs a new Client Up to recieve Notifications."
-      produces:
-        - "application/json"
+        - Client - Android Automotive Application
+      summary: SignUp a new Client
+      description: Signs a new Client Up to recieve Notifications.
+      requestBody:
+        description: The type of the device and an unique Identifier
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/SignUpInfo'
+        required: true
+      responses:
+        200:
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignUpTokenDTO'
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+      x-codegen-request-body-name: body
+  /message:
+    get:
+      tags:
+        - Administration - OEM-Web Frontend
+      summary: Gets all messages with the specified criteria.
+      description: The search criteria are passed as a search string, which must be
+        partially fulfilled, a date range and a topic. If you omit any of these criteria,
+        the search string will be ignored and everything will be returned. If at least
+        one message matches the given search criteria it will be sent back with all
+        properties. If not 404 is returned.
+      responses:
+        200:
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageCompactDTO'
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+    post:
+      tags:
+        - Administration - OEM-Web Frontend
+      summary: Posts a new message the will be published to the appropriate clients
+      description: Only sender, title, content and either topic or properties need
+        to be set
+      requestBody:
+        description: Message to be published
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/TopicMessageDTO'
+                - $ref: '#/components/schemas/PropertyMessageDTO'
+            examples:
+              TopicMessageDTOExample:
+                $ref: '#/components/examples/TopicMessageDTOExample'
+              PropertyMessageDTOExample:
+                $ref: '#/components/examples/PropertyMessageDTOExample'
+      responses:
+        200:
+          description: Successful Operation
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+        422:
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBadRequestInfo'
+      x-codegen-request-body-name: body
+  /message/{id}:
+    get:
+      tags:
+        - Administration - OEM-Web Frontend
+      summary: Retrieves the message with the given id form the backend
+      description: If a message with the given id is stored in the backend it will
+        be send as a reply. Otherwise 404 will be returned.
       parameters:
-        - in: "body"
-          name: "body"
-          description: "The type of the device and an unique Identifier"
+        - name: id
+          in: path
           required: true
           schema:
-            $ref: "#/definitions/SignUpInfo"
+            type: number
       responses:
-        "200":
-          description: "successful operation"
-        "400":
-          description: "Bad Request"
-        "404":
-          description: "Not Found"
-definitions:
-  Topic:
-    type: "object"
-    properties:
-      title:
-        type: "string"
-        example: "Kultur"
-      binding:
-        type: "string"
-        example: "landschaft/Kultur"
-      description:
-        type: "string"
-        example: "Hier werden alle kulturbezogenen Themen veröffentlicht."
+        200:
+          description: OK
+          content:
+            'application/json':
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/TopicMessage'
+                  - $ref: '#/components/schemas/PropertyMessage'
+              examples:
+                TopicMessageExample:
+                  $ref: '#/components/examples/TopicMessageExample'
+                PropertyMessageExample:
+                  $ref: '#/components/examples/PropertyMessageExample'
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+    put:
       tags:
-        $ref: "#/definitions/Tag"
-  SignUpInfo:
-    type: "object"
-    properties:
-      deviceType:
-        type: string
-        example: "Audi A3"
-      signUpToken:
-        type: string
-        format: uuid
-        example: "bd604ecb-b6d3-49f7-a0f7-eaff204019be"
-
-
-  Tag:
-    type: "string"
-    format: "enum"
-    example:
-      - "Wandern"
-      - "Natur"
-
-
-  ApiResponse:
-    type: "object"
-    properties:
-      code:
-        type: "integer"
-        format: "int32"
-      type:
-        type: "string"
-      message:
-        type: "string"
+        - Administration - OEM-Web Frontend
+      summary: Updates Message with given id in the backend
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        description: Message with id to be updated
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/TopicMessageDTO'
+        required: true
+      responses:
+        200:
+          description: Successful Operation
+          content: {}
+        422:
+          description: Unprocessable Entity
+          content: {}
+        423:
+          description: 'Locked: The given message has already been published and therefore cannot be changed anymore'
+          content: {}
+      x-codegen-request-body-name: body
+    delete:
+      tags:
+        - Administration - OEM-Web Frontend
+      summary: Deletes Messages with the given id from the backend
+      description: Deletes unsent Messages with the given id. Returns Bad Request
+        if the message was already sent. Return Not Found if no message with the given
+        id exists.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: OK
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+  /property:
+    get:
+      tags:
+        - Administration - OEM-Web Frontend
+      summary: Retrieves all existing properties in the backend
+      description: Loads all previously created properties and returns them as a list
+        within the response body.
+      parameters:
+        - name: showDisabledProperties
+          in: query
+          description: Allows to fetch properties which have been disabled
+          required: false
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Property'
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+    post:
+      tags:
+        - Administration - OEM-Web Frontend
+      summary: Stores a new property in the backend.
+      description: If no id is given a new one will be generated.
+      requestBody:
+        description: Property to be stored
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/PropertyDTO'
+        required: true
+      responses:
+        200:
+          description: Successful Operation
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+        422:
+          description: Unprocessable Entity
+          content: {}
+      x-codegen-request-body-name: body
+  /property/{id}:
+    put:
+      tags:
+        - Administration - OEM-Web Frontend
+      summary: Updates Property with the given id in the backend
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        description: Property to be stored
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/PropertyEnableDTO'
+        required: true
+      responses:
+        200:
+          description: Successful Operation
+          content: {}
+      x-codegen-request-body-name: body
+  /template:
+    get:
+      tags:
+        - Administration - OEM-Web Frontend
+      summary: Retrieves all existing templates in the backend
+      description: Loads all previously created templates and returns them as a list
+        within the response body.
+      responses:
+        200:
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/TopicTemplateMessage'
+                    - $ref: '#/components/schemas/PropertyTemplateMessage'
+        400:
+          description: Bad Request
+          content: {}
+        404:
+          description: Not Found
+          content: {}
+    post:
+      tags:
+        - Administration - OEM-Web Frontend
+      summary: Stores a new template in the backend.
+      description: If no id is given a new one will be generated.
+      requestBody:
+        description: Property to be stored
+        content:
+          'application/json':
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/TopicTemplateMessage'
+                - $ref: '#/components/schemas/PropertyTemplateMessage'
+            examples:
+              TopicTemplateMessage:
+                $ref: '#/components/examples/TopicTemplateMessageExample'
+              PropertyTemplateMessage:
+                $ref: '#/components/examples/PropertyTemplateMessageExample'
+        required: true
+      responses:
+        200:
+          description: Successful Operation
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+      x-codegen-request-body-name: body
+  /template/{id}:
+    delete:
+      tags:
+        - Administration - OEM-Web Frontend
+      summary: Deletes template
+      description: Deletes the template with the given id in the backend.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: OK
+          content: {}
+        400:
+          description: Bad Request
+          content: {}
+components:
+  examples:
+    TopicMessageDTOExample:
+      summary: Message containing Topic
+      value:
+        topic: topic/Kultur
+        sender: Audi
+        title: Nachrichtentitel
+        content: Textinhalt der Nachricht
+        starttime: "2020-10-20T12:25:19.518Z"
+        endtime: "2020-10-21T11:25:19.518Z"
+        attachment: HTP40c5xijnt
+        logoAttachment: HTP40c5xijnt
+        links: ['https://uulm.de']
+        locationData:
+          lat: 48.3584855
+          lng: 9.9788416
+          radius: 13
+        messageDisplayProperties:
+          backgroundColor: '#ffffff'
+          fontColor: '#000000'
+          fontFamily: ROBOTO
+          alignment: LEFT
+    PropertyMessageDTOExample:
+      summary: Message containing Properties
+      value:
+        sender: Audi
+        title: Nachrichtentitel
+        properties: [property/device/audia3, property/device/audia5]
+        content: Textinhalt der Nachricht
+        starttime: "2020-10-20T12:25:19.518Z"
+        endtime: "2020-10-21T11:25:19.518Z"
+        attachment: HTP40c5xijnt
+        logoAttachment: HTP40c5xijnt
+        links: ['https://uulm.de']
+        locationData:
+          lat: 48.3584855
+          lng: 9.9788416
+          radius: 13
+        messageDisplayProperties:
+          backgroundColor: '#ffffff'
+          fontColor: '#000000'
+          fontFamily: ROBOTO
+          alignment: LEFT
+    TopicMessageExample:
+      summary: Full message containing Topic
+      value:
+        id: 8
+        topic: topic/Kultur
+        sender: Audi
+        title: Nachrichtentitel
+        content: Textinhalt der Nachricht
+        starttime: "2020-10-21T14:03:22.548818"
+        endtime: "2020-10-21T11:25:19.518"
+        isSent: true
+        properties: []
+        attachment: HTP40c5xijnt
+        logoAttachment: HTP40c5xijnt
+        links: ['https://uulm.de']
+        locationData:
+          id: 9
+          lat: 48.3584855
+          lng: 9.9788416
+          radius: 13
+        messageDisplayProperties:
+          id: 14
+          backgroundColor: '#ffffff'
+          fontColor: '#000000'
+          fontFamily: ROBOTO
+          alignment: LEFT
+    PropertyMessageExample:
+      summary: Full message containing Properties
+      value:
+        id: 8
+        sender: Audi
+        title: Nachrichtentitel
+        properties: [property/device/audia3, property/device/audia5]
+        content: Textinhalt der Nachricht
+        starttime: "2020-10-21T14:03:22.548818"
+        endtime: "2020-10-21T11:25:19.518"
+        isSent: true
+        attachment: HTP40c5xijnt
+        logoAttachment: HTP40c5xijnt
+        links: ['https://uulm.de']
+        locationData:
+          id: 9
+          lat: 48.3584855
+          lng: 9.9788416
+          radius: 13
+        messageDisplayProperties:
+          id: 14
+          backgroundColor: '#ffffff'
+          fontColor: '#000000'
+          fontFamily: ROBOTO
+          alignment: LEFT
+    TopicTemplateMessageExample:
+      summary: Full message containing Topic
+      value:
+        templateName: Demo Template
+        topic: topic/Kultur
+        sender: Audi
+        title: Nachrichtentitel
+        content: Textinhalt der Nachricht
+        starttime: "2020-10-20T12:25:19.518Z"
+        endtime: "2020-10-21T11:25:19.518Z"
+        isSent: false
+        attachment: HTP40c5xijnt
+        logoAttachment: HTP40c5xijnt
+        links: ['https://uulm.de']
+        locationData:
+          lat: 48.3584855
+          lng: 9.9788416
+          radius: 13
+        messageDisplayProperties:
+          backgroundColor: '#ffffff'
+          fontColor: '#000000'
+          fontFamily: ROBOTO
+          alignment: LEFT
+    PropertyTemplateMessageExample:
+      summary: Full message containing Properties
+      value:
+        templateName: Demo Template
+        sender: Audi
+        title: Nachrichtentitel
+        properties: [property/device/audia3, property/device/audia5]
+        content: Textinhalt der Nachricht
+        starttime: "2020-10-20T12:25:19.518Z"
+        endtime: "2020-10-21T11:25:19.518Z"
+        isSent: false
+        attachment: HTP40c5xijnt
+        logoAttachment: HTP40c5xijnt
+        links: ['https://uulm.de']
+        locationData:
+          lat: 48.3584855
+          lng: 9.9788416
+          radius: 13
+        messageDisplayProperties:
+          backgroundColor: '#ffffff'
+          fontColor: '#000000'
+          fontFamily: ROBOTO
+          alignment: LEFT
+  schemas:
+    Topic:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 42.0
+        binding:
+          type: string
+          example: topic/Kultur
+        title:
+          type: string
+          example: Kultur
+        tags:
+          $ref: '#/components/schemas/Tag'
+        description:
+          type: string
+          example: Hier werden alle kulturbezogenen Themen veröffentlicht.
+        disabled:
+          type: boolean
+          example: false
+    TopicDTO:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Kultur
+        tags:
+          $ref: '#/components/schemas/Tag'
+        description:
+          type: string
+          example: Hier werden alle kulturbezogenen Themen veröffentlicht.
+    TopicUpdateDTO:
+      type: object
+      properties:
+        description:
+          type: string
+          example: Hier werden alle kulturbezogenen Themen veröffentlicht.
+    TopicDisableDTO:
+      type: object
+      properties:
+        disabled:
+          type: boolean
+          example: true
+    SignUpInfo:
+      type: object
+      properties:
+        deviceType:
+          type: string
+          example: Audi A3
+        signUpToken:
+          type: string
+          format: uuid
+          example: bd604ecb-b6d3-49f7-a0f7-eaff204019be
+    SignUpTokenDTO:
+      type: object
+      properties:
+        signUpToken:
+          type: string
+          format: uuid
+        queueID:
+          type: string
+          format: uuid
+    Property:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 3
+        name:
+          type: string
+          example: Audi A3
+        binding:
+          type: string
+          example: property/device/audia3
+        isDeleted:
+          type: boolean
+          example: false
+    PropertyDTO:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Audi A3
+    PropertyEnableDTO:
+      type: object
+      properties:
+        isEnabled:
+          type: boolean
+    BaseMessage:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 3
+        sender:
+          type: string
+          example: Audi
+        title:
+          type: string
+          example: Nachrichtentitel
+        content:
+          type: string
+          example: Textinhalt der Nachricht
+        starttime:
+          type: string
+          format: date-time
+        endtime:
+          type: string
+          format: date-time
+        isSent:
+          type: boolean
+          example: false
+        attachment:
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+          example: HTP40c5xijnt
+        logoAttachment:
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+          example: HTP40c5xijnt
+        links:
+          type: array
+          items:
+            type: string
+            example: https://uulm.de
+        messageDisplayProperties:
+          $ref: '#/components/schemas/MessageDisplayProperties'
+    TopicMessage:
+      allOf:
+        - $ref: '#/components/schemas/BaseMessage'
+      type: object
+      properties:
+        topic:
+          type: string
+          example: topic/Kultur
+    PropertyMessage:
+      allOf:
+        - $ref: '#/components/schemas/BaseMessage'
+      type: object
+      properties:
+        properties:
+          type: array
+          items:
+            type: string
+            example: property/device/audia3
+    MessageCompactDTO:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 9
+        sender:
+          type: string
+          example: Audi
+        title:
+          type: string
+          example: Nachrichtentitel
+        content:
+          type: string
+          example: Textinhalt der Nachricht
+        starttime:
+          type: string
+          format: date-time
+        isSent:
+          type: boolean
+          example: true
+    BaseMessageDTO:
+      required:
+        - sender
+        - title
+      type: object
+      properties:
+        sender:
+          type: string
+          example: Audi
+        title:
+          type: string
+          example: Nachrichtentitel
+        content:
+          type: string
+          example: Textinhalt der Nachricht
+        starttime:
+          type: string
+          format: date-time
+        endtime:
+          type: string
+          format: date-time
+        attachment:
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+          example: HTP40c5xijnt
+        logoAttachment:
+          pattern: ^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$
+          type: string
+          format: byte
+          example: HTP40c5xijnt
+        links:
+          type: array
+          items:
+            type: string
+            example: https://uulm.de
+        locationData:
+          $ref: '#/components/schemas/LocationDataDTO'
+        messageDisplayProperties:
+          $ref: '#/components/schemas/MessageDisplayPropertiesDTO'
+    MessageDisplayPropertiesDTO:
+      type: object
+      properties:
+        backgroundColor:
+          type: string
+          example: '#ffffff'
+        fontColor:
+          type: string
+          example: '#000000'
+        fontFamily:
+          $ref: '#/components/schemas/FontFamily'
+        alignment:
+          $ref: '#/components/schemas/Alignment'
+    MessageDisplayProperties:
+      allOf:
+        - $ref: '#/components/schemas/MessageDisplayPropertiesDTO'
+      type: object
+      properties:
+        id:
+          type: number
+          example: 11
+    TopicMessageDTO:
+      allOf:
+        - $ref: '#/components/schemas/BaseMessageDTO'
+      type: object
+      properties:
+        topic:
+          type: 'string'
+          example: 'topic/Kultur'
+    PropertyMessageDTO:
+      allOf:
+        - $ref: "#/components/schemas/BaseMessageDTO"
+      type: "object"
+      properties:
+        properties:
+          type: array
+          items:
+            type: "string"
+            example: "property/device/audia3"
+    Template:
+      type: object
+      properties:
+        templateName:
+          type: string
+          example: Demo Template
+    TopicTemplateMessage:
+      allOf:
+        - $ref: '#/components/schemas/TopicMessage'
+        - $ref: '#/components/schemas/Template'
+    PropertyTemplateMessage:
+      allOf:
+        - $ref: '#/components/schemas/PropertyMessage'
+        - $ref: '#/components/schemas/Template'
+    LocationDataDTO:
+      type: object
+      required:
+        - lat
+        - lng
+        - radius
+      properties:
+        lat:
+          type: number
+          example: 48.3584855
+        lng:
+          type: number
+          example: 9.9788416
+        radius:
+          type: number
+          example: 13
+    Tag:
+      type: string
+      format: enum
+      example: [Wandern, Natur]
+    FontFamily:
+      type: string
+      enum:
+        - ROBOTO
+        - OPEN_SANS
+        - MONTSERRAT
+        - PLAYFAIR_DISPLAY
+    Alignment:
+      type: string
+      enum:
+        - LEFT
+        - CENTER
+        - RIGHT
+    MessageBadRequestInfo:
+      type: object
+      properties:
+        topicError:
+          type: string
+          example: Topic must not be null
+        propertyError:
+          type: string
+          example: Property can not contain more than 200 characters.
+        senderError:
+          type: string
+          example: Sender field is required.
+        titleError:
+          type: string
+          example: Title field is required.
+        contentError:
+          type: string
+          example: Either content or files are required.
+        locationError:
+          type: string
+          example: Please check your coordinate values!
+        linkError:
+          type: string
+          example: Please check your link values.
+        colorError:
+          type: string
+          example: Please enter different colors for background and font.
+        colorFormatError:
+          type: string
+          example: Please enter a valid HexColor.
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string

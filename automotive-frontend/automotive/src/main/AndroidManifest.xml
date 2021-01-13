@@ -6,25 +6,30 @@
         android:name="android.hardware.type.automotive"
         android:required="true" />
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".SubscribeActivity" />
+        <activity
+            android:name="de.uulm.automotiveuulmapp.messages.messageFragment.deletion.MessageDeletionHelper"
+            android:theme="@style/Transparent" />
+        <activity android:name=".MainActivity" />
         <activity
             android:name=".welcome.WelcomeAppIntro"
             android:label="@string/title_activity_my_custom_app_intro"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".MessageContentActivity"/>
-        <activity android:name=".MainActivity">
+        <activity android:name=".messages.MessageContentActivity" android:launchMode="singleTask"/>
+        <activity android:name=".IntroActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,6 +38,12 @@
         </activity>
 
         <service
+            android:name=".messages.MessagePersistenceService"
+            android:exported="false" />
+        <service
+            android:name=".notifications.DismissNotificationService"
+            android:exported="false" />
+        <service
             android:name=".rabbitmq.RabbitMQService"
             android:enabled="true"
             android:exported="true" />
@@ -40,6 +51,14 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCdP9Z5FYGgS10fS_aV_vzt5uuXDzc5vS4" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
+        <!--        Test Activities -->
+        <activity android:name=".TopicAdapterTestActivity" />
+        <activity android:name=".MessageAdapterTestActivity" />
+        <activity android:name=".MessageFragmentTestActivity"/>
     </application>
 
 </manifest>

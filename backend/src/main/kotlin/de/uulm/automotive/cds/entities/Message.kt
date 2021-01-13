@@ -20,20 +20,29 @@ import javax.persistence.*
  * @property links Links used in the message
  */
 @Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 class Message(
         @Id @GeneratedValue var id: Long? = null,
         var topic: String?,
+        @Column(length = 127)
         var sender: String?,
+        @Column(length = 127)
         var title: String?,
-        var content: String,
+        @Column(length = 1023)
+        var content: String?,
         var starttime: LocalDateTime?,
         var endtime: LocalDateTime?,
         var isSent: Boolean?,
         @ElementCollection(fetch = FetchType.LAZY)
         var properties: MutableList<String>?,
         @Lob
-        @Column(name = "attachment", columnDefinition = "BLOB")
         var attachment: ByteArray?,
+        @Lob
+        var logoAttachment: ByteArray?,
         @ElementCollection(fetch = FetchType.LAZY)
-        var links: MutableList<URL>?
-)
+        var links: MutableList<URL>?,
+        @OneToOne(cascade = [CascadeType.ALL])
+        var locationData: LocationData?,
+        @OneToOne(cascade = [CascadeType.ALL])
+        var messageDisplayProperties: MessageDisplayProperties?
+) : de.uulm.automotive.cds.models.Entity()

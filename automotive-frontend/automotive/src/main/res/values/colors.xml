@@ -11,4 +11,7 @@
     <color name="colorAccent">#00EB00</color>
     <!-- Used for most of the text as textcolor-->
     <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="lightgray">#D3D3D3</color>
+    <color name="darkgray">#A9A9A9</color>
 </resources>

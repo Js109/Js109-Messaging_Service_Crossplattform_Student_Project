@@ -6,20 +6,17 @@
   <h3>{{title}}</h3>
 
   <form enctype="multipart/form-data" action="/publish" onsubmit="return validateForm()"
-        name="messageForm" method="post">
+        name="message" method="post">
     <div class="form-group">
       <label for="topic">Topic:</label>
       <select
-          class="browser-default custom-select {{#hasTopicPropertiesError}}is-invalid{{/hasTopicPropertiesError}}"
+          class="browser-default custom-select"
           name="topic" id="topic">
         <option selected></option>
         {{#topics}}
           <option value="{{binding}}">{{title}}</option>
         {{/topics}}
       </select>
-      {{#hasTopicPropertiesError}}
-        <div class="invalid-feedback">Either Topics or Properties are required.</div>
-      {{/hasTopicPropertiesError}}
     </div>
     <div class="form-group">
       <label>Property:</label>
@@ -27,40 +24,28 @@
         <div class="form-check">
 
           <input
-              class="form-check-input {{#hasTopicPropertiesError}}is-invalid{{/hasTopicPropertiesError}}"
+              class="form-check-input"
               name="properties" type="checkbox" value="{{binding}}" id="checkbox{{id}}"/>
           <label class="form-check-label" for="checkbox{{id}}">
             {{name}}
           </label>
         </div>
       {{/properties}}
-      {{#hasTopicPropertiesError}}
-        <div class="invalid-feedback">Either Topics or Properties are required.</div>
-      {{/hasTopicPropertiesError}}
     </div>
     <div class="form-group">
       <label for="sender">Sender:</label>
-      <input class="form-control {{#hasSenderError}}is-invalid{{/hasSenderError}}" name="sender"
+      <input class="form-control" name="sender"
              id="sender" placeholder="Sender">
-      {{#hasSenderError}}
-        <div class="invalid-feedback">Sender field is required.</div>
-      {{/hasSenderError}}
     </div>
     <div class="form-group">
       <label for="title">Title:</label>
-      <input class="form-control {{#hasTitleError}}is-invalid{{/hasTitleError}}" name="title"
+      <input class="form-control" name="title"
              id="title" placeholder="Title">
-      {{#hasTitleError}}
-        <div class="invalid-feedback">Title field is required.</div>
-      {{/hasTitleError}}
     </div>
     <div class="form-group">
       <label for="content">Message content:</label>
-      <textarea class="form-control {{#hasContentError}}is-invalid{{/hasContentError}}"
+      <textarea class="form-control"
                 name="content" id="content" placeholder="Content"></textarea>
-      {{#hasContentError}}
-        <div class="invalid-feedback">Either Content or Files are required.</div>
-      {{/hasContentError}}
     </div>
     <div class="form-group">
       <label for="messagestarttime">Send message at:</label>
@@ -70,9 +55,6 @@
     <div class="custom-file">
       <input type="file" id="fileSelection" name="file" class="custom-file-input">
       <label class="custom-file-label" for="customFile">Choose file</label>
-      {{#hasContentError}}
-        <div class="invalid-feedback">Either Content or Files are required.</div>
-      {{/hasContentError}}
     </div>
     <div class="form-group">
       <div class="container" id="url-list">
@@ -81,12 +63,8 @@
           <span>Add URL:</span>
         </button>
       </div>
-      {{#hasUrlError}}
-        <div class="invalid-feedback">Please insert URLs in the following Scheme:
-          http://www.example.com .
-        </div>
-      {{/hasUrlError}}
     </div>
+    {{> location-data}}
     <button type="button" onclick="document.getElementById('fileSelection').value = ''"
             class="btn btn-primary">clear
     </button>
@@ -95,13 +73,59 @@
   <script>
     // Add the following code if you want the name of the file appear on select
     $(".custom-file-input").on("change", function () {
-      var fileName = $(this).val().split("\\").pop();
+      let fileName = $(this).val().split("\\").pop();
       $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
     });
   </script>
 </div>
 
+<script src="js/slider.js"></script>
 <script>
+
+  function initialValidationWarnings() {
+
+    let form = document.forms["message"];
+    let topic = form["topic"];
+    let sender = form["sender"];
+    let title = form["title"];
+    let content = form["content"];
+    let file = document.getElementById("fileSelection");
+    let urls = document.getElementById("url-list");
+    let lat = form["latTextField"];
+
+    {{#hasTopicPropertiesError}}
+      addValidationError(topic, "Either Topics or Properties are required.");
+    {{/hasTopicPropertiesError}}
+
+    {{#hasSenderError}}
+      addValidationError(sender, "Sender field is required");
+    {{/hasSenderError}}
+
+    {{#hasTitleError}}
+      addValidationError(title, "Title field is required");
+    {{/hasTitleError}}
+
+    {{#hasContentError}}
+      addValidationError(content, "Either Content or Files are required.");
+      addValidationError(file, "Either Content or Files are required.");
+    {{/hasContentError}}
+
+    {{#coordValueRangeError}}
+      addValidationError(lat.parentNode, "Please check your coordinate values!");
+    {{/coordValueRangeError}}
+
+    {{#onlyOneCoordError}}
+      addValidationError(lat.parentNode, "Please enter both coordinate values!")
+    {{/onlyOneCoordError}}
+
+    {{#hasUrlError}}
+      addValidationError(urls,
+          "Please insert URLs in the following Scheme: http://www.example.com .")
+    {{/hasUrlError}}
+  }
+
+  initialValidationWarnings()
+
   let cnt = 0;
 
   function addItem() {
@@ -151,34 +175,34 @@
    */
   function validateForm() {
     let isValid = true;
+    let form = document.forms["message"];
 
-    let topic = document.forms["messageForm"]["topic"];
-    let properties = document.forms["messageForm"]["properties"];
+    let topic = form["topic"];
+    let properties = form["properties"];
 
-    let sender = document.forms["messageForm"]["sender"];
-    let title = document.forms["messageForm"]["title"];
+    let sender = form["sender"];
+    let title = form["title"];
 
-    let content = document.forms["messageForm"]["content"];
-    let file = document.forms["messageForm"]["file"];
+    let content = form["content"];
+    let file = form["file"];
 
-    let urls = document.forms["messageForm"].querySelectorAll(".url-lst");
+    let urls = form.querySelectorAll(".url-lst");
+
+    let lat = form["latTextField"];
+    let lng = form["lngTextField"];
 
     // topic or properties required
 
     if (topic.value === "") {
-      let hasProperty = false;
+      let hasSelectedProperty = false;
       if (properties != null) {
-        if (properties.length === undefined) {
-          hasProperty = properties.checked;
-        } else {
-          properties.forEach(option => {
-            if (option.checked) {
-              hasProperty = true;
-            }
-          });
-        }
+        properties.forEach(option => {
+          if (option.checked) {
+            hasSelectedProperty = true;
+          }
+        });
       }
-      if (!hasProperty) {
+      if (!hasSelectedProperty) {
         isValid = false;
 
         if (properties != null) {
@@ -203,7 +227,9 @@
       removeValidationError(topic);
 
       if (properties != null) {
-        removeValidationError(properties);
+        properties.forEach(option => {
+          removeValidationError(option);
+        });
         if (properties.length === undefined) {
           properties.classList.remove("is-invalid");
         } else {
@@ -277,6 +303,29 @@
       }
 
     });
+
+    // check for valid boundaries and completeness (lat and long entered)
+    if (lat.value < -90 || lat.value > 90 || lng.value < -180 || lng.value > 180) {
+      removeValidationError(lat.parentNode)
+      isValid = false;
+      addValidationError(lat.parentNode, "Please check your coordinate values!");
+    } else if ((lat.value === "" && lng.value !== "") || (lat.value !== "" && lng.value === "")) {
+      removeValidationError(lat.parentNode)
+      isValid = false;
+      addValidationError(lat.parentNode, "Please enter both coordinate values!")
+    } else {
+      removeValidationError(lat.parentNode)
+    }
+
+    // if location data tab is collapsed, content will not be sent.
+    if(isValid){
+        var locationDataCollapsed = document.getElementById("collapseButton").classList.contains("collapsed")
+        if(locationDataCollapsed){
+            document.getElementById("latTextField").disabled = true;
+            document.getElementById("lngTextField").disabled = true;
+            document.getElementById("radiusRange").disabled = true;
+        }
+    }
 
     return isValid;
   }

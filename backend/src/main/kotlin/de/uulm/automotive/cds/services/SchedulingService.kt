@@ -4,11 +4,12 @@ import de.uulm.automotive.cds.entities.Message
 import de.uulm.automotive.cds.repositories.MessageRepository
 import de.uulm.automotive.cds.repositories.SignUpRepository
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Bean
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
-/**s
+/**
  * A Service class that takes care of all actions that execute on a scheduled time.
  *
  * @property messageRepository
@@ -16,7 +17,7 @@ import java.time.LocalDateTime
  * @property messageService
  */
 @Component
-class SchedulingService(private val messageRepository: MessageRepository, private val tokenRepository: SignUpRepository, private val messageService: MessageService,
+class SchedulingService(private val messageRepository: MessageRepository, private val tokenRepository: SignUpRepository, private val messageService: MessageService, private val metricsService: MetricsService,
                         @Value("\${pruning.interval.seconds:60}000")
                         val removeTokenIntervalInSeconds: Long) {
 
@@ -49,5 +50,17 @@ class SchedulingService(private val messageRepository: MessageRepository, privat
                 tokenRepository.delete(it)
             }
         }
+    }
+
+    /**
+     * Should only run once after all dependencies have been loaded.
+     *
+     */
+    @Bean
+    fun scheduleOnce() = getAndSaveSubscriberMetricsForCurrentDay()
+
+    @Scheduled(cron = "0 0 0 * * *")
+    fun getAndSaveSubscriberMetricsForCurrentDay() {
+        metricsService.getAndSaveRabbitMQMetrics()
     }
 }

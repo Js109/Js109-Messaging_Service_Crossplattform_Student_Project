@@ -1,0 +1,28 @@
+<mat-sidenav-container class="property-panel">
+  <mat-sidenav-content>
+    <div class="container d-flex flex-column h-100">
+      <h2>Property</h2>
+
+      <div style="display: flex" class="mb-4">
+        <input class="form-control col-9 no-right-rounding" name="name"
+               id="name" placeholder="Property Name" maxlength="200"
+               [(ngModel)]="property.name">
+        <button type="button" class="btn btn-primary col no-left-rounding" (click)="createProperty()">Submit</button>
+      </div>
+
+      <div class="overflow-auto form-control col flex-grow-1 mb-4">
+        <ng-container *ngFor="let p of properties;let i = index">
+          <div class="mb-2 mt-2 d-flex">
+            <div class="flex-grow-1" [style.color]="p.disabled ? 'lightgrey' : 'black'">{{p.name}}</div>
+            <div class="ml-auto">
+              Enabled:
+                <mat-slide-toggle color="primary" [checked]="!p.disabled" (change)="updateProperty(p)"></mat-slide-toggle>
+            </div>
+          </div>
+          <mat-divider *ngIf="i < properties.length - 1"></mat-divider>
+        </ng-container>
+      </div>
+
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/intro_screen_frame_border"
     tools:context=".welcome.IntroFragmentSubscriptionExplanation">
 
     <TextView
@@ -11,7 +12,7 @@
         android:layout_width="910dp"
         android:layout_height="109dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
         android:gravity="center"
         android:text="@string/welcome_subscription_explanation_titel"
@@ -23,14 +24,14 @@
 
     <ImageView
         android:id="@+id/fragment_subscription_explanation_imageView"
-        android:layout_width="786dp"
-        android:layout_height="297dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="62dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
+        android:background="@drawable/intro_screen_screenshot_border"
         android:contentDescription="@string/welcome_imageView_description"
         android:src="@mipmap/topic_selection"
-        app:layout_constraintBottom_toTopOf="@+id/fragment_subscription_explanation_textView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fragment_subscription_explanation_textview1" />
@@ -38,18 +39,18 @@
     <TextView
         android:id="@+id/fragment_subscription_explanation_textView2"
         android:layout_width="881dp"
-        android:layout_height="286dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="1000dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="64dp"
         android:gravity="center"
         android:text="@string/welcome_subscription_explanation_subtitel"
         android:textColor="@color/white"
         android:textSize="@dimen/subheading"
-        app:layout_constraintBottom_toTopOf="@+id/fragment_subscription_explanation_imageView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/fragment_subscription_explanation_imageView"
+        app:layout_constraintVertical_bias="0.12" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

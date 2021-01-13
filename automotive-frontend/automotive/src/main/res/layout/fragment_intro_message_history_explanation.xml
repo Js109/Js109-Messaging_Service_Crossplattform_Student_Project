@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/intro_screen_frame_border"
+    tools:context=".welcome.IntroFragmentSubscriptionExplanation">
+
+    <ImageView
+        android:id="@+id/fragment_message_history_explanation_imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/intro_screen_screenshot_border"
+        android:contentDescription="@string/welcome_message_history_imageView_description"
+        android:src="@mipmap/message_history"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_message_history_explanation_textview1" />
+
+    <TextView
+        android:id="@+id/fragment_message_history_explanation_textview1"
+        android:layout_width="910dp"
+        android:layout_height="109dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:gravity="center"
+        android:text="@string/welcome_message_history_explanation_titel"
+        android:textColor="@color/white"
+        android:textSize="@dimen/heading"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/fragment_message_history_explanation_textView2"
+        android:layout_width="881dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:gravity="center"
+        android:text="@string/welcome_message_history_explanation_subtitel"
+        android:textColor="@color/white"
+        android:textSize="@dimen/subheading"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_message_history_explanation_imageView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
